@@ -1,19 +1,18 @@
-import BaseRoute from "./baseRoute";
-import userController from "../controller/userController";
+import BaseRoute from './baseRoute';
+import UserController from '../controller/UserController';
 
-class UserRoute extends BaseRoute{
-    private userController = new userController();
+class UserRoute extends BaseRoute {
+  private userController = new UserController();
 
-    constructor() {
-        super();
-        this.setRouters();
-        this.prefix = '/user'
-    }
+  constructor() {
+    super();
+    this.setRouters();
+    this.prefix = '/user';
+  }
 
-    protected setRouters(){
-        this.router.get('/login', this.userController.index)
-    }
-
+  protected setRouters() {
+    this.router.post('/', this.userController.createUser);
+  }
 }
 
-export default UserRoute
+export default UserRoute;
