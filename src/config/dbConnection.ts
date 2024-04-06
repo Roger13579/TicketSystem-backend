@@ -7,7 +7,7 @@ env.config();
 const connection = async () => {
   try {
     const mongoDbUrl =
-        process.env.MONGO_DB_URL || 'mongodb://localhost:27017/test';
+      process.env.MONGO_DB_URL || 'mongodb://localhost:27017/test';
     await connect(mongoDbUrl);
     logger.info('mongo db connection initialized');
   } catch (err) {

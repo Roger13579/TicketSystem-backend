@@ -1,5 +1,5 @@
 import BaseRoute from './baseRoute';
-import IndexController from '../controller/IndexController';
+import IndexController from '../controller/indexController';
 class IndexRoute extends BaseRoute {
   private indexController = new IndexController();
 

@@ -6,8 +6,14 @@ import path from 'path';
 import morgan from 'morgan';
 import { router } from './routes/router';
 import connection from './config/dbConnection';
-import globalMiddleware from "./middleware/globalMiddleware";
-import {appErrorHandler, globalErrorHandler, unknownRouteError} from "./utils/errorHandler";
+import globalMiddleware from './middleware/globalMiddleware';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './swagger-output.json';
+import {
+  appErrorHandler,
+  globalErrorHandler,
+  unknownRouteError,
+} from './utils/errorHandler';
 
 class App {
   public app: express.Application;
@@ -20,7 +26,7 @@ class App {
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
     this.app.use(express.static(path.join(__dirname, 'public')));
-    this.app.use(globalMiddleware)
+    this.app.use(globalMiddleware);
 
     // db connection
     connection();
@@ -29,6 +35,9 @@ class App {
     for (const route of router) {
       this.app.use(route.getPrefix(), route.getRouters());
     }
+
+    // swagger
+    this.app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
     // 查無路由
     this.app.use(unknownRouteError);
 
@@ -41,6 +50,8 @@ class App {
     const logger = log4js.getLogger();
     this.app.use(log4js.connectLogger(logger, { level: 'info' }));
   }
+
+  private initContainer() {}
 }
 
 export default new App().app;
