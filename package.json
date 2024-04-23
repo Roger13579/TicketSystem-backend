@@ -7,7 +7,7 @@
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "tsc && node src/dist/bin/www.js",
+    "start": "node src/dist/bin/www.js",
     "swagger": "node src/dist/swagger.js"
   },
   "keywords": [],

@@ -53,7 +53,7 @@ env:
   GAR_LOCATION: asia-east1-docker.pkg.dev/sincere-strata-420613/cloud-run-source-deploy # TODO: update Artifact Registry location
   SERVICE: ticketsystembackend # TODO: update Cloud Run service name
   REGION: asia-east1 # TODO: update Cloud Run service region
-
+  MONGO_DB_URL: ${{ secrets.MONGO_DB_URL }}
 jobs:
   deploy:
     # Add 'id-token' with the intended permissions for workload identity federation
