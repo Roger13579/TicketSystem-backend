@@ -54,7 +54,6 @@ env:
   SERVICE: ticketsystembackend # TODO: update Cloud Run service name
   REPOSITORY: cloud-run-source-deploy
   REGION: asia-east1 # TODO: update Cloud Run service region
-  MONGO_DB_URL: ${{ secrets.MONGO_DB_URL }}
 jobs:
   deploy:
     # Add 'id-token' with the intended permissions for workload identity federation
@@ -94,6 +93,8 @@ jobs:
           registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
 
       - name: Build and Push Container
+        env:
+          MONGO_DB_URL: ${{ secrets.MONGO_DB_URL }}
         run: |-
           docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"
