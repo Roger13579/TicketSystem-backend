@@ -92,6 +92,11 @@ jobs:
           password: '${{ steps.auth.outputs.access_token }}'
           registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
 
+      - name: 'Create env file'
+        run: |-
+          touch .env
+          echo MONGO_DB_URL=${{ secrets.MONGO_DB_URL }} >> .env
+          cat .env
       - name: Build and Push Container
         env:
           MONGO_DB_URL: ${{ secrets.MONGO_DB_URL }}
