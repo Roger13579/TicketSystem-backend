@@ -1,9 +1,16 @@
 import { Schema, model } from 'mongoose';
 
 interface IUser {
-  name: string;
   account: string;
+  googleId: string;
   pwd: string;
+  name: string;
+  gender: string;
+  avatarPath: string;
+  email: string;
+  phone: string;
+  birth: string;
+  address: string;
   date: Date;
 }
 
@@ -17,6 +24,6 @@ const schema = new Schema<IUser>({
   },
 });
 
-const UserModel = model<IUser>('User', schema);
+const UserModel = model<IUser>('User', schema, 'uuser');
 
 export default UserModel;
