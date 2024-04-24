@@ -21,7 +21,7 @@
    ```
 2. 移動到專案中
    ```
-   cd ticket-system-frontend
+   cd ticket-system-backend
    ```
 3. 安裝套件
    ```
@@ -30,39 +30,30 @@
 4. 根據 `.evn.example` 內容來調整設定
    ```
    PORT= # PORT號
+   MONGO_DB_URL= # DB連線
    ```
 5. 運行專案
    ```
+   npm run build
    npm run start
    ```
 6. 開啟專案
    在瀏覽器中前往 `http://localhost:3000` 後，輸入對應身份組的帳號密碼即可查看
 
 ## 資料夾說明
-| 資料夾/檔案           | 說明                             |
-|------------------|--------------------------------|
-| `src/app`        | 根據身份組（路由）去開不同的資料夾，內有此專案主要的功能核心 |
-| `src/assets`     | 圖片、svg 等放置於此                   |
-| `src/components` | 此資料夾中含有共用的頁面配置、元件              |
-| `src/hooks`      | 此資料夾中放置共用的 React custom hooks  |
-| `src/pages`      | 路由在此資料夾設定                      |
-| `src/services`   | 像後端取得資料的 api 在此資料夾設定           |
-| `src/stores`     | 於此資料夾中設定全域共用的狀態管理              |
-| `src/styles`     | 全域的樣式檔                         |
-| `src/types`      | TypeScript 的型別統一於此設定           |
-| `src/utils`      | 全域共用的函示會放在此資料夾中                |
-
-在每個 `src/apps` 的元件中，通常會包含以下幾個檔案：
-- `components/*`：此頁面所需的元件
-- `hooks/*`：定義此頁面所需的 React custom hooks
-- `index.tsx`：此頁面的進入點
-- `stores.ts`：此頁面所需的狀態管理
+| 資料夾/檔案           | 說明                  |
+|------------------|---------------------|
+| `src/bin`        | 內含server初始化入口www.ts |
+| `src/config`     | 此專案設定如DB連線資訊        |
+| `src/controller` | 存放各功能controller     |
+| `src/middleware` | 存放專案使用的middleware   |
+| `src/models`     | DB Schema 物件定義      |
+| `src/routes`     | 存放各功能路由             |
+| `src/service`    | 存放各功能業務邏輯           |
+| `src/utils`      | 全域共用的函式工具           |
 
 ## 專案使用技術
 - Node.js: v21
-- Next.js: v14.1
+- Express: v4.19
 - TypeScript: v5
-- Vite: v5.2.8
-- React hook form: v7
-- TailwindCSS: v3.4.3
 - ESlint: v8
