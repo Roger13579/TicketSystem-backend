@@ -17,7 +17,7 @@ interface IUser {
   status: string;
   groups: [Schema.Types.ObjectId];
   collects: [Schema.Types.ObjectId];
-  myTickets: [Schema.Types.ObjectId]
+  myTickets: [Schema.Types.ObjectId];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,7 +32,7 @@ const schema = new Schema<IUser>({
   },
   pwd: {
     type: String,
-    select: false
+    select: false,
   },
   email: {
     type: String,
@@ -86,12 +86,12 @@ const schema = new Schema<IUser>({
   },
   groups: {
     type: [
-        {
-          groupId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Group'
-          },
+      {
+        groupId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Group',
         },
+      },
     ],
   },
   collects: {
@@ -99,7 +99,7 @@ const schema = new Schema<IUser>({
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product'
+          ref: 'Product',
         },
       },
     ],
@@ -109,19 +109,19 @@ const schema = new Schema<IUser>({
       {
         ticketId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Ticket'
+          ref: 'Ticket',
         },
       },
     ],
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 const UserModel = model<IUser>('User', schema);

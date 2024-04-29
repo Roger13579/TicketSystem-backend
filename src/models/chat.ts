@@ -19,7 +19,7 @@ const schema = new Schema<IChat>({
     type: Schema.Types.ObjectId,
     ref: 'Ticket',
   },
-  groupId:{
+  groupId: {
     type: Schema.Types.ObjectId,
     ref: 'Group',
   },
@@ -35,7 +35,7 @@ const schema = new Schema<IChat>({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 const ChatModel = model<IChat>('Chat', schema);

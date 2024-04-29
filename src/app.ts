@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, {ErrorRequestHandler} from 'express';
+import express, { ErrorRequestHandler } from 'express';
 import log4js from './config/log4js';
 import path from 'path';
 import morgan from 'morgan';
@@ -11,9 +11,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swagger-output.json';
 import { DefaultException } from './utils/defaultException';
 import passport from 'passport';
-import {
-  unknownRouteError,
-} from './utils/errorHandler';
+import { unknownRouteError } from './utils/errorHandler';
 
 class App {
   public app: express.Application;
@@ -21,7 +19,7 @@ class App {
     this.app = express();
     this.initLogger();
     this.app.use(cors());
-    this.app.use(passport.initialize())
+    this.app.use(passport.initialize());
     this.app.use(morgan('dev'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));

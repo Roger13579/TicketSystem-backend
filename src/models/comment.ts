@@ -31,11 +31,11 @@ const schema = new Schema<IComment>({
   },
   createAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updateAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   status: {
     type: Boolean,

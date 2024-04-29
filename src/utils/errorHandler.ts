@@ -25,12 +25,7 @@ class AppError extends Error {
   }
 }
 
-const globalErrorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const globalErrorHandler = (err: Error, res: Response) => {
   if (err) {
     logger.info('globalErrorHandler process');
     res.status(500).json({
@@ -42,12 +37,7 @@ const globalErrorHandler = (
   }
 };
 
-const appErrorHandler = (
-  err: AppError,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const appErrorHandler = (err: AppError, res: Response) => {
   if (err) {
     logger.info('appErrorHandler process');
     err.statusCode = err.statusCode || 500;
@@ -60,12 +50,8 @@ const appErrorHandler = (
   }
 };
 
-const unknownRouteError = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const unknownRouteError = (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(404, '40401', '無此路由資訊'));
 };
 
-export { AppError, globalErrorHandler, appErrorHandler, unknownRouteError};
+export { AppError, globalErrorHandler, appErrorHandler, unknownRouteError };

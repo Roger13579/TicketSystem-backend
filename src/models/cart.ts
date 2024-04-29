@@ -21,7 +21,7 @@ const schema = new Schema<ICart>({
         name: String,
         price: Number,
         amount: Number,
-      }
+      },
     ],
     required: true,
   },

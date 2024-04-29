@@ -21,7 +21,7 @@ const schema = new Schema<IGroup>({
     ref: 'User',
     required: true,
   },
-  title:{
+  title: {
     type: String,
     required: true,
   },
@@ -43,7 +43,7 @@ const schema = new Schema<IGroup>({
   },
   amount: {
     type: Number,
-    required: true
+    required: true,
   },
   haveTicket: {
     type: Boolean,
@@ -53,22 +53,22 @@ const schema = new Schema<IGroup>({
     type: String,
   },
   participant: {
-    type:[
+    type: [
       {
         phone: String,
         name: String,
         nickname: String,
         lineId: String,
-      }
-    ]
+      },
+    ],
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
 });
 

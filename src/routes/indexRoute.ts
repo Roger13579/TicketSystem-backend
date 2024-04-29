@@ -8,8 +8,7 @@ class IndexRoute extends BaseRoute {
     this.setRouters();
   }
 
-  protected setRouters() {
-  }
+  protected setRouters() {}
 }
 
 export default IndexRoute;

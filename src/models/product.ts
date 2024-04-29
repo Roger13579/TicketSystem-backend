@@ -33,14 +33,40 @@ const schema = new Schema<IProduct>({
     type: String,
     required: true,
   },
-  type:{
+  type: {
     type: String,
-    enum: ["premier", "corporateBooking", "privateBooking", "preScreeningMeeting", "postScreeningMeeting", "specialEvent", "openAir"],
+    enum: [
+      'premier',
+      'corporateBooking',
+      'privateBooking',
+      'preScreeningMeeting',
+      'postScreeningMeeting',
+      'specialEvent',
+      'openAir',
+    ],
     required: true,
   },
   genre: {
     type: String,
-    enum: ["Action", "Adventure", "Comedy", "Dram", "Horro", "Fantasy", "Romance", "Animation", "Thriller", "Mystery" , "ScienceFictio", "Musical", "Music", "War", "Western", "Epic", "Historical"],
+    enum: [
+      'Action',
+      'Adventure',
+      'Comedy',
+      'Dram',
+      'Horro',
+      'Fantasy',
+      'Romance',
+      'Animation',
+      'Thriller',
+      'Mystery',
+      'ScienceFictio',
+      'Musical',
+      'Music',
+      'War',
+      'Western',
+      'Epic',
+      'Historical',
+    ],
     required: true,
   },
   vender: {
@@ -65,7 +91,7 @@ const schema = new Schema<IProduct>({
         plan: String,
         discount: String,
         amount: Number,
-      }
+      },
     ],
   },
   startAt: {
@@ -100,8 +126,8 @@ const schema = new Schema<IProduct>({
     type: [
       {
         tagId: Schema.Types.ObjectId,
-        ref: "Tag",
-      }
+        ref: 'Tag',
+      },
     ],
   },
   photoPath: {
@@ -135,9 +161,9 @@ const schema = new Schema<IProduct>({
       {
         commentId: {
           type: Schema.Types.ObjectId,
-          ref: "Comment",
-        }
-      }
+          ref: 'Comment',
+        },
+      },
     ],
   },
 });

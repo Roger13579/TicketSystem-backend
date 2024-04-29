@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 interface IOrder {
   thirdPartyPaymentId: string;
@@ -33,7 +33,7 @@ const schema = new Schema<IOrder>({
         name: String,
         price: Number,
         amount: Number,
-      }
+      },
     ],
     required: true,
   },
@@ -47,15 +47,15 @@ const schema = new Schema<IOrder>({
   },
   createAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updateAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   paymentMethod: {
     type: String,
-    enum: ["LinePay", "ecPay", "newebPay"],
+    enum: ['LinePay', 'ecPay', 'newebPay'],
     required: true,
   },
   paidAt: {
@@ -67,7 +67,7 @@ const schema = new Schema<IOrder>({
       address: String,
       phone: String,
       email: String,
-    }
+    },
   },
 });
 
