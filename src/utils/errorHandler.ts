@@ -61,11 +61,11 @@ const appErrorHandler = (
 };
 
 const unknownRouteError = (
-  rreq: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   next(new AppError(404, '40401', '無此路由資訊'));
 };
 
-export { AppError, globalErrorHandler, appErrorHandler, unknownRouteError };
+export { AppError, globalErrorHandler, appErrorHandler, unknownRouteError};

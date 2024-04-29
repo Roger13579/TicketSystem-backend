@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import log4js from '../config/log4js';
-const logger = log4js.getLogger(`initConnection`);
+const logger = log4js.getLogger(`globalMiddleware`);
 const globalMiddleware = (req: Request, res: Response, next: NextFunction) => {
   logger.info(`request method : ${req.method}`);
   logger.info(`request uri : ${req.url}`);

@@ -1,32 +1,49 @@
-import { NextFunction, Request, Response } from 'express';
-import user from '../models/user';
-import UserModel from '../models/user';
+import {Request} from 'express';
+import { validationResult } from 'express-validator';
+import {BaseController} from './baseController';
 import log4js from '../config/log4js';
-import { AppError } from '../utils/errorHandler';
+import {CustomResponseType} from "../types/customResponseType";
+import {ResponseObject} from "../utils/responseObject";
+import {UserService} from "../service/user.service";
+import bcrypt from "bcrypt";
+import {SignUpVo} from "../vo/signUpVo";
+
 const logger = log4js.getLogger(`UserController`);
 
-class UserController {
-  public async createUser(req: Request, res: Response, next: NextFunction) {
-    const { name, account, pwd } = req.body;
-    await user
-      .create(
-        new UserModel({
-          name,
-          account,
-          pwd,
-        }),
-      )
-      .then(() => {
-        logger.info('user create success');
-        res.status(200).json({
-          name,
-        });
-      })
-      .catch((err) => {
-        logger.error('user create fail', err);
-        next(new AppError(500, 'validation fail', err.message));
-      });
+class UserController extends BaseController{
+  private readonly userService = new UserService();
+
+  public createUser = async (req: Request):Promise<ResponseObject> => {
+      const result = validationResult(req);
+      if (!result.isEmpty()){
+         return this.formatResponse(result.array()[0].msg, CustomResponseType.FORMAT_ERROR);
+      }
+      const { email, account, pwd, confirmPwd } = req.body;
+      const newUser= await this.userService.createUser(account, email, pwd, confirmPwd);
+      if(!newUser){
+          logger.error("create user error")
+          return this.formatResponse(CustomResponseType.INSERT_ERROR_MESSAGE, CustomResponseType.INSERT_ERROR);
+      }
+      return this.formatResponse(CustomResponseType.OK_MESSAGE, CustomResponseType.OK);
+  }
+
+  public login = async (req: Request): Promise<ResponseObject> =>{
+      let account: string = req.body.account;
+      let pwd: string = req.body.pwd;
+      const user = await this.userService.findByAccount(account)
+      if (!user) {
+          return this.formatResponse(CustomResponseType.UNREGISTERED_USER_MESSAGE, CustomResponseType.UNREGISTERED_USER);
+      }
+      let dbPwd: string = user.pwd;
+      let compare: boolean = await bcrypt.compare(pwd, dbPwd);
+      if (compare){
+          const jwt: string = await this.userService.generateJWT(user._id.toString(), user.accountType.toString());
+          return this.formatResponse(new SignUpVo(user, jwt), CustomResponseType.OK);
+      }else {
+          return this.formatResponse(CustomResponseType.WRONG_PASSWORD_MESSAGE, CustomResponseType.WRONG_PASSWORD);
+      }
   }
 }
+
 
 export default UserController;

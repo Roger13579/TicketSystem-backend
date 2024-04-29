@@ -1,18 +1,25 @@
-import BaseRoute from './baseRoute';
+import {BaseRoute} from './baseRoute';
 import UserController from '../controller/userController';
+import { body, validationResult } from 'express-validator';
+import {CustomResponseType} from "../types/customResponseType";
 
-class UserRoute extends BaseRoute {
-  private userController = new UserController();
+export class UserRoute extends BaseRoute {
+  protected controller!: UserController;
 
   constructor() {
     super();
-    this.setRouters();
+    this.initial()
     this.prefix = '/user';
   }
 
-  protected setRouters() {
+  protected initial(): void {
+    this.controller = new UserController();
+    super.initial();
+  }
+
+  protected setRouters(): void {
     this.router.post(
-      '/',
+      '/sign-up',
       /* 	#swagger.tags = ['Sign-in']
         #swagger.description = 'Endpoint to sign in a specific user' */
 
@@ -26,9 +33,31 @@ class UserRoute extends BaseRoute {
       /* #swagger.security = [{
                 "apiKeyAuth": []
         }] */
-      this.userController.createUser,
+        body('account').exists().withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
+        body('email').exists().isEmail().withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '電子信箱'),
+        body('pwd').exists().isLength({min:8}).withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+        body('confirmPwd').exists(),
+        this.responseHandler(this.controller.createUser),
+    );
+    this.router.post(
+      '/login',
+      /* 	#swagger.tags = ['Login']
+        #swagger.description = 'Endpoint to user login' */
+
+      /*	#swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'User information.',
+                required: true,
+                schema: { $ref: "#/definitions/Success" }
+        } */
+
+      /* #swagger.security = [{
+                "apiKeyAuth": []
+        }] */
+        body('account').exists().withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
+        body('pwd').exists().isLength({min:8}).withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+        this.responseHandler(this.controller.login),
     );
   }
 }
 
-export default UserRoute;

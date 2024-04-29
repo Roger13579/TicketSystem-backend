@@ -1,4 +1,4 @@
-import BaseRoute from './baseRoute';
+import { BaseRoute } from './baseRoute';
 import IndexController from '../controller/indexController';
 class IndexRoute extends BaseRoute {
   private indexController = new IndexController();
@@ -9,7 +9,6 @@ class IndexRoute extends BaseRoute {
   }
 
   protected setRouters() {
-    this.router.get('/123', this.indexController.index);
   }
 }
 
