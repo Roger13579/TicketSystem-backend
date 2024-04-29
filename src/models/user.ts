@@ -32,7 +32,7 @@ const schema = new Schema<IUser>({
   },
   pwd: {
     type: String,
-    select: false,
+    select: true,
   },
   email: {
     type: String,
