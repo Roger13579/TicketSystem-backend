@@ -15,17 +15,15 @@ export class UserService {
     const findByEmail = await UserModel.findOne({ email: email });
     const findByAccount = await UserModel.findOne({ account: account });
     if (findByEmail) {
-      const error = new Error(
+      this.throwError(
         CustomResponseType.EMAIL_REGISTERED_MESSAGE + email,
+        CustomResponseType.EMAIL_REGISTERED,
       );
-      (error as any).status = CustomResponseType.EMAIL_REGISTERED;
-      throw error;
     } else if (findByAccount) {
-      const error = new Error(
+      this.throwError(
         CustomResponseType.ACCOUNT_REGISTERED_MESSAGE + account,
+        CustomResponseType.ACCOUNT_REGISTERED,
       );
-      (error as any).status = CustomResponseType.ACCOUNT_REGISTERED;
-      throw error;
     }
     return await UserModel.create(
       new UserModel({

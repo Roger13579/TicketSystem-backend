@@ -3,11 +3,16 @@ import { ResponseObject } from '../utils/responseObject';
 
 export abstract class BaseController {
   public formatResponse(
-    data: any,
+    message: string,
     status = CustomResponseType.SYSTEM_ERROR,
+    data: any = {},
   ): ResponseObject {
-    const options: any = { status: status };
-    status > '6000' ? (options.message = data) : (options.data = data);
+    const options: any = {
+      status: status,
+      message: message,
+      data: data,
+    };
+
     return new ResponseObject(options);
   }
 }

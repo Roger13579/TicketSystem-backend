@@ -39,13 +39,8 @@ export abstract class BaseRoute {
       method
         .call(this.controller, req, res, next)
         .then((obj) => res.status(HttpStatus.OK).json(obj))
-        .catch((err: Error) =>
-          next(
-            controller.formatResponse(
-              err.message,
-              (err as any).status || HttpStatus.INTERNAL_ERROR,
-            ),
-          ),
+        .catch((err) =>
+          next(controller.formatResponse(err.message, (err as any).status)),
         );
     };
   }

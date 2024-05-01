@@ -59,8 +59,9 @@ class UserController extends BaseController {
         user.accountType.toString(),
       );
       return this.formatResponse(
-        new SignUpVo(user, jwt),
+        CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
+        new SignUpVo(user, jwt),
       );
     } else {
       return this.formatResponse(

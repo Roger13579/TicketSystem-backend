@@ -74,6 +74,9 @@ export const enum CustomResponseType {
   ACCOUNT_DISABLED = '6402',
   ACCOUNT_DISABLED_MESSAGE = '此帳號已停用',
 
+  NOT_SUCH_ROUTE = '6404',
+  NOT_SUCH_ROUTE_MESSAGE = '無此路由資訊',
+
   SYSTEM_ERROR = '6501',
   SYSTEM_ERROR_MESSAGE = '系統錯誤',
 
