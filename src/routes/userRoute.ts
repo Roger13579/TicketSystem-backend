@@ -9,7 +9,6 @@ export class UserRoute extends BaseRoute {
   constructor() {
     super();
     this.initial();
-    this.prefix = '/user';
   }
 
   protected initial(): void {
@@ -19,7 +18,7 @@ export class UserRoute extends BaseRoute {
 
   protected setRouters(): void {
     this.router.post(
-      '/sign-up',
+      '/v1/user/sign-up',
       /* 	#swagger.tags = ['Sign-in']
         #swagger.description = 'Endpoint to sign in a specific user' */
 
@@ -48,7 +47,7 @@ export class UserRoute extends BaseRoute {
       this.responseHandler(this.controller.createUser),
     );
     this.router.post(
-      '/login',
+      '/v1/user/login',
       /* 	#swagger.tags = ['Login']
         #swagger.description = 'Endpoint to user login' */
 
