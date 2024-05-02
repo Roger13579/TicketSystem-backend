@@ -6,7 +6,7 @@ import path from 'path';
 import morgan from 'morgan';
 import { router } from './routes/router';
 import connection from './config/dbConnection';
-import globalMiddleware from './middleware/globalMiddleware';
+import { globalMiddleware } from './middleware/globalMiddleware';
 import swaggerUi from 'swagger-ui-express';
 import swaggerFile from './swagger-output.json';
 import passport from 'passport';

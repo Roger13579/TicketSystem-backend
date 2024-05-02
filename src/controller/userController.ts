@@ -7,6 +7,9 @@ import { ResponseObject } from '../utils/responseObject';
 import { UserService } from '../service/user.service';
 import bcrypt from 'bcrypt';
 import { SignUpVo } from '../vo/signUpVo';
+import { JWTPayloadDTO } from '../dto/jwtPayloadDto';
+import { UserDetailVo } from '../vo/userDetailVo';
+import { UserDetailDto } from '../dto/userDetailDto';
 
 const logger = log4js.getLogger(`UserController`);
 
@@ -45,16 +48,10 @@ class UserController extends BaseController {
     const account: string = req.body.account;
     const pwd: string = req.body.pwd;
     const user = await this.userService.findByAccount(account);
-    if (!user) {
-      return this.formatResponse(
-        CustomResponseType.UNREGISTERED_USER_MESSAGE,
-        CustomResponseType.UNREGISTERED_USER,
-      );
-    }
     const dbPwd: string = user.pwd;
     const compare: boolean = await bcrypt.compare(pwd, dbPwd);
     if (compare) {
-      const jwt: string = await this.userService.generateJWT(
+      const jwt: string = this.userService.generateJWT(
         user._id.toString(),
         user.accountType.toString(),
       );
@@ -69,6 +66,25 @@ class UserController extends BaseController {
         CustomResponseType.WRONG_PASSWORD,
       );
     }
+  };
+
+  public getUserDetail = async (req: Request): Promise<ResponseObject> => {
+    const payload = new JWTPayloadDTO((req as any).user);
+    const user = await this.userService.findByAccount(payload.account);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      new UserDetailVo(user),
+    );
+  };
+
+  public updateUserDetail = async (req: Request): Promise<ResponseObject> => {
+    const userDetailDto = new UserDetailDto(req);
+    await this.userService.updateUserDetail(userDetailDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+    );
   };
 }
 

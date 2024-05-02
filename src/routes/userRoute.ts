@@ -2,6 +2,7 @@ import { BaseRoute } from './baseRoute';
 import UserController from '../controller/userController';
 import { body } from 'express-validator';
 import { CustomResponseType } from '../types/customResponseType';
+import { UserVerify } from '../middleware/userVerify';
 
 export class UserRoute extends BaseRoute {
   protected controller!: UserController;
@@ -17,6 +18,42 @@ export class UserRoute extends BaseRoute {
   }
 
   protected setRouters(): void {
+    this.router.get(
+      '/v1/user',
+      /* 	#swagger.tags = ['Sign-in']
+        #swagger.description = 'Endpoint to sign in a specific user' */
+
+      /*	#swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'User information.',
+                required: true,
+                schema: { $ref: "#/definitions/Success" }
+        } */
+
+      /* #swagger.security = [{
+                "apiKeyAuth": []
+        }] */
+      UserVerify,
+      this.responseHandler(this.controller.getUserDetail),
+    );
+    this.router.patch(
+      '/v1/user',
+      /* 	#swagger.tags = ['Sign-in']
+        #swagger.description = 'Endpoint to sign in a specific user' */
+
+      /*	#swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'User information.',
+                required: true,
+                schema: { $ref: "#/definitions/Success" }
+        } */
+
+      /* #swagger.security = [{
+                "apiKeyAuth": []
+        }] */
+      UserVerify,
+      this.responseHandler(this.controller.updateUserDetail),
+    );
     this.router.post(
       '/v1/user/sign-up',
       /* 	#swagger.tags = ['Sign-in']

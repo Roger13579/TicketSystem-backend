@@ -1,6 +1,6 @@
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema, model, Document } from 'mongoose';
 
-interface IUser {
+export interface IUser extends Document {
   account: string;
   pwd: string;
   email: string;
@@ -44,25 +44,31 @@ const schema = new Schema<IUser>({
   name: {
     type: String,
     trim: true,
+    default: '',
   },
   gender: {
     type: String,
     enum: ['male', 'female', 'none'],
+    default: 'none',
   },
   avatarPath: {
     type: String,
     trim: true,
+    default: '',
   },
   phone: {
     type: String,
     trim: true,
+    default: '',
   },
   birthDate: {
     type: Date,
+    default: null,
   },
   address: {
     type: String,
     trim: true,
+    default: '',
   },
   thirdPartyId: {
     type: String,
@@ -83,6 +89,7 @@ const schema = new Schema<IUser>({
   status: {
     type: String,
     enum: ['active', 'disabled'],
+    default: 'active',
   },
   groups: {
     type: [
@@ -124,6 +131,4 @@ const schema = new Schema<IUser>({
   },
 });
 
-const UserModel = model<IUser>('User', schema);
-
-export default UserModel;
+export const UserModel = model<IUser>('User', schema);

@@ -30,5 +30,9 @@ class AppError extends Error {
     this.statusCode = statusCode;
   }
 }
-
+export const throwError = (message: string, code: string): any => {
+  const error = new Error(message);
+  (error as any).status = code;
+  throw error;
+};
 export { AppError };

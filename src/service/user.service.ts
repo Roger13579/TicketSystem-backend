@@ -1,49 +1,67 @@
 import jwt from 'jsonwebtoken';
-import UserModel from '../models/user';
 import { CustomResponseType } from '../types/customResponseType';
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
+import { UserRepository } from '../repository/userRepository';
+import { throwError } from '../utils/errorHandler';
+import { UserDetailDto } from '../dto/userDetailDto';
+import { IUser } from '../models/user';
+import log4js from '../config/log4js';
+const logger = log4js.getLogger(`UserRepository`);
 
 export class UserService {
+  private readonly userRepository: UserRepository = new UserRepository();
+
   public async createUser(
     account: string,
     email: string,
     pwd: string,
-    confirm_password: string,
+    confirmPwd: string,
   ): Promise<mongoose.Document> {
-    this.userValidate(pwd, confirm_password);
-    const findByEmail = await UserModel.findOne({ email: email });
-    const findByAccount = await UserModel.findOne({ account: account });
+    this.userValidate(pwd, confirmPwd);
+    const hashPwd = bcrypt.hashSync(pwd, 10);
+    const findByEmail = await this.userRepository.findByEmail(email);
+    const findByAccount = await this.userRepository.findByAccount(account);
     if (findByEmail) {
-      this.throwError(
+      throwError(
         CustomResponseType.EMAIL_REGISTERED_MESSAGE + email,
         CustomResponseType.EMAIL_REGISTERED,
       );
     } else if (findByAccount) {
-      this.throwError(
+      throwError(
         CustomResponseType.ACCOUNT_REGISTERED_MESSAGE + account,
         CustomResponseType.ACCOUNT_REGISTERED,
       );
     }
-    return await UserModel.create(
-      new UserModel({
-        email,
-        account,
-        pwd: bcrypt.hashSync(pwd, 10),
-        accountType: 'member',
-      }),
-    );
+    return this.userRepository.createUser(account, email, hashPwd);
+  }
+
+  public async updateUserDetail(
+    userDetailDto: UserDetailDto,
+  ): Promise<IUser | null | void> {
+    return this.userRepository.updateUserDetail(userDetailDto).catch((err) => {
+      logger.error(err);
+      throwError(
+        CustomResponseType.UPDATE_ERROR_MESSAGE,
+        CustomResponseType.UPDATE_ERROR,
+      );
+    });
   }
 
   public async findByAccount(account: string): Promise<any> {
-    return await UserModel.findOne({ account: account }).exec();
+    const user = await this.userRepository.findByAccount(account);
+    if (!user) {
+      throwError(
+        CustomResponseType.UNREGISTERED_USER_MESSAGE,
+        CustomResponseType.UNREGISTERED_USER,
+      );
+    }
+    return user;
   }
 
-  public async generateJWT(
-    userId: string,
-    accountType: string,
-  ): Promise<string> {
+  public generateJWT(userId: string, accountType: string): string {
     const privateKey: any = process.env.JWT_SECRETS;
+    console.log(privateKey);
     const defaultOptions: object = {
       expiresIn: process.env.JWT_EXPIRES,
     };
@@ -67,17 +85,11 @@ export class UserService {
 
   private userValidate(pwd: string, confirmPwd: string): void {
     if (pwd !== confirmPwd) {
-      this.throwError(
+      throwError(
         CustomResponseType.PWD_CONFIRMPWD_NOT_THE_SAME_MESSAGE,
         CustomResponseType.PWD_CONFIRMPWD_NOT_THE_SAME,
       );
     }
-  }
-
-  private throwError(message: string, code: string): any {
-    const error = new Error(message);
-    (error as any).status = code;
-    throw error;
   }
 
   // const validateToken = function (token: string): Object {

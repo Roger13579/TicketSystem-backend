@@ -68,6 +68,9 @@ export const enum CustomResponseType {
   TOKEN_EXPIRED = '6302',
   TOKEN_EXPIRED_MESSAGE = 'token 過期',
 
+  NOT_LOGIN = '6303',
+  NOT_LOGIN_MESSAGE = '尚未登入',
+
   PERMISSION_DENIED = '6401',
   PERMISSION_DENIED_MESSAGE = '不允許使用該方法',
 
