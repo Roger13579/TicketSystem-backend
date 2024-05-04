@@ -17,7 +17,7 @@ export class UserService {
     email: string,
     pwd: string,
     confirmPwd: string,
-  ): Promise<mongoose.Document> {
+  ): Promise<IUser | void> {
     this.userValidate(pwd, confirmPwd);
     const hashPwd = bcrypt.hashSync(pwd, 10);
     const findByEmail = await this.userRepository.findByEmail(email);
@@ -33,7 +33,13 @@ export class UserService {
         CustomResponseType.ACCOUNT_REGISTERED,
       );
     }
-    return this.userRepository.createUser(account, email, hashPwd);
+    return this.userRepository.createUser(account, email, hashPwd).catch(err => {
+      logger.error("create user error", err);
+      throwError(
+          CustomResponseType.INSERT_ERROR_MESSAGE,
+          CustomResponseType.INSERT_ERROR,
+      );
+    });
   }
 
   public async updateUserDetail(
@@ -61,7 +67,6 @@ export class UserService {
 
   public generateJWT(userId: string, accountType: string): string {
     const privateKey: any = process.env.JWT_SECRETS;
-    console.log(privateKey);
     const defaultOptions: object = {
       expiresIn: process.env.JWT_EXPIRES,
     };

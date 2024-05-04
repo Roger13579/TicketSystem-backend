@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request,  Response, NextFunction } from 'express';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import jwt, { TokenExpiredError } from 'jsonwebtoken';
