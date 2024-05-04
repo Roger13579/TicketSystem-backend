@@ -1,9 +1,13 @@
 const Success = {
-  message: '成功訊息',
+  status: '6000',
+  message: '成功',
+  data: {},
 };
 
-const Error400 = {
-  message: '錯誤訊息',
+const Error6202 = {
+  status: '6202',
+  message: '密碼錯誤',
+  data: {},
 };
 
 const ErrorToken = {
@@ -22,9 +26,42 @@ const Error500 = {
   message: '系統錯誤，請稍後再試',
 };
 
-const Sign = {
-  token: 'abcde',
-  _id: '123456789',
+const signUpForm = {
+  account: 'roger',
+  email: 'roger@gmail.com',
+  pwd: '12345678',
+  confirmPwd: '12345678',
+};
+const loginSuccess = {
+  status: '6000',
+  message: '成功',
+  data: {
+    account: 'roger',
+    email: 'roger@gmail.com',
+    token: 'token',
+    accountType: 'member',
+  },
+};
+
+const userDetail = {
+  status: '6000',
+  message: '成功',
+  data: {
+    name: 'roger',
+    createdAt: '2024-05-02T14:54:58.972Z',
+    birthDate: null,
+    email: 'roger@gmail.com',
+    gender: 'none',
+    phone: '0912345678',
+    address: 'aaaabbb',
+    imgUrl: '',
+  },
+};
+
+const updateUserDetail = {
+  status: '6000',
+  message: '成功',
+  data: {},
 };
 
 const RegisterEmailSuccess = {
@@ -40,13 +77,16 @@ const ValidateEmailError = {
   message: '信箱驗證失敗',
 };
 
-export default {
+export const definitions = {
   Success,
-  Error400,
+  Error6202,
   ErrorToken,
   Error404,
   Error500,
-  Sign,
+  signUpForm,
+  loginSuccess,
+  userDetail,
+  updateUserDetail,
   RegisterEmailSuccess,
   RegisterEmailError,
   ValidateEmailError,

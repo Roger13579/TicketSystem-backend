@@ -20,55 +20,73 @@ export class UserRoute extends BaseRoute {
   protected setRouters(): void {
     this.router.get(
       '/v1/user',
-      /* 	#swagger.tags = ['Sign-in']
-        #swagger.description = 'Endpoint to sign in a specific user' */
-
-      /*	#swagger.parameters['obj'] = {
-                in: 'body',
-                description: 'User information.',
-                required: true,
-                schema: { $ref: "#/definitions/Success" }
-        } */
-
-      /* #swagger.security = [{
-                "apiKeyAuth": []
-        }] */
+      /**
+       * #swagger.tags = ['User']
+       * #swagger.summary = '取得使用者資料'
+       */
+      /**
+         #swagger.security=[{"Bearer": []}],
+         #swagger.responses[200] = {
+          description: 'OK',
+          schema: {
+            $ref: '#/definitions/userDetail' }
+         }
+        */
       UserVerify,
       this.responseHandler(this.controller.getUserDetail),
     );
     this.router.patch(
       '/v1/user',
-      /* 	#swagger.tags = ['Sign-in']
-        #swagger.description = 'Endpoint to sign in a specific user' */
-
-      /*	#swagger.parameters['obj'] = {
-                in: 'body',
-                description: 'User information.',
-                required: true,
-                schema: { $ref: "#/definitions/Success" }
-        } */
-
-      /* #swagger.security = [{
-                "apiKeyAuth": []
-        }] */
+      /**
+       * #swagger.tags = ['User']
+       * #swagger.summary = '更新使用者資料'
+       */
+      /*
+         #swagger.security=[{"Bearer": []}],
+          #swagger.parameters['obj'] = {
+            in: 'body',
+            description: '可更新部分欄位',
+            schema: {
+              "name": "roger",
+              "birthDate": null,
+              "email": "roger@gmail.com",
+              "gender": "none",
+              "phone": "0912345678",
+              "address": "aaaabbb",
+              "imgUrl": ""
+            }
+          }
+          */
+      /*
+          #swagger.responses[200] = {
+            description: 'OK',
+            schema:{
+              $ref: "#/definitions/Success"
+            }
+          }
+        */
       UserVerify,
       this.responseHandler(this.controller.updateUserDetail),
     );
     this.router.post(
       '/v1/user/sign-up',
-      /* 	#swagger.tags = ['Sign-in']
-        #swagger.description = 'Endpoint to sign in a specific user' */
+      /* 	#swagger.tags = ['User']
+        #swagger.description = 'Endpoint to sign up' */
 
       /*	#swagger.parameters['obj'] = {
                 in: 'body',
-                description: 'User information.',
+                description: 'Sign up information',
                 required: true,
-                schema: { $ref: "#/definitions/Success" }
+                schema: { $ref: "#/definitions/signUpForm" }
         } */
 
-      /* #swagger.security = [{
-                "apiKeyAuth": []
-        }] */
+      /* #swagger.responses[200] = {
+            description: 'OK',
+            schema:{
+              $ref: "#/definitions/Success"
+            }
+          }
+       */
       body('account')
         .exists()
         .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
@@ -85,7 +103,7 @@ export class UserRoute extends BaseRoute {
     );
     this.router.post(
       '/v1/user/login',
-      /* 	#swagger.tags = ['Login']
+      /* 	#swagger.tags = ['User']
         #swagger.description = 'Endpoint to user login' */
 
       /*	#swagger.parameters['obj'] = {

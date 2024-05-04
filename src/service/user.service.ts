@@ -40,7 +40,7 @@ export class UserService {
     userDetailDto: UserDetailDto,
   ): Promise<IUser | null | void> {
     return this.userRepository.updateUserDetail(userDetailDto).catch((err) => {
-      logger.error(err);
+      logger.error('update user detail error', err);
       throwError(
         CustomResponseType.UPDATE_ERROR_MESSAGE,
         CustomResponseType.UPDATE_ERROR,
@@ -91,16 +91,4 @@ export class UserService {
       );
     }
   }
-
-  // const validateToken = function (token: string): Object {
-  //     try {
-  //         const publicKey: any = process.env.JWT_SECRETS;
-  //         return jwt.verify(token, publicKey);
-  //     } catch (e) {
-  //         throw new HttpError({
-  //             title: 'invalid_token',
-  //             detail: 'Invalid token',
-  //             code: 400,
-  //         });
-  //     }};
 }

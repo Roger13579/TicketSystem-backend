@@ -1,6 +1,5 @@
 import swagger_autogen from 'swagger-autogen';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerDefinition from './swagger-definition';
+import { definitions } from './swagger-definition';
 const swaggerAutogen = swagger_autogen();
 
 const doc = {
@@ -9,6 +8,7 @@ const doc = {
     description: 'This is the project for a Node.js course.',
   },
   host: process.env.FRONTEND_URL,
+  basePath: '/api',
   schemes: ['http', 'https'],
   tags: [
     { name: 'Home', description: '首頁' },
@@ -18,6 +18,7 @@ const doc = {
     { name: 'Payment', description: '金流串接' },
     { name: 'NotFound', description: '頁面路由相關' },
   ],
+  definitions,
   securityDefinitions: {
     // Token
     Bearer: {
@@ -27,27 +28,7 @@ const doc = {
       description: 'JWT Token',
     },
   },
-  swaggerDefinition,
 };
-
-const options = {
-  definition: {
-    openapi: '3.1.0',
-    info: {
-      title: 'Node.js and typescript with Swagger',
-      version: '1.0.0',
-      description: 'Movie Go Ticket Manage System',
-    },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-      },
-    ],
-  },
-  apis: ['./routes/*.ts'],
-};
-
-const spec = swaggerJsdoc(options);
 
 const outputFile = '../swagger-output.json';
 const routes = ['src/routes/*.ts']; // 進入點/注入點，分析 router 和自動生成
@@ -55,5 +36,3 @@ const routes = ['src/routes/*.ts']; // 進入點/注入點，分析 router 和�
 swaggerAutogen(outputFile, routes, doc).then(() => {
   console.log('swagger document generate success');
 });
-
-export default spec;

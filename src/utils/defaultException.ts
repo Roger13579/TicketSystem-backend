@@ -8,6 +8,6 @@ export const DefaultException: ErrorRequestHandler = (err, req, res, next) => {
   return res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
-    data: err.data,
+    data: err.data || {},
   });
 };

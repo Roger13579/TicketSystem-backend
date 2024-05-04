@@ -5,7 +5,7 @@
     "description": "This is the project for a Node.js course.",
     "version": "1.0.0"
   },
-  "basePath": "/",
+  "basePath": "/api",
   "tags": [
     {
       "name": "Home",
@@ -48,6 +48,13 @@
     "/123": {
       "get": {
         "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "default": {
             "description": ""
@@ -55,12 +62,130 @@
         }
       }
     },
-    "/": {
+    "/v1/user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "取得使用者資料",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/userDetail"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "更新使用者資料",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "可更新部分欄位",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "roger"
+                },
+                "birthDate": {},
+                "email": {
+                  "type": "string",
+                  "example": "roger@gmail.com"
+                },
+                "gender": {
+                  "type": "string",
+                  "example": "none"
+                },
+                "phone": {
+                  "type": "string",
+                  "example": "0912345678"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "aaaabbb"
+                },
+                "imgUrl": {
+                  "type": "string",
+                  "example": ""
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/sign-up": {
       "post": {
         "tags": [
-          "Sign-in"
+          "User"
         ],
-        "description": "Endpoint to sign in a specific user",
+        "description": "Endpoint to sign up",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Sign up information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/signUpForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint to user login",
         "parameters": [
           {
             "name": "obj",
@@ -85,39 +210,230 @@
       }
     }
   },
-  "swaggerDefinition": {
+  "definitions": {
     "Success": {
-      "message": "成功訊息"
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6000"
+        },
+        "message": {
+          "type": "string",
+          "example": "成功"
+        },
+        "data": {
+          "type": "object",
+          "properties": {}
+        }
+      }
     },
-    "Error400": {
-      "message": "錯誤訊息"
+    "Error6202": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6202"
+        },
+        "message": {
+          "type": "string",
+          "example": "密碼錯誤"
+        },
+        "data": {
+          "type": "object",
+          "properties": {}
+        }
+      }
     },
     "ErrorToken": {
-      "status": "false",
-      "message": "你尚未登入",
-      "error": {
-        "name": "40300"
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "false"
+        },
+        "message": {
+          "type": "string",
+          "example": "你尚未登入"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "40300"
+            }
+          }
+        }
       }
     },
     "Error404": {
-      "message": "找不到頁面"
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "找不到頁面"
+        }
+      }
     },
     "Error500": {
-      "message": "系統錯誤，請稍後再試"
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "系統錯誤，請稍後再試"
+        }
+      }
     },
-    "Sign": {
-      "token": "abcde",
-      "_id": "123456789"
+    "signUpForm": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string",
+          "example": "roger"
+        },
+        "email": {
+          "type": "string",
+          "example": "roger@gmail.com"
+        },
+        "pwd": {
+          "type": "string",
+          "example": "12345678"
+        },
+        "confirmPwd": {
+          "type": "string",
+          "example": "12345678"
+        }
+      }
+    },
+    "loginSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6000"
+        },
+        "message": {
+          "type": "string",
+          "example": "成功"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "account": {
+              "type": "string",
+              "example": "roger"
+            },
+            "email": {
+              "type": "string",
+              "example": "roger@gmail.com"
+            },
+            "token": {
+              "type": "string",
+              "example": "token"
+            },
+            "accountType": {
+              "type": "string",
+              "example": "member"
+            }
+          }
+        }
+      }
+    },
+    "userDetail": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6000"
+        },
+        "message": {
+          "type": "string",
+          "example": "成功"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "roger"
+            },
+            "createdAt": {
+              "type": "string",
+              "example": "2024-05-02T14:54:58.972Z"
+            },
+            "birthDate": {},
+            "email": {
+              "type": "string",
+              "example": "roger@gmail.com"
+            },
+            "gender": {
+              "type": "string",
+              "example": "none"
+            },
+            "phone": {
+              "type": "string",
+              "example": "0912345678"
+            },
+            "address": {
+              "type": "string",
+              "example": "aaaabbb"
+            },
+            "imgUrl": {
+              "type": "string",
+              "example": ""
+            }
+          }
+        }
+      }
+    },
+    "updateUserDetail": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6000"
+        },
+        "message": {
+          "type": "string",
+          "example": "成功"
+        },
+        "data": {
+          "type": "object",
+          "properties": {}
+        }
+      }
     },
     "RegisterEmailSuccess": {
-      "status": "success",
-      "message": "請至信箱確認是否收到驗證信"
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "請至信箱確認是否收到驗證信"
+        }
+      }
     },
     "RegisterEmailError": {
-      "message": "請稍後重試或聯絡管理員"
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "請稍後重試或聯絡管理員"
+        }
+      }
     },
     "ValidateEmailError": {
-      "message": "信箱驗證失敗"
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "信箱驗證失敗"
+        }
+      }
     }
   }
 }
