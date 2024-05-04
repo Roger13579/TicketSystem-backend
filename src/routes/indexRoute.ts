@@ -17,61 +17,89 @@ class IndexRoute extends BaseRoute {
 
   protected setRouters() {
     this.router.post(
-        '/v1/user/sign-up',
-        /* 	#swagger.tags = ['User']
+      '/v1/user/sign-up',
+      /* 	#swagger.tags = ['User']
           #swagger.description = 'Endpoint to sign up' */
 
-        /*	#swagger.parameters['obj'] = {
+      /*	#swagger.parameters['obj'] = {
                   in: 'body',
                   description: 'Sign up information',
                   required: true,
                   schema: { $ref: "#/definitions/signUpForm" }
           } */
 
-        /* #swagger.responses[200] = {
+      /* #swagger.responses[200] = {
               description: 'OK',
               schema:{
                 $ref: "#/definitions/Success"
               }
             }
          */
-        body('account')
-            .exists()
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
-        body('email')
-            .exists()
-            .isEmail()
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '電子信箱'),
-        body('pwd')
-            .exists()
-            .isLength({ min: 8 })
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-        body('confirmPwd').exists(),
-        this.responseHandler(this.controller.signIn),
+      body('account')
+        .exists()
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
+      body('email')
+        .exists()
+        .isEmail()
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '電子信箱'),
+      body('pwd')
+        .exists()
+        .isLength({ min: 8 })
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+      body('confirmPwd').exists(),
+      this.responseHandler(this.controller.signIn),
     );
     this.router.post(
-        '/v1/user/login',
-        /* 	#swagger.tags = ['User']
+      '/v1/user/login',
+      /* 	#swagger.tags = ['User']
           #swagger.description = 'Endpoint to user login' */
 
-        /*	#swagger.parameters['obj'] = {
+      /*	#swagger.parameters['obj'] = {
                   in: 'body',
                   description: 'User information.',
                   required: true,
-                  schema: { $ref: "#/definitions/Success" }
+                  schema: { $ref: "#/definitions/loginForm" }
+          } */
+      /* #swagger.responses[200] = {
+              description: 'OK',
+              schema:{
+                $ref: "#/definitions/loginSuccess"
+              }
+            }
+         */
+      body('account')
+        .exists()
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
+      body('pwd')
+        .exists()
+        .isLength({ min: 8 })
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+      this.responseHandler(this.controller.login),
+    );
+
+    this.router.post(
+      '/v1/user/forgot-pwd',
+      /* 	#swagger.tags = ['User']
+
+        /*	#swagger.parameters['obj'] = {
+                  in: 'body',
+                  description: 'Forgot Password User Email.',
+                  required: true,
+                  schema: { $ref: "#/definitions/forgotPwdForm" }
           } */
 
-        /* #swagger.security = [{
-                  "apiKeyAuth": []
-          }] */
-        body('account')
-            .exists()
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
-        body('pwd')
-            .exists()
-            .isLength({ min: 8 })
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-        this.responseHandler(this.controller.login),
+      /* #swagger.responses[200] = {
+              description: 'OK',
+              schema:{
+                $ref: "#/definitions/Success"
+              }
+            }
+         */
+      body('email')
+        .exists()
+        .isEmail()
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '電子信箱'),
+      this.responseHandler(this.controller.forgotPwd),
     );
   }
 }

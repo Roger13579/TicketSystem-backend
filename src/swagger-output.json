@@ -45,19 +45,83 @@
     }
   },
   "paths": {
-    "/123": {
-      "get": {
-        "description": "",
+    "/v1/user/sign-up": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint to sign up",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
+            "name": "obj",
+            "in": "body",
+            "description": "Sign up information",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/signUpForm"
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint to user login",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "User information.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/loginSuccess"
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/forgot-pwd": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Forgot Password User Email.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/forgotPwdForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
           }
         }
       }
@@ -83,12 +147,7 @@
               "$ref": "#/definitions/userDetail"
             }
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        }
       },
       "patch": {
         "tags": [
@@ -145,68 +204,7 @@
               "$ref": "#/definitions/Success"
             }
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/v1/user/sign-up": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "description": "Endpoint to sign up",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "description": "Sign up information",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/signUpForm"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Success"
-            }
-          }
         }
-      }
-    },
-    "/v1/user/login": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "description": "Endpoint to user login",
-        "parameters": [
-          {
-            "name": "obj",
-            "in": "body",
-            "description": "User information.",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Success"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
       }
     }
   },
@@ -306,6 +304,28 @@
         }
       }
     },
+    "forgotPwdForm": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "roger@gmail.com"
+        }
+      }
+    },
+    "loginForm": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string",
+          "example": "rrroger"
+        },
+        "pwd": {
+          "type": "string",
+          "example": "123123123"
+        }
+      }
+    },
     "loginSuccess": {
       "type": "object",
       "properties": {
@@ -322,7 +342,7 @@
           "properties": {
             "account": {
               "type": "string",
-              "example": "roger"
+              "example": "rrroger"
             },
             "email": {
               "type": "string",

@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { CustomResponseType } from '../types/customResponseType';
 import bcrypt from 'bcrypt';
-import mongoose from 'mongoose';
 import { UserRepository } from '../repository/userRepository';
 import { throwError } from '../utils/errorHandler';
 import { UserDetailDto } from '../dto/userDetailDto';
 import { IUser } from '../models/user';
+import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
+import { token } from 'morgan';
 const logger = log4js.getLogger(`UserRepository`);
 
 export class UserService {
@@ -33,13 +34,15 @@ export class UserService {
         CustomResponseType.ACCOUNT_REGISTERED,
       );
     }
-    return this.userRepository.createUser(account, email, hashPwd).catch(err => {
-      logger.error("create user error", err);
-      throwError(
+    return this.userRepository
+      .createUser(account, email, hashPwd)
+      .catch((err) => {
+        logger.error('create user error', err);
+        throwError(
           CustomResponseType.INSERT_ERROR_MESSAGE,
           CustomResponseType.INSERT_ERROR,
-      );
-    });
+        );
+      });
   }
 
   public async updateUserDetail(
@@ -65,6 +68,29 @@ export class UserService {
     return user;
   }
 
+  public async findByEmail(email: string): Promise<any> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throwError(
+        CustomResponseType.UNREGISTERED_USER_MESSAGE,
+        CustomResponseType.UNREGISTERED_USER,
+      );
+    }
+    return user;
+  }
+
+  public async forgotPwd(email: string): Promise<any> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throwError(
+        CustomResponseType.EMAIL_VERIFICATION_FAILED_MESSAGE,
+        CustomResponseType.EMAIL_VERIFICATION_FAILED,
+      );
+    } else {
+      await mailer(user, await this.generateForgotPasswordJWT(user.id));
+    }
+  }
+
   public generateJWT(userId: string, accountType: string): string {
     const privateKey: any = process.env.JWT_SECRETS;
     const defaultOptions: object = {
@@ -77,15 +103,12 @@ export class UserService {
     );
   }
 
-  public async generateForgotPasswordJWT(
-    password: string,
-    payload: string,
-  ): Promise<string> {
-    const privateKey: any = process.env.JWT_SECRETS + password;
+  public async generateForgotPasswordJWT(userId: string): Promise<string> {
+    const privateKey: any = process.env.JWT_SECRETS;
     const defaultOptions: object = {
-      expiresIn: process.env.JWT_EXPIRES,
+      expiresIn: process.env.JWT_EMAIL_EXPIRES,
     };
-    return jwt.sign(payload, privateKey, Object.assign(defaultOptions));
+    return jwt.sign({ id: userId }, privateKey, Object.assign(defaultOptions));
   }
 
   private userValidate(pwd: string, confirmPwd: string): void {

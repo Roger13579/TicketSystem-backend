@@ -23,7 +23,6 @@ export class UserRoute extends BaseRoute {
        * #swagger.summary = '取得使用者資料'
        */
       /**
-         #swagger.security=[{"Bearer": []}],
          #swagger.responses[200] = {
           description: 'OK',
           schema: {
@@ -40,7 +39,6 @@ export class UserRoute extends BaseRoute {
        * #swagger.summary = '更新使用者資料'
        */
       /*
-         #swagger.security=[{"Bearer": []}],
           #swagger.parameters['obj'] = {
             in: 'body',
             description: '可更新部分欄位',

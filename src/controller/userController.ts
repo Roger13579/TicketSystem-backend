@@ -1,9 +1,8 @@
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { BaseController } from './baseController';
-import log4js from '../config/log4js';
 import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
-import { UserService } from '../service/user.service';
+import { UserService } from '../service/userService';
 import { JWTPayloadDTO } from '../dto/jwtPayloadDto';
 import { UserDetailVo } from '../vo/userDetailVo';
 import { UserDetailDto } from '../dto/userDetailDto';

@@ -32,11 +32,18 @@ const signUpForm = {
   pwd: '12345678',
   confirmPwd: '12345678',
 };
+const forgotPwdForm = {
+  email: 'roger@gmail.com',
+};
+const loginForm = {
+  account: 'rrroger',
+  pwd: '123123123',
+};
 const loginSuccess = {
   status: '6000',
   message: '成功',
   data: {
-    account: 'roger',
+    account: 'rrroger',
     email: 'roger@gmail.com',
     token: 'token',
     accountType: 'member',
@@ -84,6 +91,8 @@ export const definitions = {
   Error404,
   Error500,
   signUpForm,
+  forgotPwdForm,
+  loginForm,
   loginSuccess,
   userDetail,
   updateUserDetail,
