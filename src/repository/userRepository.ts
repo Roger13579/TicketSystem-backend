@@ -33,6 +33,15 @@ export class UserRepository {
     );
   }
 
+  public async updatePwd(
+    id: string, pwd: string
+  ): Promise<IUser | null> {
+    return UserModel.findByIdAndUpdate(
+      { _id: new Types.ObjectId(id) },
+      {pwd: pwd},
+    );
+  }
+
   public async findByEmail(email: string): Promise<IUser | null> {
     return UserModel.findOne({ email: email });
   }
