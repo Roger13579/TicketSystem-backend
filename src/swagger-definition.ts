@@ -35,6 +35,11 @@ const signUpForm = {
 const forgotPwdForm = {
   email: 'roger@gmail.com',
 };
+const resetPwdForm = {
+  oldPwd: '12345678',
+  pwd: '111222333',
+  confirmPwd: '111222333',
+};
 const loginForm = {
   account: 'rrroger',
   pwd: '123123123',
@@ -92,6 +97,7 @@ export const definitions = {
   Error500,
   signUpForm,
   forgotPwdForm,
+  resetPwdForm,
   loginForm,
   loginSuccess,
   userDetail,
