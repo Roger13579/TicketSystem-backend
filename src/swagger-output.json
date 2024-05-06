@@ -126,6 +126,38 @@
         }
       }
     },
+    "/v1/user/reset-pwd": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Reset Password.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/resetPwdForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        }
+      }
+    },
     "/v1/user": {
       "get": {
         "tags": [
@@ -310,6 +342,23 @@
         "email": {
           "type": "string",
           "example": "roger@gmail.com"
+        }
+      }
+    },
+    "resetPwdForm": {
+      "type": "object",
+      "properties": {
+        "oldPwd": {
+          "type": "string",
+          "example": "12345678"
+        },
+        "pwd": {
+          "type": "string",
+          "example": "111222333"
+        },
+        "confirmPwd": {
+          "type": "string",
+          "example": "111222333"
         }
       }
     },

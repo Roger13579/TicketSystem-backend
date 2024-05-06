@@ -111,7 +111,7 @@ class IndexRoute extends BaseRoute {
                   in: 'body',
                   description: 'Reset Password.',
                   required: true,
-                  schema: { $ref: "#/definitions/forgotPwdForm" }
+                  schema: { $ref: "#/definitions/resetPwdForm" }
           } */
 
       /* #swagger.responses[200] = {
