@@ -19,8 +19,11 @@ class IndexRoute extends BaseRoute {
   protected setRouters() {
     this.router.post(
       '/v1/user/sign-up',
-      /* 	#swagger.tags = ['User']
-          #swagger.description = 'Endpoint to sign up' */
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = '註冊'
+       */
+      /*
 
       /*	#swagger.parameters['obj'] = {
                   in: 'body',
@@ -52,8 +55,11 @@ class IndexRoute extends BaseRoute {
     );
     this.router.post(
       '/v1/user/login',
-      /* 	#swagger.tags = ['User']
-          #swagger.description = 'Endpoint to user login' */
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = '登入'
+       */
+      /*
 
       /*	#swagger.parameters['obj'] = {
                   in: 'body',
@@ -80,7 +86,11 @@ class IndexRoute extends BaseRoute {
 
     this.router.post(
       '/v1/user/forgot-pwd',
-      /* 	#swagger.tags = ['User']
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = '忘記密碼'
+       */
+      /*
 
         /*	#swagger.parameters['obj'] = {
                   in: 'body',
@@ -105,13 +115,18 @@ class IndexRoute extends BaseRoute {
 
     this.router.post(
       '/v1/user/reset-pwd',
-      /* 	#swagger.tags = ['User']
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = '重設密碼'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
 
         /*	#swagger.parameters['obj'] = {
                   in: 'body',
                   description: 'Reset Password.',
                   required: true,
-                  schema: { $ref: "#/definitions/forgotPwdForm" }
+                  schema: { $ref: "#/definitions/resetPwdForm" }
           } */
 
       /* #swagger.responses[200] = {

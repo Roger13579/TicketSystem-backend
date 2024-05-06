@@ -19,8 +19,9 @@ export class UserRoute extends BaseRoute {
     this.router.get(
       '/v1/user',
       /**
-       * #swagger.tags = ['User']
+       * #swagger.tags = ['Account']
        * #swagger.summary = '取得使用者資料'
+       * #swagger.security=[{"Bearer": []}],
        */
       /**
          #swagger.responses[200] = {
@@ -35,8 +36,9 @@ export class UserRoute extends BaseRoute {
     this.router.patch(
       '/v1/user',
       /**
-       * #swagger.tags = ['User']
+       * #swagger.tags = ['Account']
        * #swagger.summary = '更新使用者資料'
+       * #swagger.security=[{"Bearer": []}],
        */
       /*
           #swagger.parameters['obj'] = {

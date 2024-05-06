@@ -20,16 +20,24 @@
       "description": "會員管理"
     },
     {
-      "name": "Notifications",
-      "description": "系統通知"
+      "name": "Product",
+      "description": "商品相關"
+    },
+    {
+      "name": "Ticket",
+      "description": "票券相關"
     },
     {
       "name": "Payment",
-      "description": "金流串接"
+      "description": "訂單相關"
     },
     {
-      "name": "NotFound",
-      "description": "頁面路由相關"
+      "name": "Group",
+      "description": "揪團"
+    },
+    {
+      "name": "Admin",
+      "description": "後台管理"
     }
   ],
   "schemes": [
@@ -48,9 +56,10 @@
     "/v1/user/sign-up": {
       "post": {
         "tags": [
-          "User"
+          "Sign-in"
         ],
-        "description": "Endpoint to sign up",
+        "summary": "註冊",
+        "description": "",
         "parameters": [
           {
             "name": "obj",
@@ -75,9 +84,10 @@
     "/v1/user/login": {
       "post": {
         "tags": [
-          "User"
+          "Sign-in"
         ],
-        "description": "Endpoint to user login",
+        "summary": "登入",
+        "description": "",
         "parameters": [
           {
             "name": "obj",
@@ -102,8 +112,9 @@
     "/v1/user/forgot-pwd": {
       "post": {
         "tags": [
-          "User"
+          "Sign-in"
         ],
+        "summary": "忘記密碼",
         "description": "",
         "parameters": [
           {
@@ -126,10 +137,48 @@
         }
       }
     },
+    "/v1/user/reset-pwd": {
+      "post": {
+        "tags": [
+          "Sign-in"
+        ],
+        "summary": "重設密碼",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Reset Password.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/resetPwdForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/v1/user": {
       "get": {
         "tags": [
-          "User"
+          "Account"
         ],
         "summary": "取得使用者資料",
         "description": "",
@@ -147,11 +196,16 @@
               "$ref": "#/definitions/userDetail"
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       },
       "patch": {
         "tags": [
-          "User"
+          "Account"
         ],
         "summary": "更新使用者資料",
         "description": "",
@@ -204,7 +258,12 @@
               "$ref": "#/definitions/Success"
             }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     }
   },
@@ -310,6 +369,23 @@
         "email": {
           "type": "string",
           "example": "roger@gmail.com"
+        }
+      }
+    },
+    "resetPwdForm": {
+      "type": "object",
+      "properties": {
+        "oldPwd": {
+          "type": "string",
+          "example": "12345678"
+        },
+        "pwd": {
+          "type": "string",
+          "example": "111222333"
+        },
+        "confirmPwd": {
+          "type": "string",
+          "example": "111222333"
         }
       }
     },
