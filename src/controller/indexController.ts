@@ -6,11 +6,12 @@ import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import { SignUpVo } from '../vo/signUpVo';
 import { UserService } from '../service/userService';
+import {ResetPwdDto} from "../dto/resetPwdDto";
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
 
-  public signIn = async (req: Request): Promise<ResponseObject> => {
+  public signUp = async (req: Request): Promise<ResponseObject> => {
     this.paramVerify(req);
     const { email, account, pwd, confirmPwd } = req.body;
     await this.userService.createUser(account, email, pwd, confirmPwd);
@@ -51,6 +52,17 @@ class IndexController extends BaseController {
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
+      );
+    });
+  };
+
+  public resetPwd = async (req: Request): Promise<ResponseObject> => {
+    this.paramVerify(req);
+    const resetPwdDto = new ResetPwdDto(req);
+    return this.userService.resetPwd(resetPwdDto).then(() => {
+      return this.formatResponse(
+          CustomResponseType.OK_MESSAGE,
+          CustomResponseType.OK,
       );
     });
   };

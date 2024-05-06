@@ -7,7 +7,7 @@ import { UserDetailDto } from '../dto/userDetailDto';
 import { IUser } from '../models/user';
 import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
-import { token } from 'morgan';
+import {ResetPwdDto} from "../dto/resetPwdDto";
 const logger = log4js.getLogger(`UserRepository`);
 
 export class UserService {
@@ -19,7 +19,7 @@ export class UserService {
     pwd: string,
     confirmPwd: string,
   ): Promise<IUser | void> {
-    this.userValidate(pwd, confirmPwd);
+    this.pwdValidate(pwd, confirmPwd);
     const hashPwd = bcrypt.hashSync(pwd, 10);
     const findByEmail = await this.userRepository.findByEmail(email);
     const findByAccount = await this.userRepository.findByAccount(account);
@@ -91,6 +91,44 @@ export class UserService {
     }
   }
 
+  public async resetPwd(resetPwdDto: ResetPwdDto): Promise<any> {
+    const user = await this.userRepository.findById(resetPwdDto.getId);
+    if (!user) {
+      throwError(
+          CustomResponseType.EMAIL_VERIFICATION_FAILED_MESSAGE,
+          CustomResponseType.EMAIL_VERIFICATION_FAILED,
+      );
+    } else {
+      const dbPwd: string = user.pwd;
+      if (resetPwdDto.getOldPwd) {
+      let oldCompare = await bcrypt.compare(resetPwdDto.getOldPwd, dbPwd);
+        if (!oldCompare) {
+          return throwError(
+              CustomResponseType.OLD_PASSWORD_INCORRECT_MESSAGE,
+              CustomResponseType.OLD_PASSWORD_INCORRECT
+          )
+        }
+      }
+      let compare: boolean = await bcrypt.compare(resetPwdDto.getPwd, dbPwd);
+      if (compare) {
+        return throwError(
+            CustomResponseType.CAN_NOT_USE_OLD_PASSWORD_MESSAGE,
+            CustomResponseType.CAN_NOT_USE_OLD_PASSWORD
+        )
+      }
+      this.pwdValidate(resetPwdDto.getPwd, resetPwdDto.getConfirmPwd);
+      const newPwd = bcrypt.hashSync(resetPwdDto.getPwd, 10);
+      return await this.userRepository.updatePwd(resetPwdDto.getId, newPwd)
+          .catch(err => {
+            logger.error("reset pwd error", err)
+            throwError(
+                CustomResponseType.UPDATE_ERROR_MESSAGE,
+                CustomResponseType.UPDATE_ERROR
+            )
+          })
+    }
+  }
+
   public generateJWT(userId: string, accountType: string): string {
     const privateKey: any = process.env.JWT_SECRETS;
     const defaultOptions: object = {
@@ -111,7 +149,7 @@ export class UserService {
     return jwt.sign({ id: userId }, privateKey, Object.assign(defaultOptions));
   }
 
-  private userValidate(pwd: string, confirmPwd: string): void {
+  private pwdValidate(pwd: string, confirmPwd: string): void {
     if (pwd !== confirmPwd) {
       throwError(
         CustomResponseType.PWD_CONFIRMPWD_NOT_THE_SAME_MESSAGE,
@@ -119,4 +157,24 @@ export class UserService {
       );
     }
   }
+
+  // private async comparePwd(dbPwd: string, pwd: string) {
+  //   const compare: boolean = await bcrypt.compare(pwd, dbPwd);
+  //   if (compare) {
+  //     const jwt: string = this.generateJWT(
+  //         user._id.toString(),
+  //         user.accountType.toString(),
+  //     );
+  //     return this.formatResponse(
+  //         CustomResponseType.OK_MESSAGE,
+  //         CustomResponseType.OK,
+  //         new SignUpVo(user, jwt),
+  //     );
+  //   } else {
+  //     return this.formatResponse(
+  //         CustomResponseType.WRONG_PASSWORD_MESSAGE,
+  //         CustomResponseType.WRONG_PASSWORD,
+  //     );
+  //   }
+  // }
 }
