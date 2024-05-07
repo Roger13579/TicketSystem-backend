@@ -2,7 +2,7 @@ import { BaseRoute } from './baseRoute';
 import IndexController from '../controller/indexController';
 import { body } from 'express-validator';
 import { CustomResponseType } from '../types/customResponseType';
-import {UserVerify} from "../middleware/userVerify";
+import { UserVerify } from '../middleware/userVerify';
 class IndexRoute extends BaseRoute {
   protected controller!: IndexController;
 
@@ -29,7 +29,7 @@ class IndexRoute extends BaseRoute {
                   in: 'body',
                   description: 'Sign up information',
                   required: true,
-                  schema: { $ref: "#/definitions/signUpForm" }
+                  schema: { $ref: "#/definitions/SignUpForm" }
           } */
 
       /* #swagger.responses[200] = {
@@ -65,12 +65,12 @@ class IndexRoute extends BaseRoute {
                   in: 'body',
                   description: 'User information.',
                   required: true,
-                  schema: { $ref: "#/definitions/loginForm" }
+                  schema: { $ref: "#/definitions/LoginForm" }
           } */
       /* #swagger.responses[200] = {
               description: 'OK',
               schema:{
-                $ref: "#/definitions/loginSuccess"
+                $ref: "#/definitions/LoginSuccess"
               }
             }
          */
@@ -96,7 +96,7 @@ class IndexRoute extends BaseRoute {
                   in: 'body',
                   description: 'Forgot Password User Email.',
                   required: true,
-                  schema: { $ref: "#/definitions/forgotPwdForm" }
+                  schema: { $ref: "#/definitions/ForgotPwdForm" }
           } */
 
       /* #swagger.responses[200] = {
@@ -126,7 +126,7 @@ class IndexRoute extends BaseRoute {
                   in: 'body',
                   description: 'Reset Password.',
                   required: true,
-                  schema: { $ref: "#/definitions/resetPwdForm" }
+                  schema: { $ref: "#/definitions/ResetPwdForm" }
           } */
 
       /* #swagger.responses[200] = {
@@ -136,15 +136,15 @@ class IndexRoute extends BaseRoute {
               }
             }
          */
-        UserVerify,
-        body('oldPwd')
-            .isLength({ min: 8 })
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-        body('pwd')
-            .exists()
-            .isLength({ min: 8 })
-            .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-        body('confirmPwd').exists(),
+      UserVerify,
+      body('oldPwd')
+        .isLength({ min: 8 })
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+      body('pwd')
+        .exists()
+        .isLength({ min: 8 })
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+      body('confirmPwd').exists(),
       this.responseHandler(this.controller.resetPwd),
     );
   }
