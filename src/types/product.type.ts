@@ -1,3 +1,6 @@
+import { IProduct } from '../models/product';
+import { Request } from 'express';
+
 export enum ProductType {
   premier = 'premier',
   corporateBooking = 'corporateBooking',
@@ -33,3 +36,9 @@ export type TPlan = {
   discount: number; // 方案折扣數
   headCount: number; // 該方案包含幾張票
 };
+
+export type TCreateProductsReq = Request<
+  unknown,
+  unknown,
+  { products: [IProduct] }
+>;

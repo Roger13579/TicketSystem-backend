@@ -338,7 +338,12 @@
           "type": "object",
           "properties": {}
         }
-      }
+      },
+      "required": [
+        "status",
+        "message",
+        "data"
+      ]
     },
     "Error6202": {
       "type": "object",
@@ -350,52 +355,63 @@
         "message": {
           "type": "string",
           "example": "密碼錯誤"
-        },
-        "data": {
-          "type": "object",
-          "properties": {}
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
     "ErrorToken": {
       "type": "object",
       "properties": {
         "status": {
           "type": "string",
-          "example": "false"
+          "example": "6303"
         },
         "message": {
           "type": "string",
-          "example": "你尚未登入"
-        },
-        "error": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string",
-              "example": "40300"
-            }
-          }
+          "example": "尚未登入"
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
     "Error404": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "number",
+          "example": 404
+        },
         "message": {
           "type": "string",
           "example": "找不到頁面"
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
     "Error500": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "number",
+          "example": 500
+        },
         "message": {
           "type": "string",
           "example": "系統錯誤，請稍後再試"
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
     "SignUpForm": {
       "type": "object",
@@ -489,7 +505,12 @@
             }
           }
         }
-      }
+      },
+      "required": [
+        "status",
+        "message",
+        "data"
+      ]
     },
     "UserDetail": {
       "type": "object",
@@ -536,7 +557,12 @@
             }
           }
         }
-      }
+      },
+      "required": [
+        "status",
+        "message",
+        "data"
+      ]
     },
     "UpdateUserDetail": {
       "type": "object",
@@ -553,40 +579,65 @@
           "type": "object",
           "properties": {}
         }
-      }
+      },
+      "required": [
+        "status",
+        "message",
+        "data"
+      ]
     },
     "RegisterEmailSuccess": {
       "type": "object",
       "properties": {
         "status": {
           "type": "string",
-          "example": "success"
+          "example": "6000"
         },
         "message": {
           "type": "string",
           "example": "請至信箱確認是否收到驗證信"
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
     "RegisterEmailError": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "example": "6504"
+        },
         "message": {
           "type": "string",
           "example": "請稍後重試或聯絡管理員"
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
     "ValidateEmailError": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "example": "6505"
+        },
         "message": {
           "type": "string",
           "example": "信箱驗證失敗"
         }
-      }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
     },
-    "CustomCreateProductsSuccess": {
+    "CreateProductsSuccess": {
       "type": "object",
       "properties": {
         "status": {
@@ -633,6 +684,10 @@
                     "type": "number",
                     "example": 100
                   },
+                  "soldAmount": {
+                    "type": "number",
+                    "example": 0
+                  },
                   "plans": {
                     "type": "array",
                     "items": {
@@ -671,19 +726,19 @@
                   },
                   "sellEndAt": {
                     "type": "string",
-                    "example": "2024-05-09T12:19:42.178Z"
+                    "example": "2024-05-09T15:42:53.661Z"
                   },
                   "sellStartAt": {
                     "type": "string",
-                    "example": "2024-05-09T10:19:42.180Z"
+                    "example": "2024-05-09T13:42:53.662Z"
                   },
                   "endAt": {
                     "type": "string",
-                    "example": "2024-05-09T16:19:42.180Z"
+                    "example": "2024-05-09T19:42:53.662Z"
                   },
                   "startAt": {
                     "type": "string",
-                    "example": "2024-05-09T14:19:42.180Z"
+                    "example": "2024-05-09T17:42:53.662Z"
                   },
                   "tags": {
                     "type": "array",
@@ -768,6 +823,7 @@
                   "theater",
                   "price",
                   "amount",
+                  "soldAmount",
                   "introduction",
                   "isLaunched",
                   "isPublic",
@@ -788,6 +844,23 @@
         "data"
       ]
     },
+    "CreateProductsError": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6213"
+        },
+        "message": {
+          "type": "string",
+          "example": "新增錯誤"
+        }
+      },
+      "required": [
+        "status",
+        "message"
+      ]
+    },
     "CustomCreateProductsObj": {
       "type": "object",
       "required": [
@@ -806,6 +879,7 @@
               "theater",
               "price",
               "amount",
+              "soldAmount",
               "startAt",
               "endAt",
               "sellStartAt",
@@ -881,6 +955,12 @@
                 "min": 0,
                 "description": "票券總量，不得低於最大人數方案。"
               },
+              "soldAmount": {
+                "type": "number",
+                "example": 0,
+                "min": 0,
+                "description": "已銷售數量"
+              },
               "plans": {
                 "type": "array",
                 "items": {
@@ -937,26 +1017,26 @@
               },
               "sellEndAt": {
                 "type": "Date",
-                "example": "2024-05-09T12:19:42.178Z",
-                "min": "2024-05-08T11:19:42.180Z",
+                "example": "2024-05-09T15:42:53.661Z",
+                "min": "2024-05-08T14:42:53.662Z",
                 "description": "販賣結束時間，必須晚於販賣開始時間至少一個小時"
               },
               "sellStartAt": {
                 "type": "Date",
-                "example": "2024-05-09T10:19:42.180Z",
-                "min": "2024-05-08T10:19:42.180Z",
+                "example": "2024-05-09T13:42:53.662Z",
+                "min": "2024-05-08T13:42:53.662Z",
                 "description": "販賣開始時間，必須晚於現在時間至少一天"
               },
               "endAt": {
                 "type": "Date",
-                "example": "2024-05-09T16:19:42.180Z",
-                "min": "2024-05-08T13:19:42.180Z",
+                "example": "2024-05-09T19:42:53.662Z",
+                "min": "2024-05-08T16:42:53.662Z",
                 "description": "活動結束時間，必須晚於活動開始時間至少一個小時"
               },
               "startAt": {
                 "type": "Date",
-                "example": "2024-05-09T14:19:42.180Z",
-                "min": "2024-05-08T12:19:42.180Z",
+                "example": "2024-05-09T17:42:53.662Z",
+                "min": "2024-05-08T15:42:53.663Z",
                 "description": "活動開始時間，必須晚於販售結束時間至少一個小時"
               },
               "tags": {

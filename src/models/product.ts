@@ -30,6 +30,7 @@ export interface IProduct extends Document, ITimestamp {
   cancelPolicies?: [string];
   certificates?: [string];
   comments?: [string];
+  soldAmount: number;
 }
 
 const schema = new Schema<IProduct>(
@@ -79,6 +80,10 @@ const schema = new Schema<IProduct>(
         message: '總數量錯誤，請確認 plans 內部數量',
       },
     },
+    soldAmount: {
+      type: Number,
+      default: 0,
+    },
     plans: {
       type: [
         {
@@ -122,7 +127,7 @@ const schema = new Schema<IProduct>(
       required: true,
       validate: {
         validator: function (sellStartAt: Date) {
-          return moment().isBefore(sellStartAt, 'day');
+          return moment().isBefore(moment(sellStartAt), 'day');
         },
         message: '販賣開始時間必須晚於現在時間至少一天',
       },

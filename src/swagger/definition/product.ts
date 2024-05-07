@@ -16,6 +16,7 @@ const CustomProduct = {
   $theater: '信義威秀',
   $price: 1100,
   $amount: 100,
+  $soldAmount: 0,
   plans: [CustomPlan],
   $introduction: '<p>很棒的商品</p>',
   $isLaunched: false,
@@ -59,6 +60,7 @@ export const CustomCreateProductsObj = {
           'theater',
           'price',
           'amount',
+          'soldAmount',
           'startAt',
           'endAt',
           'sellStartAt',
@@ -107,6 +109,12 @@ export const CustomCreateProductsObj = {
             example: CustomProduct.$amount,
             min: 0,
             description: '票券總量，不得低於最大人數方案。',
+          },
+          soldAmount: {
+            type: 'number',
+            example: CustomProduct.$soldAmount,
+            min: 0,
+            description: '已銷售數量',
           },
           plans: {
             type: 'array',
