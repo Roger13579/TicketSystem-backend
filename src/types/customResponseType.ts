@@ -1,6 +1,7 @@
 export const enum CustomResponseType {
   OK = '6000',
   OK_MESSAGE = '成功',
+  OK_REGISTER_EMAIL_MESSAGE = '請至信箱確認是否收到驗證信',
 
   FORMAT_ERROR = '6101',
   FORMAT_ERROR_MESSAGE = '輸入格式錯誤：',
@@ -11,8 +12,8 @@ export const enum CustomResponseType {
   IMAGE_TYPE_ERROR = '6103',
   IMAGE_TYPE_ERROR_MESSAGE = '圖片格式錯誤',
 
-  PWD_CONFIRMPWD_NOT_THE_SAME = '6104',
-  PWD_CONFIRMPWD_NOT_THE_SAME_MESSAGE = '密碼與確認密碼不同',
+  PWD_CONFIRMED_NOT_THE_SAME = '6104',
+  PWD_CONFIRMED_NOT_THE_SAME_MESSAGE = '密碼與確認密碼不同',
 
   UNREGISTERED_USER = '6201',
   UNREGISTERED_USER_MESSAGE = '尚未註冊，查詢不到此用戶',
@@ -88,4 +89,10 @@ export const enum CustomResponseType {
 
   PAYMENT_FAILED = '6503',
   PAYMENT_FAILED_MESSAGE = '付款失敗',
+
+  REGISTER_EMAIL_ERROR = '6504',
+  REGISTER_EMAIL_ERROR_MESSAGE = '請稍後重試或聯絡管理員',
+
+  VALIDATE_EMAIL_ERROR = '6505',
+  VALIDATE_EMAIL_ERROR_MESSAGE = '信箱驗證失敗',
 }

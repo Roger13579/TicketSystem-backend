@@ -35,4 +35,21 @@ export const throwError = (message: string, code: string): any => {
   (error as any).status = code;
   throw error;
 };
+
+export const createErrorMsg = (err: any) => {
+  let errMsg: string = '';
+  if (err.writeErrors) {
+    // from mongodb
+    // TODO: error type
+    errMsg = (err.writeErrors as { err: { errmsg: string } }[])
+      .map(({ err }) => err.errmsg)
+      .join('/');
+  }
+  if (err.errors) {
+    // from mongoose
+    errMsg = (err as Error).message;
+  }
+  return errMsg;
+};
+
 export { AppError };

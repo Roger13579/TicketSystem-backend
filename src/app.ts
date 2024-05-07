@@ -13,6 +13,7 @@ import passport from 'passport';
 import { AppError } from './utils/errorHandler';
 import { DefaultException } from './utils/defaultException';
 import { CustomResponseType } from './types/customResponseType';
+import { HttpStatus } from './types/responseType';
 
 class App {
   public app: express.Application;
@@ -41,7 +42,7 @@ class App {
       next(
         new AppError(
           CustomResponseType.NOT_SUCH_ROUTE,
-          404,
+          HttpStatus.NOT_FOUND,
           CustomResponseType.NOT_SUCH_ROUTE_MESSAGE,
         ),
       );

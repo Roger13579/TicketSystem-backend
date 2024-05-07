@@ -1,6 +1,9 @@
 import mongoose, { Schema, model, Document } from 'mongoose';
+import { ITimestamp, Status } from '../types/common.type';
+import { schemaOption } from '../utils/constants';
+import { AccountType, Gender } from '../types/user.type';
 
-export interface IUser extends Document {
+export interface IUser extends Document, ITimestamp {
   account: string;
   pwd: string;
   email: string;
@@ -14,121 +17,115 @@ export interface IUser extends Document {
   thirdPartyType: string;
   isThirdPartyVerified: boolean;
   accountType: string;
-  status: string;
+  status: Status;
   groups: [Schema.Types.ObjectId];
   collects: [Schema.Types.ObjectId];
   myTickets: [Schema.Types.ObjectId];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-const schema = new Schema<IUser>({
-  account: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  pwd: {
-    type: String,
-    select: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  name: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  gender: {
-    type: String,
-    enum: ['male', 'female', 'none'],
-    default: 'none',
-  },
-  avatarPath: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  phone: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  birthDate: {
-    type: Date,
-    default: null,
-  },
-  address: {
-    type: String,
-    trim: true,
-    default: '',
-  },
-  thirdPartyId: {
-    type: String,
-    trim: true,
-  },
-  thirdPartyType: {
-    type: String,
-    trim: true,
-  },
-  isThirdPartyVerified: {
-    type: Boolean,
-    default: false,
-  },
-  accountType: {
-    type: String,
-    enum: ['admin', 'member'],
-  },
-  status: {
-    type: String,
-    enum: ['active', 'disabled'],
-    default: 'active',
-  },
-  groups: {
-    type: [
-      {
-        groupId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Group',
+const schema = new Schema<IUser>(
+  {
+    account: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    pwd: {
+      type: String,
+      select: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    name: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    gender: {
+      type: String,
+      enum: Object.values(Gender),
+      default: Gender.none,
+    },
+    avatarPath: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    birthDate: {
+      type: Date,
+      default: null,
+    },
+    address: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    thirdPartyId: {
+      type: String,
+      trim: true,
+    },
+    thirdPartyType: {
+      type: String,
+      trim: true,
+    },
+    isThirdPartyVerified: {
+      type: Boolean,
+      default: false,
+    },
+    accountType: {
+      type: String,
+      enum: Object.values(AccountType),
+      default: AccountType.member,
+    },
+    status: {
+      type: String,
+      enum: Object.values(Status),
+      default: Status.active,
+    },
+    groups: {
+      type: [
+        {
+          groupId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Group',
+          },
         },
-      },
-    ],
-  },
-  collects: {
-    type: [
-      {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product',
+      ],
+    },
+    collects: {
+      type: [
+        {
+          productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product',
+          },
         },
-      },
-    ],
-  },
-  myTickets: {
-    type: [
-      {
-        ticketId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Ticket',
+      ],
+    },
+    myTickets: {
+      type: [
+        {
+          ticketId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Ticket',
+          },
         },
-      },
-    ],
+      ],
+    },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  schemaOption,
+);
 
 export const UserModel = model<IUser>('User', schema);

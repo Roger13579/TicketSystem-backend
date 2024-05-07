@@ -1,8 +1,12 @@
-import { Request, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 
-export const IsAdmin = async (req: Request, next: NextFunction) => {
+export const IsAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const accountType = (req.user as any).accountType;
   if (accountType !== 'admin') {
     throwError(

@@ -27,7 +27,7 @@ export class UserRoute extends BaseRoute {
          #swagger.responses[200] = {
           description: 'OK',
           schema: {
-            $ref: '#/definitions/userDetail' }
+            $ref: '#/definitions/UserDetail' }
          }
         */
       UserVerify,
