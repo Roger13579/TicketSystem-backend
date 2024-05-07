@@ -9,7 +9,7 @@
     "build": "tsc",
     "start": "node src/dist/bin/www.js",
     "dev": "tsc && node src/dist/bin/www.js",
-    "swagger": "node src/dist/swagger.js"
+    "swagger": "node src/dist/swagger/index.js"
   },
   "keywords": [],
   "author": "",
