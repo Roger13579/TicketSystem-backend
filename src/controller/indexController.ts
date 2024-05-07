@@ -6,7 +6,7 @@ import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import { SignUpVo } from '../vo/signUpVo';
 import { UserService } from '../service/userService';
-import {ResetPwdDto} from "../dto/resetPwdDto";
+import { ResetPwdDto } from '../dto/resetPwdDto';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
@@ -61,8 +61,8 @@ class IndexController extends BaseController {
     const resetPwdDto = new ResetPwdDto(req);
     return this.userService.resetPwd(resetPwdDto).then(() => {
       return this.formatResponse(
-          CustomResponseType.OK_MESSAGE,
-          CustomResponseType.OK,
+        CustomResponseType.OK_MESSAGE,
+        CustomResponseType.OK,
       );
     });
   };

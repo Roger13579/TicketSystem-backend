@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from 'express';
 import { ResponseObject } from '../utils/responseObject';
 import { BaseController } from '../controller/baseController';
 import { HttpStatus } from '../types/responseType';
-import log4js from "../config/log4js";
+import log4js from '../config/log4js';
 const logger = log4js.getLogger(`BaseRoute`);
 
 export abstract class BaseRoute {
@@ -41,11 +41,10 @@ export abstract class BaseRoute {
       method
         .call(this.controller, req, res, next)
         .then((obj) => res.status(HttpStatus.OK).json(obj))
-        .catch((err) =>{
-          logger.error(err)
-          next(controller.formatResponse(err.message, (err as any).status))
-        }
-        );
+        .catch((err) => {
+          logger.error(err);
+          next(controller.formatResponse(err.message, (err as any).status));
+        });
     };
   }
 }

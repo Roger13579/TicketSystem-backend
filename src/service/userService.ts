@@ -7,7 +7,7 @@ import { UserDetailDto } from '../dto/userDetailDto';
 import { IUser } from '../models/user';
 import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
-import {ResetPwdDto} from "../dto/resetPwdDto";
+import { ResetPwdDto } from '../dto/resetPwdDto';
 const logger = log4js.getLogger(`UserRepository`);
 
 export class UserService {
@@ -95,37 +95,38 @@ export class UserService {
     const user = await this.userRepository.findById(resetPwdDto.getId);
     if (!user) {
       throwError(
-          CustomResponseType.EMAIL_VERIFICATION_FAILED_MESSAGE,
-          CustomResponseType.EMAIL_VERIFICATION_FAILED,
+        CustomResponseType.EMAIL_VERIFICATION_FAILED_MESSAGE,
+        CustomResponseType.EMAIL_VERIFICATION_FAILED,
       );
     } else {
       const dbPwd: string = user.pwd;
       if (resetPwdDto.getOldPwd) {
-      let oldCompare = await bcrypt.compare(resetPwdDto.getOldPwd, dbPwd);
+        const oldCompare = await bcrypt.compare(resetPwdDto.getOldPwd, dbPwd);
         if (!oldCompare) {
           return throwError(
-              CustomResponseType.OLD_PASSWORD_INCORRECT_MESSAGE,
-              CustomResponseType.OLD_PASSWORD_INCORRECT
-          )
+            CustomResponseType.OLD_PASSWORD_INCORRECT_MESSAGE,
+            CustomResponseType.OLD_PASSWORD_INCORRECT,
+          );
         }
       }
-      let compare: boolean = await bcrypt.compare(resetPwdDto.getPwd, dbPwd);
+      const compare: boolean = await bcrypt.compare(resetPwdDto.getPwd, dbPwd);
       if (compare) {
         return throwError(
-            CustomResponseType.CAN_NOT_USE_OLD_PASSWORD_MESSAGE,
-            CustomResponseType.CAN_NOT_USE_OLD_PASSWORD
-        )
+          CustomResponseType.CAN_NOT_USE_OLD_PASSWORD_MESSAGE,
+          CustomResponseType.CAN_NOT_USE_OLD_PASSWORD,
+        );
       }
       this.pwdValidate(resetPwdDto.getPwd, resetPwdDto.getConfirmPwd);
       const newPwd = bcrypt.hashSync(resetPwdDto.getPwd, 10);
-      return await this.userRepository.updatePwd(resetPwdDto.getId, newPwd)
-          .catch(err => {
-            logger.error("reset pwd error", err)
-            throwError(
-                CustomResponseType.UPDATE_ERROR_MESSAGE,
-                CustomResponseType.UPDATE_ERROR
-            )
-          })
+      return await this.userRepository
+        .updatePwd(resetPwdDto.getId, newPwd)
+        .catch((err) => {
+          logger.error('reset pwd error', err);
+          throwError(
+            CustomResponseType.UPDATE_ERROR_MESSAGE,
+            CustomResponseType.UPDATE_ERROR,
+          );
+        });
     }
   }
 
@@ -152,8 +153,8 @@ export class UserService {
   private pwdValidate(pwd: string, confirmPwd: string): void {
     if (pwd !== confirmPwd) {
       throwError(
-        CustomResponseType.PWD_CONFIRMPWD_NOT_THE_SAME_MESSAGE,
-        CustomResponseType.PWD_CONFIRMPWD_NOT_THE_SAME,
+        CustomResponseType.PWD_CONFIRMED_NOT_THE_SAME_MESSAGE,
+        CustomResponseType.PWD_CONFIRMED_NOT_THE_SAME,
       );
     }
   }

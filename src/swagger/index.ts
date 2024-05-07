@@ -1,5 +1,6 @@
 import swagger_autogen from 'swagger-autogen';
-import { definitions } from './swagger-definition';
+import { customDefinitions, definitions } from './definition';
+
 const swaggerAutogen = swagger_autogen();
 
 const doc = {
@@ -21,6 +22,7 @@ const doc = {
     { name: 'Admin', description: '後台管理' },
   ],
   definitions,
+  '@definitions': customDefinitions,
   securityDefinitions: {
     // Token
     Bearer: {
