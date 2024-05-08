@@ -16,7 +16,7 @@ export interface IUser extends Document, ITimestamp {
   thirdPartyId: string;
   thirdPartyType: string;
   isThirdPartyVerified: boolean;
-  accountType: string;
+  accountType: AccountType;
   status: Status;
   groups: [Schema.Types.ObjectId];
   collects: [Schema.Types.ObjectId];

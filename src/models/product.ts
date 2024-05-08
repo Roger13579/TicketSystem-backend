@@ -21,7 +21,7 @@ export interface IProduct extends Document, ITimestamp {
   isPublic: boolean;
   isLaunched: boolean;
   tags?: [string];
-  photoPath: string;
+  photoPath: string | null;
   notifications?: [string];
   highlights?: [string];
   introduction?: string;
@@ -148,10 +148,12 @@ const schema = new Schema<IProduct>(
       min: 1,
       max: 10,
       required: true,
+      select: true, // 只有管理者可以看到
     },
     isPublic: {
       type: Boolean,
       required: true,
+      select: true, // 只有管理者可以看到
     },
     isLaunched: {
       type: Boolean,
@@ -175,8 +177,8 @@ const schema = new Schema<IProduct>(
       ],
     },
     photoPath: {
-      type: String,
-      default: '',
+      type: String || null,
+      default: null,
       trim: true,
     },
     notifications: {
