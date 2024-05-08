@@ -16,7 +16,28 @@ import {
   ValidateEmailError,
   CreateProductsError,
 } from './common';
-import { CustomCreateProductsObj, CreateProductsSuccess } from './product';
+import {
+  CustomCreateProductsObj,
+  CreateProductsSuccess,
+  CustomGetProductTitleQuery,
+  CustomGetProductTypesQuery,
+  CustomGetProductGenresQuery,
+  CustomGetProductTheatersQuery,
+  CustomGetProductVendorsQuery,
+  CustomGetProductIsPublicQuery,
+  CustomGetProductIsLaunchedQuery,
+  CustomGetProductSellStartFromQuery,
+  CustomGetProductStartAtFromQuery,
+  CustomGetProductStartAtToQuery,
+  CustomGetProductRecommendWeightQuery,
+  CustomGetProductPriceMaxQuery,
+  CustomGetProductSellStartToQuery,
+  CustomGetProductLimitQuery,
+  CustomGetProductPageQuery,
+  CustomGetProductPriceMinQuery,
+  CustomGetProductSortByQuery,
+  CustomGetProductTagQuery,
+} from './product';
 
 export const definitions = {
   Success,
@@ -40,4 +61,22 @@ export const definitions = {
 
 export const customDefinitions = {
   CustomCreateProductsObj,
+  CustomGetProductTitleQuery,
+  CustomGetProductTypesQuery,
+  CustomGetProductGenresQuery,
+  CustomGetProductVendorsQuery,
+  CustomGetProductTheatersQuery,
+  CustomGetProductIsLaunchedQuery,
+  CustomGetProductIsPublicQuery,
+  CustomGetProductStartAtFromQuery,
+  CustomGetProductStartAtToQuery,
+  CustomGetProductSellStartFromQuery,
+  CustomGetProductSellStartToQuery,
+  CustomGetProductRecommendWeightQuery,
+  CustomGetProductPriceMaxQuery,
+  CustomGetProductPriceMinQuery,
+  CustomGetProductTagQuery,
+  CustomGetProductPageQuery,
+  CustomGetProductLimitQuery,
+  CustomGetProductSortByQuery,
 };

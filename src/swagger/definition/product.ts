@@ -2,6 +2,39 @@ import moment from 'moment';
 import { CustomResponseType } from '../../types/customResponseType';
 import { ProductType, MovieGenre } from '../../types/product.type';
 
+const propName = {
+  title: '商品名稱',
+  type: '商品類別',
+  genre: '電影分類',
+  vendor: '供應商',
+  theater: '位置',
+  price: '單張票價',
+  amount: '票券總量',
+  soldAmount: '已銷售數量',
+  plan: {
+    name: '方案名稱',
+    discount: '方案折扣數',
+    headCount: '方案包含人數',
+  },
+  introduction: '商品介紹',
+  isLaunched: '是否開始販賣',
+  isPublic: '是否公開',
+  recommendWeight: '推薦權重',
+  sellEndAt: '販賣結束時間',
+  sellStartAt: '販賣開始時間',
+  endAt: '活動結束時間',
+  startAt: '活動開始時間',
+  tags: '標籤列表',
+  tag: '標籤',
+  photoPath: '商品圖片 Url',
+  notifications: '通知列表',
+  highlights: '活動亮點列表',
+  cautions: '注意事項列表',
+  confirmations: '確認詳情列表',
+  cancelPolicies: '取消政策列表',
+  certificates: '憑證類型列表',
+};
+
 const CustomPlan = {
   name: '三人同行好棒棒',
   discount: 0.5,
@@ -9,7 +42,7 @@ const CustomPlan = {
 };
 
 const CustomProduct = {
-  $title: 'string',
+  $title: '這是一個商品名稱',
   $type: ProductType.premier,
   $genre: MovieGenre.action,
   $vendor: '貓咪影業',
@@ -26,8 +59,8 @@ const CustomProduct = {
   $sellStartAt: moment().add(2, 'days').toISOString(),
   $endAt: moment().add(2, 'day').add(6, 'hour').toISOString(),
   $startAt: moment().add(2, 'day').add(4, 'hour').toISOString(),
-  tags: ['A', 'B'],
-  photoPath: '',
+  tags: [{ tagId: '123' }, { tagId: '123' }],
+  photoPath: null,
   notifications: ['通知一', '通知二'],
   highlights: ['亮點一', '亮點二'],
   cautions: ['事項一', '事項二'],
@@ -40,7 +73,18 @@ export const CreateProductsSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
-    products: [CustomProduct],
+    $products: [CustomProduct],
+    $page: 1,
+    $limit: 10,
+    $totalCount: 1,
+  },
+};
+
+export const FindProductSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $products: [CustomProduct],
   },
 };
 
@@ -74,57 +118,58 @@ export const CustomCreateProductsObj = {
           title: {
             type: 'string',
             example: CustomProduct.$title,
-            description: '商品名稱',
+            description: propName.title,
           },
           type: {
             type: 'string',
             example: CustomProduct.$type,
             enum: Object.values(ProductType),
-            description: '商品類別',
+            description: propName.type,
           },
           genre: {
             type: 'string',
             example: CustomProduct.$genre,
             enum: Object.values(MovieGenre),
-            description: '電影分類',
+            description: propName.genre,
           },
           vendor: {
             type: 'string',
             example: CustomProduct.$vendor,
-            description: '供應商',
+            description: propName.vendor,
           },
           theater: {
             type: 'string',
             example: CustomProduct.$theater,
-            description: '位置',
+            description: propName.theater,
           },
           price: {
             type: 'number',
             example: CustomProduct.$price,
             min: 100,
-            description: '單買一張的票價',
+            description: propName.price,
           },
           amount: {
             type: 'number',
             example: CustomProduct.$amount,
             min: 0,
-            description: '票券總量，不得低於最大人數方案。',
+            description: `${propName.amount}，不得低於最大人數方案。`,
           },
           soldAmount: {
             type: 'number',
             example: CustomProduct.$soldAmount,
             min: 0,
-            description: '已銷售數量',
+            description: propName.soldAmount,
           },
           plans: {
             type: 'array',
+            description: '銷售方案',
             items: {
               type: 'object',
               required: ['name', 'discount', 'headCount'],
               properties: {
                 name: {
                   type: 'string',
-                  description: '方案名稱',
+                  description: propName.plan.name,
                   example: CustomPlan.name,
                   min: 2,
                 },
@@ -133,13 +178,13 @@ export const CustomCreateProductsObj = {
                   max: 1,
                   min: 0.1,
                   example: CustomPlan.discount,
-                  description: '方案折扣數',
+                  description: propName.plan.discount,
                 },
                 headCount: {
                   type: 'number',
                   min: 0,
                   example: CustomPlan.headCount,
-                  description: '方案包含人數',
+                  description: propName.plan.headCount,
                 },
               },
             },
@@ -147,70 +192,71 @@ export const CustomCreateProductsObj = {
           introduction: {
             type: 'string',
             example: CustomProduct.$introduction,
-            description: '商品介紹 (html)',
+            description: `${propName.introduction} (html)`,
           },
           isLaunched: {
             type: 'boolean',
             example: CustomProduct.$isLaunched,
-            description: '是否開始販賣，尚未公開的情況下，商品不可以進行販賣',
+            description: `${propName.isLaunched}，尚未公開的情況下，商品不可以進行販賣，可販賣的商品須同時在販賣時間的區間且 isLaunched 為 true`,
           },
           isPublic: {
             type: 'boolean',
             example: CustomProduct.$isPublic,
-            description: '是否公開',
+            description: propName.isPublic,
           },
           recommendWeight: {
             type: 'number',
             min: 1,
             max: 10,
-            example: CreateProductsSuccess.$data.products[0].$recommendWeight,
-            description: '推薦權重',
+            example: CreateProductsSuccess.$data.$products[0].$recommendWeight,
+            description: propName.recommendWeight,
           },
           sellEndAt: {
             type: 'Date',
             example: CustomProduct.$sellEndAt,
             min: moment().add(1, 'day').add(1, 'hour'),
-            description: '販賣結束時間，必須晚於販賣開始時間至少一個小時',
+            description: `${propName.sellEndAt}，必須晚於販賣開始時間至少一個小時`,
           },
           sellStartAt: {
             type: 'Date',
             example: CustomProduct.$sellStartAt,
             min: moment().add(1, 'day'),
-            description: '販賣開始時間，必須晚於現在時間至少一天',
+            description: `${propName.sellStartAt}，必須晚於現在時間至少一天`,
           },
           endAt: {
             type: 'Date',
             example: CustomProduct.$endAt,
             min: moment().add(1, 'day').add(3, 'hour'),
-            description: '活動結束時間，必須晚於活動開始時間至少一個小時',
+            description: `${propName.endAt}，必須晚於活動開始時間至少一個小時`,
           },
           startAt: {
             type: 'Date',
             example: CustomProduct.$startAt,
             min: moment().add(1, 'day').add(2, 'hour'),
-            description: '活動開始時間，必須晚於販售結束時間至少一個小時',
+            description: `${propName.startAt}，必須晚於販售結束時間至少一個小時`,
           },
           tags: {
             type: 'array',
+            description: propName.tags,
             items: {
               type: 'object',
               properties: {
                 tagId: {
                   type: 'string',
                   example: 'AAA',
-                  description: '標籤',
+                  description: `${propName.tag}，先把這個拿掉`,
                 },
               },
             },
           },
           photoPath: {
             type: 'string',
-            description: '商品圖片 Url',
+            description: propName.photoPath,
             example: CustomProduct.photoPath,
           },
           notifications: {
             type: 'array',
-            description: '通知列表',
+            description: propName.notifications,
             example: CustomProduct.notifications,
             items: {
               type: 'string',
@@ -218,7 +264,7 @@ export const CustomCreateProductsObj = {
           },
           highlights: {
             type: 'array',
-            description: '活動亮點列表',
+            description: propName.highlights,
             example: CustomProduct.highlights,
             items: {
               type: 'string',
@@ -226,7 +272,7 @@ export const CustomCreateProductsObj = {
           },
           cautions: {
             type: 'array',
-            description: '注意事項列表',
+            description: propName.cautions,
             example: CustomProduct.cautions,
             items: {
               type: 'string',
@@ -234,7 +280,7 @@ export const CustomCreateProductsObj = {
           },
           confirmations: {
             type: 'array',
-            description: '確認詳情列表',
+            description: propName.confirmations,
             example: CustomProduct.confirmations,
             items: {
               type: 'string',
@@ -242,7 +288,7 @@ export const CustomCreateProductsObj = {
           },
           cancelPolicies: {
             type: 'array',
-            description: '取消政策列表',
+            description: propName.cancelPolicies,
             example: CustomProduct.cancelPolicies,
             items: {
               type: 'string',
@@ -250,7 +296,7 @@ export const CustomCreateProductsObj = {
           },
           certificates: {
             type: 'array',
-            description: '憑證類型列表',
+            description: propName.certificates,
             example: CustomProduct.certificates,
             items: {
               type: 'string',
@@ -260,4 +306,64 @@ export const CustomCreateProductsObj = {
       },
     },
   },
+};
+
+export const CustomGetProductTitleQuery = {
+  example: '很棒的特映會',
+};
+
+export const CustomGetProductTypesQuery = {
+  example: `${ProductType.corporateBooking},${ProductType.openAir}`,
+};
+
+export const CustomGetProductGenresQuery = {
+  example: `${MovieGenre.action},${MovieGenre.drama}`,
+};
+
+export const CustomGetProductVendorsQuery = {
+  example: '貓咪影業,小狗影業',
+};
+
+export const CustomGetProductTheatersQuery = {
+  example: '信義威秀,晶站威秀',
+};
+export const CustomGetProductIsLaunchedQuery = {
+  example: 'true',
+};
+export const CustomGetProductIsPublicQuery = {
+  example: 'true',
+};
+export const CustomGetProductStartAtFromQuery = {
+  example: '2024-05-16T03:33:20.000+00:00',
+};
+export const CustomGetProductStartAtToQuery = {
+  example: '2024-05-17T03:33:20.000+00:00',
+};
+export const CustomGetProductSellStartFromQuery = {
+  example: '2024-05-18T03:33:20.000+00:00',
+};
+export const CustomGetProductSellStartToQuery = {
+  example: '2024-05-19T03:33:20.000+00:00',
+};
+
+export const CustomGetProductRecommendWeightQuery = {
+  example: '1,2,3',
+};
+export const CustomGetProductPriceMaxQuery = {
+  example: '110',
+};
+export const CustomGetProductPriceMinQuery = {
+  example: '10',
+};
+export const CustomGetProductTagQuery = {
+  example: '日舞影展,金馬影展',
+};
+export const CustomGetProductPageQuery = {
+  example: '1',
+};
+export const CustomGetProductLimitQuery = {
+  example: '10',
+};
+export const CustomGetProductSortByQuery = {
+  example: '-createdAt',
 };

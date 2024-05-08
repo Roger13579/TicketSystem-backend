@@ -182,11 +182,206 @@
         ],
         "summary": "取得商品列表",
         "description": "",
-        "responses": {
-          "default": {
-            "description": ""
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "description": "模糊搜尋：商品名稱",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductTitleQuery"
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "required": false,
+            "description": "精準搜尋：商品類別 (多個則以逗號分開)",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductTypesQuery"
+            }
+          },
+          {
+            "name": "genres",
+            "in": "query",
+            "required": false,
+            "description": "精準搜尋：電影分類 (多個則以逗號分開)",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductGenresQuery"
+            }
+          },
+          {
+            "name": "vendors",
+            "in": "query",
+            "required": false,
+            "description": "精準搜尋：供應商 (多個則以逗號分開)",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductVendorsQuery"
+            }
+          },
+          {
+            "name": "theaters",
+            "in": "query",
+            "required": false,
+            "description": "精準搜尋：位置 (多個則以逗號分開)",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductTheatersQuery"
+            }
+          },
+          {
+            "name": "isLaunched",
+            "in": "query",
+            "required": false,
+            "description": "是否販售",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductIsLaunchedQuery"
+            }
+          },
+          {
+            "name": "isPublic",
+            "in": "query",
+            "required": false,
+            "description": "是否公開",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductIsPublicQuery"
+            }
+          },
+          {
+            "name": "startAtFrom",
+            "in": "query",
+            "required": false,
+            "description": "開始活動時間-起",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductStartAtFromQuery"
+            }
+          },
+          {
+            "name": "startAtTo",
+            "in": "query",
+            "required": false,
+            "description": "開始活動時間-迄",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductStartAtToQuery"
+            }
+          },
+          {
+            "name": "sellStartAtFrom",
+            "in": "query",
+            "required": false,
+            "description": "開始販售時間-迄",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductSellStartFromQuery"
+            }
+          },
+          {
+            "name": "sellStartAtTo",
+            "in": "query",
+            "required": false,
+            "description": "開始販售時間-迄",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductSellStartToQuery"
+            }
+          },
+          {
+            "name": "recommendWeights",
+            "in": "query",
+            "required": false,
+            "description": "精準搜尋：推薦權重 (多個則以逗號分開)",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductRecommendWeightQuery"
+            }
+          },
+          {
+            "name": "priceMax",
+            "in": "query",
+            "required": false,
+            "description": "價格區間-最大值",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductPriceMaxQuery"
+            }
+          },
+          {
+            "name": "priceMin",
+            "in": "query",
+            "required": false,
+            "description": "價格區間-最小值",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductPriceMinQuery"
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "description": "精準搜尋：標籤 (多個則以逗號分開)，先不要用",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductTagQuery"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "description": "頁數",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductPageQuery"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "每頁資料數",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductLimitQuery"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "description": "排序根據, e.g. startAt, price, sellStartAt, type, vendor, theater, title, _id, soldAmount,createdAt,降冪則在前面加上 - ",
+            "type": "string",
+            "schema": {
+              "$ref": "#/definitions/CustomGetProductSortByQuery"
+            }
           }
-        }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CreateProductsSuccess"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -213,7 +408,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/CustomCreateProductsSuccess"
+              "$ref": "#/definitions/CreateProductsSuccess"
             }
           },
           "6213": {
@@ -658,7 +853,7 @@
                 "properties": {
                   "title": {
                     "type": "string",
-                    "example": "string"
+                    "example": "這是一個商品名稱"
                   },
                   "type": {
                     "type": "string",
@@ -726,34 +921,33 @@
                   },
                   "sellEndAt": {
                     "type": "string",
-                    "example": "2024-05-09T15:42:53.661Z"
+                    "example": "2024-05-10T11:53:57.214Z"
                   },
                   "sellStartAt": {
                     "type": "string",
-                    "example": "2024-05-09T13:42:53.662Z"
+                    "example": "2024-05-10T09:53:57.215Z"
                   },
                   "endAt": {
                     "type": "string",
-                    "example": "2024-05-09T19:42:53.662Z"
+                    "example": "2024-05-10T15:53:57.215Z"
                   },
                   "startAt": {
                     "type": "string",
-                    "example": "2024-05-09T17:42:53.662Z"
+                    "example": "2024-05-10T13:53:57.215Z"
                   },
                   "tags": {
                     "type": "array",
-                    "example": [
-                      "A",
-                      "B"
-                    ],
                     "items": {
-                      "type": "string"
+                      "type": "object",
+                      "properties": {
+                        "tagId": {
+                          "type": "string",
+                          "example": "123"
+                        }
+                      }
                     }
                   },
-                  "photoPath": {
-                    "type": "string",
-                    "example": ""
-                  },
+                  "photoPath": {},
                   "notifications": {
                     "type": "array",
                     "example": [
@@ -834,8 +1028,26 @@
                   "startAt"
                 ]
               }
+            },
+            "page": {
+              "type": "number",
+              "example": 1
+            },
+            "limit": {
+              "type": "number",
+              "example": 10
+            },
+            "totalCount": {
+              "type": "number",
+              "example": 1
             }
-          }
+          },
+          "required": [
+            "products",
+            "page",
+            "limit",
+            "totalCount"
+          ]
         }
       },
       "required": [
@@ -892,7 +1104,7 @@
             "properties": {
               "title": {
                 "type": "string",
-                "example": "string",
+                "example": "這是一個商品名稱",
                 "description": "商品名稱"
               },
               "type": {
@@ -947,7 +1159,7 @@
                 "type": "number",
                 "example": 1100,
                 "min": 100,
-                "description": "單買一張的票價"
+                "description": "單張票價"
               },
               "amount": {
                 "type": "number",
@@ -963,6 +1175,7 @@
               },
               "plans": {
                 "type": "array",
+                "description": "銷售方案",
                 "items": {
                   "type": "object",
                   "required": [
@@ -1001,7 +1214,7 @@
               "isLaunched": {
                 "type": "boolean",
                 "example": false,
-                "description": "是否開始販賣，尚未公開的情況下，商品不可以進行販賣"
+                "description": "是否開始販賣，尚未公開的情況下，商品不可以進行販賣，可販賣的商品須同時在販賣時間的區間且 isLaunched 為 true"
               },
               "isPublic": {
                 "type": "boolean",
@@ -1017,37 +1230,38 @@
               },
               "sellEndAt": {
                 "type": "Date",
-                "example": "2024-05-09T15:42:53.661Z",
-                "min": "2024-05-08T14:42:53.662Z",
+                "example": "2024-05-10T11:53:57.214Z",
+                "min": "2024-05-09T10:53:57.215Z",
                 "description": "販賣結束時間，必須晚於販賣開始時間至少一個小時"
               },
               "sellStartAt": {
                 "type": "Date",
-                "example": "2024-05-09T13:42:53.662Z",
-                "min": "2024-05-08T13:42:53.662Z",
+                "example": "2024-05-10T09:53:57.215Z",
+                "min": "2024-05-09T09:53:57.216Z",
                 "description": "販賣開始時間，必須晚於現在時間至少一天"
               },
               "endAt": {
                 "type": "Date",
-                "example": "2024-05-09T19:42:53.662Z",
-                "min": "2024-05-08T16:42:53.662Z",
+                "example": "2024-05-10T15:53:57.215Z",
+                "min": "2024-05-09T12:53:57.216Z",
                 "description": "活動結束時間，必須晚於活動開始時間至少一個小時"
               },
               "startAt": {
                 "type": "Date",
-                "example": "2024-05-09T17:42:53.662Z",
-                "min": "2024-05-08T15:42:53.663Z",
+                "example": "2024-05-10T13:53:57.215Z",
+                "min": "2024-05-09T11:53:57.216Z",
                 "description": "活動開始時間，必須晚於販售結束時間至少一個小時"
               },
               "tags": {
                 "type": "array",
+                "description": "標籤列表",
                 "items": {
                   "type": "object",
                   "properties": {
                     "tagId": {
                       "type": "string",
                       "example": "AAA",
-                      "description": "標籤"
+                      "description": "標籤，先把這個拿掉"
                     }
                   }
                 }
@@ -1055,7 +1269,7 @@
               "photoPath": {
                 "type": "string",
                 "description": "商品圖片 Url",
-                "example": ""
+                "example": null
               },
               "notifications": {
                 "type": "array",
@@ -1127,6 +1341,60 @@
           }
         }
       }
+    },
+    "CustomGetProductTitleQuery": {
+      "example": "很棒的特映會"
+    },
+    "CustomGetProductTypesQuery": {
+      "example": "corporateBooking,openAir"
+    },
+    "CustomGetProductGenresQuery": {
+      "example": "action,drama"
+    },
+    "CustomGetProductVendorsQuery": {
+      "example": "貓咪影業,小狗影業"
+    },
+    "CustomGetProductTheatersQuery": {
+      "example": "信義威秀,晶站威秀"
+    },
+    "CustomGetProductIsLaunchedQuery": {
+      "example": "true"
+    },
+    "CustomGetProductIsPublicQuery": {
+      "example": "true"
+    },
+    "CustomGetProductStartAtFromQuery": {
+      "example": "2024-05-16T03:33:20.000+00:00"
+    },
+    "CustomGetProductStartAtToQuery": {
+      "example": "2024-05-17T03:33:20.000+00:00"
+    },
+    "CustomGetProductSellStartFromQuery": {
+      "example": "2024-05-18T03:33:20.000+00:00"
+    },
+    "CustomGetProductSellStartToQuery": {
+      "example": "2024-05-19T03:33:20.000+00:00"
+    },
+    "CustomGetProductRecommendWeightQuery": {
+      "example": "1,2,3"
+    },
+    "CustomGetProductPriceMaxQuery": {
+      "example": "110"
+    },
+    "CustomGetProductPriceMinQuery": {
+      "example": "10"
+    },
+    "CustomGetProductTagQuery": {
+      "example": "日舞影展,金馬影展"
+    },
+    "CustomGetProductPageQuery": {
+      "example": "1"
+    },
+    "CustomGetProductLimitQuery": {
+      "example": "10"
+    },
+    "CustomGetProductSortByQuery": {
+      "example": "-createdAt"
     }
   }
 }
