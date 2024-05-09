@@ -3,7 +3,9 @@ import IndexController from '../controller/indexController';
 import { body } from 'express-validator';
 import { CustomResponseType } from '../types/customResponseType';
 import { UserVerify } from '../middleware/userVerify';
-class IndexRoute extends BaseRoute {
+import passport from 'passport';
+import { PassportInit } from '../middleware/passportInit';
+export class IndexRoute extends BaseRoute {
   protected controller!: IndexController;
 
   constructor() {
@@ -13,7 +15,7 @@ class IndexRoute extends BaseRoute {
 
   protected initial(): void {
     this.controller = new IndexController();
-    super.initial();
+    this.setRouters();
   }
 
   protected setRouters() {
@@ -147,7 +149,71 @@ class IndexRoute extends BaseRoute {
       body('confirmPwd').exists(),
       this.responseHandler(this.controller.resetPwd),
     );
+
+    this.router.get(
+      '/v1/user/google-login',
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = 'Google第三方登入'
+       */
+      /*
+
+        /*	#swagger.parameters['obj'] = {
+                  in: 'body',
+                  description: 'Google Login',
+                  required: true,
+                  schema: { $ref: "#/definitions/ResetPwdForm" }
+          } */
+
+      /* #swagger.responses[200] = {
+              description: 'OK',
+              schema:{
+                $ref: "#/definitions/Success"
+              }
+            }
+         */
+      PassportInit,
+      passport.authenticate('google', {
+        scope: ['email', 'profile'],
+      }),
+    );
+
+    this.router.get(
+      '/v1/user/google/callback',
+      this.responseHandler(this.controller.googleCallback),
+    );
+
+    this.router.post(
+      '/v1/user/google-update',
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = '首次Google第三方登入後進行一般註冊'
+       */
+
+      /*	#swagger.parameters['obj'] = {
+                  in: 'body',
+                  description: 'Sign up after Google Login',
+                  required: true,
+                  schema: { $ref: "#/definitions/SignUpForm" }
+          } */
+
+      /* #swagger.responses[200] = {
+              description: 'OK',
+              schema:{
+                $ref: "#/definitions/Success"
+              }
+            }
+         */
+      UserVerify,
+      body('account')
+        .exists()
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
+      body('pwd')
+        .exists()
+        .isLength({ min: 8 })
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+      body('confirmPwd').exists(),
+      this.responseHandler(this.controller.googleSignUp),
+    );
   }
 }
-
-export default IndexRoute;

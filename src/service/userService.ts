@@ -8,7 +8,10 @@ import { IUser } from '../models/user';
 import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
 import { ResetPwdDto } from '../dto/resetPwdDto';
-const logger = log4js.getLogger(`UserRepository`);
+import { Request, Response, NextFunction } from 'express';
+import passport from 'passport';
+import { GoogleProfileDto } from '../dto/googleProfileDto';
+const logger = log4js.getLogger(`UserService`);
 
 export class UserService {
   private readonly userRepository: UserRepository = new UserRepository();
@@ -55,6 +58,25 @@ export class UserService {
         CustomResponseType.UPDATE_ERROR,
       );
     });
+  }
+
+  public async updateUserFromGoogle(
+    account: string,
+    pwd: string,
+    confirmPwd: string,
+    thirdPartyId: string,
+  ): Promise<IUser | null | void> {
+    this.pwdValidate(pwd, confirmPwd);
+    const hashPwd = bcrypt.hashSync(pwd, 10);
+    return this.userRepository
+      .updateUserFromGoogle(account, hashPwd, thirdPartyId)
+      .catch((err) => {
+        logger.error('update google user detail error', err);
+        throwError(
+          CustomResponseType.UPDATE_ERROR_MESSAGE,
+          CustomResponseType.UPDATE_ERROR,
+        );
+      });
   }
 
   public async findByAccount(account: string): Promise<any> {
@@ -150,6 +172,44 @@ export class UserService {
     return jwt.sign({ id: userId }, privateKey, Object.assign(defaultOptions));
   }
 
+  public async googleAuth(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<IUser | void> {
+    const authenticate = (): Promise<GoogleProfileDto> => {
+      return new Promise((resolve, reject) => {
+        passport.authenticate(
+          'google',
+          { session: false },
+          (error: any, user: unknown) => {
+            if (error || !user) {
+              logger.error(error);
+              throwError(
+                CustomResponseType.GOOGLE_AUTH_ERROR_MESSAGE,
+                CustomResponseType.GOOGLE_AUTH_ERROR,
+              );
+            }
+            resolve(new GoogleProfileDto(user));
+          },
+        )(req, res, next);
+      });
+    };
+    const googleUser: GoogleProfileDto = await authenticate();
+    const user = await this.userRepository.findByThirdPartyId(googleUser.getId);
+    if (!user) {
+      return this.userRepository.createUserByGoogle(googleUser).catch((err) => {
+        logger.error('create user error', err);
+        throwError(
+          CustomResponseType.INSERT_ERROR_MESSAGE,
+          CustomResponseType.INSERT_ERROR,
+        );
+      });
+    } else {
+      return user;
+    }
+  }
+
   private pwdValidate(pwd: string, confirmPwd: string): void {
     if (pwd !== confirmPwd) {
       throwError(
@@ -158,24 +218,4 @@ export class UserService {
       );
     }
   }
-
-  // private async comparePwd(dbPwd: string, pwd: string) {
-  //   const compare: boolean = await bcrypt.compare(pwd, dbPwd);
-  //   if (compare) {
-  //     const jwt: string = this.generateJWT(
-  //         user._id.toString(),
-  //         user.accountType.toString(),
-  //     );
-  //     return this.formatResponse(
-  //         CustomResponseType.OK_MESSAGE,
-  //         CustomResponseType.OK,
-  //         new SignUpVo(user, jwt),
-  //     );
-  //   } else {
-  //     return this.formatResponse(
-  //         CustomResponseType.WRONG_PASSWORD_MESSAGE,
-  //         CustomResponseType.WRONG_PASSWORD,
-  //     );
-  //   }
-  // }
 }

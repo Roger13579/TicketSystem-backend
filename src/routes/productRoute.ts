@@ -13,7 +13,7 @@ export class ProductRoute extends BaseRoute {
 
   protected initial(): void {
     this.controller = new ProductController();
-    super.initial();
+    this.setRouters();
   }
 
   protected setRouters(): void {
