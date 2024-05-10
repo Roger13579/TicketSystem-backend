@@ -34,7 +34,7 @@ const doc = {
   },
 };
 
-const outputFile = '../swagger-output.json';
+const outputFile = '../../swagger-output.json';
 const routes = ['src/routes/*.ts']; // 進入點/注入點，分析 router 和自動生成
 
 swaggerAutogen(outputFile, routes, doc).then(() => {

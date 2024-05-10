@@ -175,6 +175,66 @@
         ]
       }
     },
+    "/v1/user/google-login": {
+      "get": {
+        "tags": [
+          "Sign-in"
+        ],
+        "summary": "Google第三方登入",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        }
+      }
+    },
+    "/v1/user/google/callback": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/user/google-update": {
+      "post": {
+        "tags": [
+          "Sign-in"
+        ],
+        "summary": "首次Google第三方登入後進行一般註冊",
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Sign up after Google Login",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignUpForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            }
+          }
+        }
+      }
+    },
     "/v1/product": {
       "get": {
         "tags": [
@@ -921,19 +981,19 @@
                   },
                   "sellEndAt": {
                     "type": "string",
-                    "example": "2024-05-10T11:53:57.214Z"
+                    "example": "2024-05-12T15:46:07.182Z"
                   },
                   "sellStartAt": {
                     "type": "string",
-                    "example": "2024-05-10T09:53:57.215Z"
+                    "example": "2024-05-12T13:46:07.183Z"
                   },
                   "endAt": {
                     "type": "string",
-                    "example": "2024-05-10T15:53:57.215Z"
+                    "example": "2024-05-12T19:46:07.183Z"
                   },
                   "startAt": {
                     "type": "string",
-                    "example": "2024-05-10T13:53:57.215Z"
+                    "example": "2024-05-12T17:46:07.183Z"
                   },
                   "tags": {
                     "type": "array",
@@ -1230,26 +1290,26 @@
               },
               "sellEndAt": {
                 "type": "Date",
-                "example": "2024-05-10T11:53:57.214Z",
-                "min": "2024-05-09T10:53:57.215Z",
+                "example": "2024-05-12T15:46:07.182Z",
+                "min": "2024-05-11T14:46:07.183Z",
                 "description": "販賣結束時間，必須晚於販賣開始時間至少一個小時"
               },
               "sellStartAt": {
                 "type": "Date",
-                "example": "2024-05-10T09:53:57.215Z",
-                "min": "2024-05-09T09:53:57.216Z",
+                "example": "2024-05-12T13:46:07.183Z",
+                "min": "2024-05-11T13:46:07.184Z",
                 "description": "販賣開始時間，必須晚於現在時間至少一天"
               },
               "endAt": {
                 "type": "Date",
-                "example": "2024-05-10T15:53:57.215Z",
-                "min": "2024-05-09T12:53:57.216Z",
+                "example": "2024-05-12T19:46:07.183Z",
+                "min": "2024-05-11T16:46:07.184Z",
                 "description": "活動結束時間，必須晚於活動開始時間至少一個小時"
               },
               "startAt": {
                 "type": "Date",
-                "example": "2024-05-10T13:53:57.215Z",
-                "min": "2024-05-09T11:53:57.216Z",
+                "example": "2024-05-12T17:46:07.183Z",
+                "min": "2024-05-11T15:46:07.184Z",
                 "description": "活動開始時間，必須晚於販售結束時間至少一個小時"
               },
               "tags": {
