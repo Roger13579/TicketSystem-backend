@@ -13,13 +13,7 @@ export abstract class BaseRoute {
 
   protected prefix: string = '/api';
 
-  protected constructor() {
-    this.initial();
-  }
-
-  protected initial(): void {
-    this.setRouters();
-  }
+  protected constructor() {}
 
   public getRouters() {
     return this.router;

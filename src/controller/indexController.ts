@@ -1,10 +1,10 @@
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { BaseController } from './baseController';
 import { ResponseObject } from '../utils/responseObject';
 import { CustomResponseType } from '../types/customResponseType';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
-import { SignUpVo } from '../vo/signUpVo';
+import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
 import { ResetPwdDto } from '../dto/resetPwdDto';
 
@@ -15,6 +15,21 @@ class IndexController extends BaseController {
     this.paramVerify(req);
     const { email, account, pwd, confirmPwd } = req.body;
     await this.userService.createUser(account, email, pwd, confirmPwd);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+    );
+  };
+  public googleSignUp = async (req: Request): Promise<ResponseObject> => {
+    this.paramVerify(req);
+    const { account, pwd, confirmPwd } = req.body;
+    const thirdPartyId = (req.user as any).thirdPartyId;
+    await this.userService.updateUserFromGoogle(
+      account,
+      pwd,
+      confirmPwd,
+      thirdPartyId,
+    );
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
@@ -36,7 +51,7 @@ class IndexController extends BaseController {
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
-        new SignUpVo(user, jwt),
+        new LoginVo(user, jwt),
       );
     } else {
       return this.formatResponse(
@@ -65,6 +80,31 @@ class IndexController extends BaseController {
         CustomResponseType.OK,
       );
     });
+  };
+
+  public googleCallback = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<ResponseObject> => {
+    const authUser = await this.userService.googleAuth(req, res, next);
+    if (authUser) {
+      const jwt = this.userService.generateJWT(
+        authUser.id,
+        authUser.accountType,
+      );
+      return this.formatResponse(
+        CustomResponseType.OK_MESSAGE,
+        CustomResponseType.OK,
+        new LoginVo(authUser, jwt),
+      );
+    } else {
+      console.log('authUser is empty');
+      return this.formatResponse(
+        CustomResponseType.GOOGLE_AUTH_ERROR_MESSAGE,
+        CustomResponseType.GOOGLE_AUTH_ERROR,
+      );
+    }
   };
 
   private paramVerify(req: Request) {

@@ -110,4 +110,7 @@ export const enum CustomResponseType {
 
   INVALID_BOOLEAN = '6510',
   INVALID_BOOLEAN_MESSAGE = '無效的 Boolean 值',
+
+  GOOGLE_AUTH_ERROR = '6511',
+  GOOGLE_AUTH_ERROR_MESSAGE = 'Google第三方登入錯誤',
 }

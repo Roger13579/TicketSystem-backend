@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export class SignUpVo {
+export class LoginVo {
   private account: string;
   private email: string;
   private token: string;

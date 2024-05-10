@@ -12,7 +12,7 @@ export class UserRoute extends BaseRoute {
 
   protected initial(): void {
     this.controller = new UserController();
-    super.initial();
+    this.setRouters();
   }
 
   protected setRouters(): void {

@@ -1,6 +1,7 @@
 import { UserModel, IUser } from '../models/user';
 import { UserDetailDto } from '../dto/userDetailDto';
 import { Types } from 'mongoose';
+import { GoogleProfileDto } from '../dto/googleProfileDto';
 
 export class UserRepository {
   public async createUser(
@@ -14,6 +15,34 @@ export class UserRepository {
         account,
         pwd,
         accountType: 'member',
+      }),
+    );
+  }
+  public async createUserByGoogle(
+    googleUser: GoogleProfileDto,
+  ): Promise<IUser> {
+    return UserModel.create(
+      new UserModel({
+        account: googleUser.getEmail,
+        email: googleUser.getEmail,
+        thirdPartyId: googleUser.getId,
+        thirdPartyType: 'google',
+        avatarPath: googleUser.getPicture,
+        isThirdPartyVerified: googleUser.getEmailVerified,
+        accountType: 'member',
+      }),
+    );
+  }
+  public async updateUserFromGoogle(
+    account: string,
+    pwd: string,
+    thirdPartyId: string,
+  ): Promise<IUser | null> {
+    return UserModel.findOneAndUpdate(
+      { thirdPartyId: thirdPartyId },
+      new UserModel({
+        account: account,
+        pwd: pwd,
       }),
     );
   }
@@ -50,5 +79,9 @@ export class UserRepository {
 
   public async findById(id: string): Promise<IUser | null> {
     return UserModel.findOne({ _id: id });
+  }
+
+  public async findByThirdPartyId(id: string): Promise<IUser | null> {
+    return UserModel.findOne({ thirdPartyId: id });
   }
 }
