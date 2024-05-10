@@ -157,14 +157,6 @@ export class IndexRoute extends BaseRoute {
        * #swagger.summary = 'Google第三方登入'
        */
       /*
-
-        /*	#swagger.parameters['obj'] = {
-                  in: 'body',
-                  description: 'Google Login',
-                  required: true,
-                  schema: { $ref: "#/definitions/ResetPwdForm" }
-          } */
-
       /* #swagger.responses[200] = {
               description: 'OK',
               schema:{
