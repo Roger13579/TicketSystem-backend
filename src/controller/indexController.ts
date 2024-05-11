@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { BaseController } from './baseController';
 import { ResponseObject } from '../utils/responseObject';
 import { CustomResponseType } from '../types/customResponseType';
-import { validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
 import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
@@ -106,16 +105,6 @@ class IndexController extends BaseController {
       );
     }
   };
-
-  private paramVerify(req: Request) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-      return this.formatResponse(
-        result.array()[0].msg,
-        CustomResponseType.FORMAT_ERROR,
-      );
-    }
-  }
 }
 
 export default IndexController;
