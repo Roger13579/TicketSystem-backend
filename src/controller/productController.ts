@@ -7,6 +7,7 @@ import { NewProductVo } from '../vo/newProductVo';
 import { TCreateProductsReq, TGetProductsReq } from '../types/product.type';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import { GetProductVo } from '../vo/getProductVo';
+import { IProduct } from '../models/product';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
@@ -14,8 +15,9 @@ class ProductController extends BaseController {
   public getProducts = async (
     req: TGetProductsReq,
   ): Promise<ResponseObject> => {
+    this.paramVerify(req);
     const productFilterDto = new ProductFilterDTO(req);
-    const { page, limit } = productFilterDto.getFilter;
+    const { page, limit } = productFilterDto;
     const info = await this.productService.findProducts(productFilterDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
@@ -27,12 +29,13 @@ class ProductController extends BaseController {
   public createProducts = async (
     req: TCreateProductsReq,
   ): Promise<ResponseObject> => {
+    this.paramVerify(req);
     const newProductsDto = new NewProductDto(req);
     const products = await this.productService.createProducts(newProductsDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new NewProductVo(products || []),
+      new NewProductVo(products as IProduct[]),
     );
   };
 }

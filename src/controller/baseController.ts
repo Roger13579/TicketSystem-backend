@@ -4,15 +4,15 @@ import { Request } from 'express';
 import { validationResult } from 'express-validator';
 
 export abstract class BaseController {
-  public formatResponse(
+  public formatResponse<T>(
     message: string,
     status = CustomResponseType.SYSTEM_ERROR,
-    data: any = {},
+    data?: T,
   ): ResponseObject {
-    const options: any = {
-      status: status,
-      message: message,
-      data: data,
+    const options = {
+      status,
+      message,
+      data,
     };
     return new ResponseObject(options);
   }

@@ -1,6 +1,7 @@
 import { parseDate } from '../utils/common';
 import { Types } from 'mongoose';
 import { GroupStatus, TCreateGroupReq } from '../types/group.type';
+import { IUser } from '../models/user';
 
 export class CreateGroupDto {
   private readonly userId: Types.ObjectId;
@@ -14,7 +15,7 @@ export class CreateGroupDto {
   private readonly status: string;
 
   constructor(req: TCreateGroupReq) {
-    this.userId = new Types.ObjectId((req.user as any).id as string);
+    this.userId = new Types.ObjectId((req.user as IUser).id);
     this.title = req.body.title;
     this.theater = req.body.theater;
     this.movieTitle = req.body.movieTitle;

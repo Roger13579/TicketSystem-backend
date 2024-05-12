@@ -5,6 +5,7 @@ import { IProduct } from '../models/product';
 import { ProductRepository } from '../repository/productRepository';
 import { CustomResponseType } from '../types/customResponseType';
 import { AccountType } from '../types/user.type';
+import { checkDateOrder } from '../utils/common';
 import { createErrorMsg, throwError } from '../utils/errorHandler';
 
 const logger = log4js.getLogger(`ProductRepository`);
@@ -44,24 +45,25 @@ export class ProductService {
     | undefined
   > {
     const {
-      page,
       priceMax,
       priceMin,
       accountType,
       limit,
       isPublic,
       recommendWeights,
-    } = productFilterDto.getFilter;
+      sellStartAtFrom,
+      sellStartAtTo,
+      startAtFrom,
+      startAtTo,
+    } = productFilterDto;
 
-    // 分頁 Check
-    if (!page) {
-      throwError(
-        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-          `: page 不得為 ${page}`,
-        CustomResponseType.INVALID_PRODUCT_FILTER,
-      );
-      return;
-    }
+    // 確認時間順序
+    checkDateOrder(
+      { prop: 'sellStartAtFrom', value: sellStartAtFrom },
+      { prop: 'sellStartAtTo', value: sellStartAtTo },
+      { prop: 'startAtFrom', value: startAtFrom },
+      { prop: 'startAtTo', value: startAtTo },
+    );
 
     // price Check: priceMax 要大於 priceMin
     if (priceMax && priceMin && priceMax < priceMin) {

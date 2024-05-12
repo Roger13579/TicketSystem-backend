@@ -1,4 +1,5 @@
-import { Request } from 'express';
+import { IUser } from '../models/user';
+import { IUserReq } from '../types/common.type';
 
 export class UserDetailDto {
   private readonly id: string;
@@ -27,8 +28,8 @@ export class UserDetailDto {
     return this.address;
   }
 
-  constructor(req: Request) {
-    this.id = (req.user as any).id;
+  constructor(req: IUserReq) {
+    this.id = (req.user as IUser).id;
     const { name, birthDate, gender, phone, address } = req.body;
     this.name = name;
     this.birthDate = birthDate;

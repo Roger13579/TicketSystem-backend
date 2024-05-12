@@ -1,3 +1,5 @@
+import { TGoogleUser } from '../types/user.type';
+
 export class GoogleProfileDto {
   private readonly id: string;
   private readonly name: string;
@@ -21,11 +23,12 @@ export class GoogleProfileDto {
     return this.emailVerified;
   }
 
-  constructor(googleUser: any) {
-    this.id = googleUser._json.sub;
-    this.name = googleUser._json.name;
-    this.email = googleUser._json.email;
-    this.picture = googleUser._json.picture;
-    this.emailVerified = googleUser._json.email_verified;
+  constructor(googleUser: TGoogleUser) {
+    const { sub, name, email, picture, email_verified } = googleUser._json;
+    this.id = sub;
+    this.name = name;
+    this.email = email;
+    this.picture = picture;
+    this.emailVerified = email_verified;
   }
 }

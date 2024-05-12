@@ -8,7 +8,7 @@ import { router } from './routes/router';
 import connection from './config/dbConnection';
 import { globalMiddleware } from './middleware/globalMiddleware';
 import swaggerUi from 'swagger-ui-express';
-import swaggerFile from './dist/swagger-output.json';
+import swaggerFile from './swagger-output.json';
 import passport from 'passport';
 import { AppError } from './utils/errorHandler';
 import { DefaultException } from './utils/defaultException';

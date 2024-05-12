@@ -1,9 +1,9 @@
-import { PipeBase } from './pipe.base';
+import { PipeBase } from '../pipe.base';
 import { body } from 'express-validator';
-import { CustomResponseType } from '../types/customResponseType';
+import { CustomResponseType } from '../../types/customResponseType';
 
 export class CreateGroupPipe extends PipeBase {
-  public transform(): any[] {
+  public transform() {
     return [
       body('title')
         .exists()
@@ -25,5 +25,9 @@ export class CreateGroupPipe extends PipeBase {
         .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '是否持有票券'),
       this.validationHandler,
     ];
+  }
+
+  constructor() {
+    super();
   }
 }

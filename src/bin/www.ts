@@ -13,35 +13,10 @@ const logger = log4js.getLogger(`init`);
 env.config();
 
 /**
- * Get port from environment and store in Express.
- */
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-const server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port, () => {
-  logger.info(`server start at port ${port} `);
-});
-server.on('error', onError);
-server.on('listening', onListening);
-
-// Socket.io
-// import socket from '../service/socket-io.js';
-// socket.connectSocketIO(server);
-
-/**
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val: string) {
+const normalizePort = (val: string) => {
   const port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -55,13 +30,28 @@ function normalizePort(val: string) {
   }
 
   return false;
-}
+};
+
+/**
+ * Get port from environment and store in Express.
+ */
+const port = normalizePort(process.env.PORT);
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+const server = http.createServer(app);
+
+// Socket.io
+// import socket from '../service/socket-io.js';
+// socket.connectSocketIO(server);
 
 /**
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error: { syscall: string; code: any }) {
+const onError = (error: NodeJS.ErrnoException) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -81,14 +71,24 @@ function onError(error: { syscall: string; code: any }) {
     default:
       throw error;
   }
-}
+};
 
 /**
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + port;
   logger.info('Listening on ' + bind);
-}
+};
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port, () => {
+  logger.info(`server start at port ${port} `);
+});
+server.on('error', onError);
+server.on('listening', onListening);
