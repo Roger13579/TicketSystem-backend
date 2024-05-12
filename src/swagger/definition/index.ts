@@ -38,6 +38,7 @@ import {
   CustomGetProductSortByQuery,
   CustomGetProductTagQuery,
 } from './product';
+import { CreateGroupSuccess, CustomCreateGroupObj } from './group';
 
 export const definitions = {
   Success,
@@ -57,6 +58,7 @@ export const definitions = {
   ValidateEmailError,
   CreateProductsSuccess,
   CreateProductsError,
+  CreateGroupSuccess,
 };
 
 export const customDefinitions = {
@@ -79,4 +81,5 @@ export const customDefinitions = {
   CustomGetProductPageQuery,
   CustomGetProductLimitQuery,
   CustomGetProductSortByQuery,
+  CustomCreateGroupObj,
 };

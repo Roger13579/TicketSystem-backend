@@ -3,6 +3,7 @@ import { ResponseObject } from '../utils/responseObject';
 import { BaseController } from '../controller/baseController';
 import { HttpStatus } from '../types/responseType';
 import log4js from '../config/log4js';
+import { PipeBase } from '../validator/pipe.base';
 const logger = log4js.getLogger(`BaseRoute`);
 
 export abstract class BaseRoute {
@@ -21,6 +22,11 @@ export abstract class BaseRoute {
 
   public getPrefix() {
     return this.prefix;
+  }
+
+  protected usePipe(prototype: any): any[] {
+    const pipe = new prototype();
+    return (pipe as PipeBase).transform();
   }
 
   protected responseHandler(
