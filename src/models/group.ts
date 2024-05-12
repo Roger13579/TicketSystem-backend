@@ -2,8 +2,9 @@ import { Schema, model } from 'mongoose';
 import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
 import { GroupStatus } from '../types/group.type';
+import { BaseModel } from './baseModel';
 
-interface IGroup extends Document, ITimestamp {
+export interface IGroup extends Document, ITimestamp, BaseModel {
   userId: Schema.Types.ObjectId;
   title: string;
   theater: string;
@@ -69,6 +70,4 @@ const schema = new Schema<IGroup>(
   schemaOption,
 );
 
-const GroupModel = model<IGroup>('Group', schema);
-
-export default GroupModel;
+export const GroupModel = model<IGroup>('Group', schema);
