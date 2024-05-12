@@ -113,4 +113,7 @@ export const enum CustomResponseType {
 
   GOOGLE_AUTH_ERROR = '6511',
   GOOGLE_AUTH_ERROR_MESSAGE = 'Google第三方登入錯誤',
+
+  INVALID_UPLOAD = '6513',
+  INVALID_UPLOAD_MESSAGE = '無效的檔案上傳：',
 }

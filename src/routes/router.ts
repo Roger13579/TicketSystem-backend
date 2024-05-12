@@ -3,10 +3,12 @@ import { UserRoute } from './userRoute';
 import { BaseRoute } from './baseRoute';
 import { ProductRoute } from './productRoute';
 import { GroupRoute } from './groupRoute';
+import { UploadRoute } from './uploadRoute';
 
 export const router: Array<BaseRoute> = [
   new IndexRoute(),
   new UserRoute(),
   new ProductRoute(),
   new GroupRoute(),
+  new UploadRoute(),
 ];
