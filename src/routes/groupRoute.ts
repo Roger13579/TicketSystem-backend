@@ -1,7 +1,7 @@
 import { BaseRoute } from './baseRoute';
 import { GroupController } from '../controller/groupController';
 import { UserVerify } from '../middleware/userVerify';
-import { CreateGroupPipe } from '../validator/createGroup.pipe';
+import { CreateGroupPipe } from '../validator/group/createGroup.pipe';
 
 export class GroupRoute extends BaseRoute {
   protected controller!: GroupController;

@@ -4,7 +4,8 @@ import { CustomResponseType } from '../types/customResponseType';
 import { throwError } from '../utils/errorHandler';
 
 export abstract class PipeBase {
-  public abstract transform(): any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public abstract transform(): any;
 
   protected validationHandler(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
@@ -14,4 +15,5 @@ export abstract class PipeBase {
     }
     next();
   }
+  protected constructor() {}
 }

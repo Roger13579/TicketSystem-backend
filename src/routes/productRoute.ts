@@ -1,6 +1,7 @@
 import ProductController from '../controller/productController';
 import { IsAdmin } from '../middleware/isAdmin';
 import { UserCheck, UserVerify } from '../middleware/userVerify';
+import { FindProductPipe } from '../validator/product/findProduct.pipe';
 import { BaseRoute } from './baseRoute';
 
 export class ProductRoute extends BaseRoute {
@@ -196,6 +197,7 @@ export class ProductRoute extends BaseRoute {
           }
       */
       UserCheck,
+      this.usePipe(FindProductPipe),
       this.responseHandler(this.controller.getProducts),
     );
 

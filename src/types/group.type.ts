@@ -1,5 +1,5 @@
-import { Request } from 'express';
 import { Types } from 'mongoose';
+import { IUserReq } from './common.type';
 
 export enum GroupStatus {
   ongoing = 'ongoing', // 正在揪團
@@ -7,7 +7,7 @@ export enum GroupStatus {
   completed = 'completed', // 完成揪團
 }
 
-export interface TCreateGroupReq extends Request {
+export interface TCreateGroupReq extends IUserReq {
   body: {
     userId: Types.ObjectId;
     title: string;

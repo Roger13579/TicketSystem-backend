@@ -1,10 +1,13 @@
 import { BaseRoute } from './baseRoute';
 import IndexController from '../controller/indexController';
-import { body } from 'express-validator';
-import { CustomResponseType } from '../types/customResponseType';
 import { UserVerify } from '../middleware/userVerify';
 import passport from 'passport';
 import { PassportInit } from '../middleware/passportInit';
+import { SignUpPipe } from '../validator/user/signUp.pipe';
+import { LoginPipe } from '../validator/user/login.pipe';
+import { ForgetPwdPipe } from '../validator/user/forgetPwd.pipe';
+import { ResetPwdPipe } from '../validator/user/resetPwd.pipe';
+import { GoogleUpdatePipe } from '../validator/user/googleUpdate.pipe';
 export class IndexRoute extends BaseRoute {
   protected controller!: IndexController;
 
@@ -41,18 +44,7 @@ export class IndexRoute extends BaseRoute {
               }
             }
          */
-      body('account')
-        .exists()
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
-      body('email')
-        .exists()
-        .isEmail()
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '電子信箱'),
-      body('pwd')
-        .exists()
-        .isLength({ min: 8 })
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-      body('confirmPwd').exists(),
+      this.usePipe(SignUpPipe),
       this.responseHandler(this.controller.signUp),
     );
     this.router.post(
@@ -76,13 +68,7 @@ export class IndexRoute extends BaseRoute {
               }
             }
          */
-      body('account')
-        .exists()
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
-      body('pwd')
-        .exists()
-        .isLength({ min: 8 })
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
+      this.usePipe(LoginPipe),
       this.responseHandler(this.controller.login),
     );
 
@@ -108,10 +94,7 @@ export class IndexRoute extends BaseRoute {
               }
             }
          */
-      body('email')
-        .exists()
-        .isEmail()
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '電子信箱'),
+      this.usePipe(ForgetPwdPipe),
       this.responseHandler(this.controller.forgotPwd),
     );
 
@@ -139,14 +122,7 @@ export class IndexRoute extends BaseRoute {
             }
          */
       UserVerify,
-      body('oldPwd')
-        .isLength({ min: 8 })
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-      body('pwd')
-        .exists()
-        .isLength({ min: 8 })
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-      body('confirmPwd').exists(),
+      this.usePipe(ResetPwdPipe),
       this.responseHandler(this.controller.resetPwd),
     );
 
@@ -197,14 +173,7 @@ export class IndexRoute extends BaseRoute {
             }
          */
       UserVerify,
-      body('account')
-        .exists()
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '帳號'),
-      body('pwd')
-        .exists()
-        .isLength({ min: 8 })
-        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '密碼'),
-      body('confirmPwd').exists(),
+      this.usePipe(GoogleUpdatePipe),
       this.responseHandler(this.controller.googleSignUp),
     );
   }
