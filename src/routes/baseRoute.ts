@@ -4,6 +4,7 @@ import { BaseController } from '../controller/baseController';
 import { HttpStatus } from '../types/responseType';
 import log4js from '../config/log4js';
 import { PipeBase } from '../validator/pipe.base';
+
 const logger = log4js.getLogger(`BaseRoute`);
 
 export abstract class BaseRoute {
@@ -24,9 +25,9 @@ export abstract class BaseRoute {
     return this.prefix;
   }
 
-  protected usePipe(prototype: any): any[] {
+  protected usePipe<T extends PipeBase>(prototype: new () => T) {
     const pipe = new prototype();
-    return (pipe as PipeBase).transform();
+    return pipe.transform();
   }
 
   protected responseHandler(
@@ -43,7 +44,7 @@ export abstract class BaseRoute {
         .then((obj) => res.status(HttpStatus.OK).json(obj))
         .catch((err) => {
           logger.error(err);
-          next(controller.formatResponse(err.message, (err as any).status));
+          next(controller.formatResponse(err.message, err.status));
         });
     };
   }

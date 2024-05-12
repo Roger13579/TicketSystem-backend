@@ -11,6 +11,7 @@ import { ResetPwdDto } from '../dto/resetPwdDto';
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import { GoogleProfileDto } from '../dto/googleProfileDto';
+import { TGoogleUser } from '../types/user.type';
 const logger = log4js.getLogger(`UserService`);
 
 export class UserService {
@@ -79,7 +80,7 @@ export class UserService {
       });
   }
 
-  public async findByAccount(account: string): Promise<any> {
+  public async findByAccount(account: string): Promise<unknown> {
     const user = await this.userRepository.findByAccount(account);
     if (!user) {
       throwError(
@@ -90,7 +91,7 @@ export class UserService {
     return user;
   }
 
-  public async findByEmail(email: string): Promise<any> {
+  public async findByEmail(email: string): Promise<unknown> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throwError(
@@ -101,7 +102,7 @@ export class UserService {
     return user;
   }
 
-  public async forgotPwd(email: string): Promise<any> {
+  public async forgotPwd(email: string) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throwError(
@@ -113,7 +114,7 @@ export class UserService {
     }
   }
 
-  public async resetPwd(resetPwdDto: ResetPwdDto): Promise<any> {
+  public async resetPwd(resetPwdDto: ResetPwdDto): Promise<unknown> {
     const user = await this.userRepository.findById(resetPwdDto.getId);
     if (!user) {
       throwError(
@@ -153,7 +154,7 @@ export class UserService {
   }
 
   public generateJWT(userId: string, accountType: string): string {
-    const privateKey: any = process.env.JWT_SECRETS;
+    const privateKey = process.env.JWT_SECRETS;
     const defaultOptions: object = {
       expiresIn: process.env.JWT_EXPIRES,
     };
@@ -165,7 +166,7 @@ export class UserService {
   }
 
   public async generateForgotPasswordJWT(userId: string): Promise<string> {
-    const privateKey: any = process.env.JWT_SECRETS;
+    const privateKey = process.env.JWT_SECRETS;
     const defaultOptions: object = {
       expiresIn: process.env.JWT_EMAIL_EXPIRES,
     };
@@ -177,12 +178,12 @@ export class UserService {
     res: Response,
     next: NextFunction,
   ): Promise<IUser | void> {
-    const authenticate = (): Promise<GoogleProfileDto> => {
-      return new Promise((resolve, reject) => {
+    const authenticate = (): Promise<GoogleProfileDto> =>
+      new Promise((resolve, _reject) => {
         passport.authenticate(
           'google',
           { session: false },
-          (error: any, user: unknown) => {
+          (error: Error, user: TGoogleUser) => {
             if (error || !user) {
               logger.error(error);
               throwError(
@@ -194,7 +195,7 @@ export class UserService {
           },
         )(req, res, next);
       });
-    };
+
     const googleUser: GoogleProfileDto = await authenticate();
     const user = await this.userRepository.findByThirdPartyId(googleUser.getId);
     if (!user) {

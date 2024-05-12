@@ -21,7 +21,7 @@ export class ProductRepository {
       priceMax,
       priceMin,
       tags,
-    } = productFilterDto.getFilter;
+    } = productFilterDto;
     const titleRegex = title ? new RegExp(title) : undefined;
     return {
       ...(titleRegex && { title: { $regex: titleRegex } }),
@@ -63,7 +63,7 @@ export class ProductRepository {
   public async findProducts(
     productFilterDto: ProductFilterDTO,
   ): Promise<IProduct[]> {
-    const { page, limit, sortBy, accountType } = productFilterDto.getFilter;
+    const { page, limit, sortBy, accountType } = productFilterDto;
     const filter = this.createProductFilter(productFilterDto);
     const selection =
       accountType === AccountType.admin ? '' : '-recommendWeight -isPublic';

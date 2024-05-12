@@ -1,4 +1,8 @@
-import { Error } from 'mongoose';
+import {
+  TCustomMongoDBError,
+  ICustomMongooseError,
+  IThrowError,
+} from '../types/common.type';
 
 /**
  * @description - 負責將所以API的錯誤統一並回傳統一error格式
@@ -30,23 +34,23 @@ class AppError extends Error {
     this.statusCode = statusCode;
   }
 }
-export const throwError = (message: string, code: string): any => {
-  const error = new Error(message);
-  (error as any).status = code;
+
+export const throwError = (message: string, code: string): Error => {
+  const error: IThrowError = new Error(message);
+  error.status = code;
   throw error;
 };
 
-export const createErrorMsg = (err: any) => {
+export const createErrorMsg = (err: unknown) => {
   let errMsg: string = '';
-  if (err.writeErrors) {
+  if ((err as TCustomMongoDBError).writeErrors) {
     // from mongodb
     // TODO: error type
-    errMsg = (err.writeErrors as { err: { errmsg: string } }[])
-      .map(({ err }) => err.errmsg)
+    errMsg = (err as TCustomMongoDBError).writeErrors
+      .map((subErr) => subErr.err.errmsg)
       .join('/');
   }
-  if (err.errors) {
-    // from mongoose
+  if ((err as ICustomMongooseError).errors) {
     errMsg = (err as Error).message;
   }
   return errMsg;

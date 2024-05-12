@@ -1,6 +1,6 @@
 import { IProduct } from '../models/product';
 import { Request } from 'express';
-import { UserReq } from './common.type';
+import { IUserReq } from './common.type';
 
 export enum ProductType {
   premier = 'premier',
@@ -52,7 +52,7 @@ export interface TCreateProductsReq extends Request {
   };
 }
 
-export interface TGetProductsReq extends UserReq {
+export interface TGetProductsReq extends IUserReq {
   query: {
     title?: string;
     types?: string;
@@ -83,7 +83,7 @@ export enum ProductSortBy {
   vendor = 'vendor',
   theater = 'theater',
   title = 'title',
-  _id = '_id',
+  id = 'id',
   soldAmount = 'soldAmount',
   createdAt = 'createdAt',
 }

@@ -1,11 +1,19 @@
-export class JWTPayloadDTO {
-  public readonly id: string;
-  public readonly account: string;
-  public readonly accountType: string;
+import { IUser } from '../models/user';
+import { IUserReq } from '../types/common.type';
 
-  constructor(user: JWTPayloadDTO) {
-    this.id = user.id;
-    this.account = user.account;
-    this.accountType = user.accountType;
+export class JWTPayloadDTO {
+  private readonly id: string;
+  private readonly _account: string;
+  private readonly accountType: string;
+
+  get account() {
+    return this._account;
+  }
+
+  constructor(req: IUserReq) {
+    const { id, account, accountType } = req.user as IUser;
+    this.id = id;
+    this._account = account;
+    this.accountType = accountType;
   }
 }

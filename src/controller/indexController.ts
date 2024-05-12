@@ -6,6 +6,8 @@ import bcrypt from 'bcrypt';
 import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
 import { ResetPwdDto } from '../dto/resetPwdDto';
+import { IUser } from '../models/user';
+import { ILoginReq } from '../types/user.type';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
@@ -22,7 +24,7 @@ class IndexController extends BaseController {
   public googleSignUp = async (req: Request): Promise<ResponseObject> => {
     this.paramVerify(req);
     const { account, pwd, confirmPwd } = req.body;
-    const thirdPartyId = (req.user as any).thirdPartyId;
+    const thirdPartyId = (req.user as IUser).thirdPartyId;
     await this.userService.updateUserFromGoogle(
       account,
       pwd,
@@ -35,15 +37,15 @@ class IndexController extends BaseController {
     );
   };
 
-  public login = async (req: Request): Promise<ResponseObject> => {
+  public login = async (req: ILoginReq): Promise<ResponseObject> => {
     this.paramVerify(req);
-    const account: string = req.body.account;
-    const pwd: string = req.body.pwd;
-    const user = await this.userService.findByAccount(account);
-    const dbPwd: string = user.pwd;
-    const compare: boolean = await bcrypt.compare(pwd, dbPwd);
+    const account = req.body.account;
+    const pwd = req.body.pwd;
+    const user = (await this.userService.findByAccount(account)) as IUser;
+    const dbPwd = user.pwd;
+    const compare = await bcrypt.compare(pwd, dbPwd);
     if (compare) {
-      const jwt: string = this.userService.generateJWT(
+      const jwt = this.userService.generateJWT(
         user._id.toString(),
         user.accountType.toString(),
       );
@@ -98,7 +100,6 @@ class IndexController extends BaseController {
         new LoginVo(authUser, jwt),
       );
     } else {
-      console.log('authUser is empty');
       return this.formatResponse(
         CustomResponseType.GOOGLE_AUTH_ERROR_MESSAGE,
         CustomResponseType.GOOGLE_AUTH_ERROR,

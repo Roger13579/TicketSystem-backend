@@ -6,7 +6,7 @@ const logger = log4js.getLogger(`initConnection`);
 const connection = async () => {
   env.config();
   try {
-    const mongoDbUrl = process.env.MONGO_DB_URL || 'mongodb://localhost:27017';
+    const mongoDbUrl = process.env.MONGO_DB_URL;
     await connect(mongoDbUrl);
     logger.info('mongo db connection initialized');
   } catch (err) {

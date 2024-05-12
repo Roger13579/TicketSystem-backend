@@ -1,45 +1,101 @@
 import { IUser } from '../models/user';
 import {
   MovieGenre,
-  ProductSortBy,
   ProductType,
-  RecommendWeightRange,
   TGetProductsReq,
 } from '../types/product.type';
 import { AccountType } from '../types/user.type';
-import { throwError } from '../utils/errorHandler';
-import { CustomResponseType } from '../types/customResponseType';
-import {
-  checkDateOrder,
-  parseBoolean,
-  parseDate,
-  parsePositiveInteger,
-  parseValidEnums,
-} from '../utils/common';
+import moment from 'moment';
 
 export class ProductFilterDTO {
-  public readonly title?: string;
-  public readonly types?: ProductType[];
-  public readonly genres?: MovieGenre[];
-  public readonly vendors?: string[];
-  public readonly theaters?: string[];
-  public readonly isPublic?: boolean;
-  public readonly isLaunched?: boolean;
-  public readonly startAtFrom?: Date;
-  public readonly startAtTo?: Date;
-  public readonly recommendWeights?: number[];
-  public readonly sellStartAtFrom?: Date;
-  public readonly sellStartAtTo?: Date;
-  public readonly priceMax?: number;
-  public readonly priceMin?: number;
-  public readonly tags?: string[];
-  public readonly page?: number;
-  public readonly limit?: number;
-  public readonly sortBy?: string;
-  public readonly accountType: AccountType = AccountType.member;
+  private readonly _title?: string;
+  private readonly _types?: ProductType[];
+  private readonly _genres?: MovieGenre[];
+  private readonly _vendors?: string[];
+  private readonly _theaters?: string[];
+  private readonly _isPublic?: boolean;
+  private readonly _isLaunched?: boolean;
+  private readonly _startAtFrom?: Date;
+  private readonly _startAtTo?: Date;
+  private readonly _recommendWeights?: number[];
+  private readonly _sellStartAtFrom?: Date;
+  private readonly _sellStartAtTo?: Date;
+  private readonly _priceMax?: number;
+  private readonly _priceMin?: number;
+  private readonly _tags?: string[];
+  private readonly _page: number;
+  private readonly _limit: number;
+  private readonly _sortBy?: string;
+  private readonly _accountType: AccountType = AccountType.member;
 
-  get getFilter() {
-    return this;
+  get title() {
+    return this._title;
+  }
+
+  get types() {
+    return this._types;
+  }
+
+  get genres() {
+    return this._genres;
+  }
+
+  get vendors() {
+    return this._vendors;
+  }
+
+  get theaters() {
+    return this._theaters;
+  }
+
+  get isLaunched() {
+    return this._isLaunched;
+  }
+
+  get isPublic() {
+    return this._isPublic;
+  }
+  get startAtFrom() {
+    return this._startAtFrom;
+  }
+  get startAtTo() {
+    return this._startAtTo;
+  }
+  get sellStartAtFrom() {
+    return this._sellStartAtFrom;
+  }
+  get recommendWeights() {
+    return this._recommendWeights;
+  }
+  get sellStartAtTo() {
+    return this._sellStartAtTo;
+  }
+  get priceMax() {
+    return this._priceMax;
+  }
+
+  get page() {
+    return this._page;
+  }
+
+  get limit() {
+    return this._limit;
+  }
+
+  get priceMin() {
+    return this._priceMin;
+  }
+
+  get tags() {
+    return this._tags;
+  }
+
+  get sortBy() {
+    return this._sortBy;
+  }
+
+  get accountType() {
+    return this._accountType;
   }
 
   constructor(req: TGetProductsReq) {
@@ -65,71 +121,37 @@ export class ProductFilterDTO {
     } = req.query;
 
     if ((req.user as IUser)?.accountType === AccountType.admin) {
-      this.accountType = AccountType.admin;
+      this._accountType = AccountType.admin;
     }
 
-    // number
-    this.limit = parsePositiveInteger('limit', limit);
-    this.priceMax = parsePositiveInteger('priceMax', priceMax);
-    this.priceMin = parsePositiveInteger('priceMin', priceMin);
-    this.page = parsePositiveInteger('page', page);
+    this._types = (types || '').split(',') as ProductType[];
+    this._genres = (genres || '').split(',') as MovieGenre[];
 
-    // string
-    this.title = title;
+    this._recommendWeights = recommendWeights
+      ?.split(',')
+      .map((weight) => Number(weight));
 
-    // validate
-    this.types = parseValidEnums('type', ProductType, types);
-    this.genres = parseValidEnums('genre', MovieGenre, genres);
+    this._sortBy = sortBy;
+    this._title = title;
+    this._limit = Number(limit);
+    this._priceMax = Number(priceMax);
+    this._priceMin = Number(priceMin);
+    this._page = Number(page);
 
-    const validRecommendWeights: number[] = [];
-    recommendWeights?.split(',').forEach((weight) => {
-      const weightNum = parsePositiveInteger('recommendWeight', weight);
-      if (
-        weightNum &&
-        Object.values(RecommendWeightRange).indexOf(weightNum) > -1
-      ) {
-        validRecommendWeights.push(weightNum);
-      }
-    });
+    this._vendors = vendors?.split(',');
+    this._theaters = theaters?.split(',');
+    this._tags = tags?.split(',');
 
-    if (validRecommendWeights.length > 0) {
-      this.recommendWeights = validRecommendWeights;
-    }
+    this._isLaunched = isLaunched === 'true';
+    this._isPublic = isPublic === 'true';
 
-    if (sortBy) {
-      const isValidSortBy =
-        Object.keys(ProductSortBy).indexOf(sortBy.trim().replace('-', '')) >= 0;
-      if (isValidSortBy) {
-        this.sortBy = sortBy as ProductSortBy;
-      } else {
-        throwError(
-          CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-            `: sortBy 不得為 ${sortBy}`,
-          CustomResponseType.INVALID_PRODUCT_FILTER,
-        );
-      }
-    }
-
-    // array
-    this.vendors = vendors?.split(',');
-    this.theaters = theaters?.split(',');
-    this.tags = tags?.split(',');
-
-    // boolean
-    this.isLaunched = parseBoolean('isLaunched', isLaunched);
-    this.isPublic = parseBoolean('isPublic', isPublic);
-
-    // time
-    this.startAtTo = parseDate('startAtTo', startAtTo);
-    this.startAtFrom = parseDate('startAtFrom', startAtFrom);
-    this.sellStartAtFrom = parseDate('sellStartAtFrom', sellStartAtFrom);
-    this.sellStartAtTo = parseDate('sellStartAtTo', sellStartAtTo);
-    // 確認時間順序
-    checkDateOrder(
-      { prop: 'sellStartAtFrom', value: this.sellStartAtFrom },
-      { prop: 'sellStartAtTo', value: this.sellStartAtTo },
-      { prop: 'startAtFrom', value: this.startAtFrom },
-      { prop: 'startAtTo', value: this.startAtTo },
-    );
+    this._startAtTo = startAtTo ? moment(startAtTo).toDate() : undefined;
+    this._startAtFrom = startAtFrom ? moment(startAtFrom).toDate() : undefined;
+    this._sellStartAtFrom = sellStartAtFrom
+      ? moment(sellStartAtFrom).toDate()
+      : undefined;
+    this._sellStartAtTo = sellStartAtTo
+      ? moment(sellStartAtTo).toDate()
+      : undefined;
   }
 }

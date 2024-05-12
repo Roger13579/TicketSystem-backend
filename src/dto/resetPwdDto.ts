@@ -1,4 +1,5 @@
-import { Request } from 'express';
+import { IUser } from '../models/user';
+import { IResetPwdReq } from '../types/user.type';
 
 export class ResetPwdDto {
   private readonly id: string;
@@ -19,8 +20,8 @@ export class ResetPwdDto {
     return this.confirmPwd;
   }
 
-  constructor(req: Request) {
-    this.id = (req.user as any).id;
+  constructor(req: IResetPwdReq) {
+    this.id = (req.user as IUser).id;
     const { oldPwd, pwd, confirmPwd } = req.body;
     this.oldPwd = oldPwd;
     this.pwd = pwd;
