@@ -19,3 +19,10 @@ export interface TCreateGroupReq extends IUserReq {
     content?: string;
   };
 }
+
+export interface IParticipant {
+  phone: string;
+  name: string;
+  nickname: string;
+  lineId: string;
+}

@@ -1,10 +1,10 @@
 import { Schema, model } from 'mongoose';
 import { MovieGenre, ProductType, TPlan } from '../types/product.type';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
 import moment from 'moment';
+import { BaseModel, schemaDef } from './baseModel';
 
-export interface IProduct extends Document, ITimestamp {
+export interface IProduct extends BaseModel {
   title: string;
   type: string;
   genre: string;
@@ -20,7 +20,7 @@ export interface IProduct extends Document, ITimestamp {
   recommendWeight: number;
   isPublic: boolean;
   isLaunched: boolean;
-  tags?: [string];
+  tags?: [{ tagId: Schema.Types.ObjectId }];
   photoPath: string | null;
   notifications?: [string];
   highlights?: [string];
@@ -29,9 +29,11 @@ export interface IProduct extends Document, ITimestamp {
   confirmations?: [string];
   cancelPolicies?: [string];
   certificates?: [string];
-  comments?: [string];
+  comments?: [{ commentId: Schema.Types.ObjectId }];
   soldAmount: number;
 }
+
+const { commentId, tagId, photoPath } = schemaDef;
 
 const schema = new Schema<IProduct>(
   {
@@ -167,20 +169,9 @@ const schema = new Schema<IProduct>(
       },
     },
     tags: {
-      type: [
-        {
-          tagId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Tag',
-          },
-        },
-      ],
+      type: [{ tagId }],
     },
-    photoPath: {
-      type: String || null,
-      default: null,
-      trim: true,
-    },
+    photoPath,
     notifications: {
       type: [String],
     },
@@ -205,14 +196,7 @@ const schema = new Schema<IProduct>(
       type: [String],
     },
     comments: {
-      type: [
-        {
-          commentId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Comment',
-          },
-        },
-      ],
+      type: [commentId],
     },
   },
   schemaOption,

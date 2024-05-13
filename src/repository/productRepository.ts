@@ -1,4 +1,3 @@
-import { NewProductDto } from '../dto/newProductDto';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import ProductModel, { IProduct } from '../models/product';
 import { AccountType } from '../types/user.type';
@@ -55,9 +54,9 @@ export class ProductRepository {
   }
 
   public async createProducts(
-    newProductsDto: NewProductDto,
+    products: IProduct[],
   ): Promise<IProduct[] | void> {
-    return ProductModel.insertMany(newProductsDto.getNewProducts);
+    return ProductModel.insertMany(products);
   }
 
   public async findProducts(

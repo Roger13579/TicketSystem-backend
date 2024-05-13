@@ -1,27 +1,20 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp, Status } from '../types/common.type';
+import { Status } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
+import { BaseModel, IProductId, IUserId, schemaDef } from './baseModel';
 
-interface IComment extends Document, ITimestamp {
-  productId: Schema.Types.ObjectId;
-  userId: Schema.Types.ObjectId;
+interface IComment extends BaseModel, IProductId, IUserId {
   rating: number;
   content: string;
   status: Status;
 }
 
+const { productId, userId } = schemaDef;
+
 const schema = new Schema<IComment>(
   {
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Product',
-      required: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+    productId,
+    userId,
     rating: {
       type: Number,
       required: true,

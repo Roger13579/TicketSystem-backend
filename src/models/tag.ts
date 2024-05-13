@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
+import { BaseModel } from './baseModel';
 
-interface ITag extends Document, ITimestamp {
+interface ITag extends BaseModel {
   name: string;
 }
 

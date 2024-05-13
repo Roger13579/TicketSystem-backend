@@ -2,7 +2,7 @@ import { CustomResponseType } from '../../types/customResponseType';
 
 const propName = {
   title: '活動標題',
-  location: '活動地點',
+  theater: '活動地點',
   movieTitle: '電影名稱',
   time: '活動時間',
   amount: '活動人數',
@@ -12,7 +12,7 @@ const propName = {
 
 const customGroup = {
   title: '活動',
-  location: '威秀影城',
+  theater: '威秀影城',
   movieTitle: '好看的電影',
   time: '2024-05-10 10:10',
   amount: 5,
@@ -37,10 +37,10 @@ export const CustomCreateGroupObj = {
       description: propName.title,
       example: customGroup.title,
     },
-    location: {
+    theater: {
       type: 'string',
-      description: propName.location,
-      example: customGroup.location,
+      description: propName.theater,
+      example: customGroup.theater,
     },
     movieTitle: {
       type: 'string',

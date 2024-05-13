@@ -1,38 +1,31 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
 import { TicketStatus } from '../types/ticket.type';
+import {
+  BaseModel,
+  IOrderId,
+  IProductId,
+  IUserId,
+  schemaDef,
+} from './baseModel';
 
-interface ITicket extends Document, ITimestamp {
-  userId: Schema.Types.ObjectId;
-  orderId: Schema.Types.ObjectId;
-  productId: Schema.Types.ObjectId;
+interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
   amount: number;
   status: TicketStatus;
   isPublished: boolean;
   chatRoomId: string;
-  writeOffAt: Date;
-  writeOffStaff: Date;
-  shareCode: string;
+  writeOffAt?: Date;
+  writeOffStaff?: Date;
+  shareCode?: string;
 }
+
+const { productId, userId, orderId } = schemaDef;
 
 const schema = new Schema<ITicket>(
   {
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Product',
-      required: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    orderId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Order',
-      required: true,
-    },
+    productId,
+    userId,
+    orderId,
     amount: {
       type: Number,
       required: true,

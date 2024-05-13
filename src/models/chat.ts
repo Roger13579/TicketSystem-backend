@@ -1,22 +1,20 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
+import { BaseModel, IUserId, schemaDef } from './baseModel';
 
-interface IChat extends Document, ITimestamp {
+interface IChat extends BaseModel, IUserId {
   userId: Schema.Types.ObjectId;
-  ticketId: Schema.Types.ObjectId;
-  groupId: Schema.Types.ObjectId;
+  ticketId?: Schema.Types.ObjectId;
+  groupId?: Schema.Types.ObjectId;
   isRead: boolean;
   message: string;
 }
 
+const { userId } = schemaDef;
+
 const schema = new Schema<IChat>(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+    userId,
     ticketId: {
       type: Schema.Types.ObjectId,
       ref: 'Ticket',

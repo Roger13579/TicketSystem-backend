@@ -2,7 +2,6 @@ import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
 import { ProductService } from '../service/productService';
-import { NewProductDto } from '../dto/newProductDto';
 import { NewProductVo } from '../vo/newProductVo';
 import { TCreateProductsReq, TGetProductsReq } from '../types/product.type';
 import { ProductFilterDTO } from '../dto/productFilterDto';
@@ -30,8 +29,9 @@ class ProductController extends BaseController {
     req: TCreateProductsReq,
   ): Promise<ResponseObject> => {
     this.paramVerify(req);
-    const newProductsDto = new NewProductDto(req);
-    const products = await this.productService.createProducts(newProductsDto);
+    const products = await this.productService.createProducts(
+      req.body.products,
+    );
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,

@@ -1,5 +1,4 @@
 import log4js from '../config/log4js';
-import { NewProductDto } from '../dto/newProductDto';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import { IProduct } from '../models/product';
 import { ProductRepository } from '../repository/productRepository';
@@ -15,26 +14,23 @@ export class ProductService {
     new ProductRepository();
 
   public async createProducts(
-    newProductsDto: NewProductDto,
+    products: IProduct[],
   ): Promise<IProduct[] | void> {
     // 沒有輸入任何新商品
-    if (newProductsDto.getNewProducts.length < 1) {
+    if (products.length < 1) {
       throwError(
         CustomResponseType.INSERT_ERROR_MESSAGE,
         CustomResponseType.INSERT_ERROR,
       );
     }
-    return this.productRepository
-      .createProducts(newProductsDto)
-      .catch((err) => {
-        const errMsg = createErrorMsg(err);
-        logger.error('create new products error', err);
-        throwError(
-          CustomResponseType.INSERT_ERROR_MESSAGE +
-            (errMsg ? `:${errMsg}` : ''),
-          CustomResponseType.INSERT_ERROR,
-        );
-      });
+    return this.productRepository.createProducts(products).catch((err) => {
+      const errMsg = createErrorMsg(err);
+      logger.error('create new products error', err);
+      throwError(
+        CustomResponseType.INSERT_ERROR_MESSAGE + (errMsg ? `:${errMsg}` : ''),
+        CustomResponseType.INSERT_ERROR,
+      );
+    });
   }
 
   public async findProducts(productFilterDto: ProductFilterDTO): Promise<
