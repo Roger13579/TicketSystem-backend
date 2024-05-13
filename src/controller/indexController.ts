@@ -24,7 +24,7 @@ class IndexController extends BaseController {
   public googleSignUp = async (req: Request): Promise<ResponseObject> => {
     this.paramVerify(req);
     const { account, pwd, confirmPwd } = req.body;
-    const thirdPartyId = (req.user as IUser).thirdPartyId;
+    const thirdPartyId = (req.user as IUser).thirdPartyId as string;
     await this.userService.updateUserFromGoogle(
       account,
       pwd,
@@ -91,7 +91,7 @@ class IndexController extends BaseController {
     const authUser = await this.userService.googleAuth(req, res, next);
     if (authUser) {
       const jwt = this.userService.generateJWT(
-        authUser.id,
+        authUser.id.toString(),
         authUser.accountType,
       );
       return this.formatResponse(

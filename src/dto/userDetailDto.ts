@@ -29,7 +29,7 @@ export class UserDetailDto {
   }
 
   constructor(req: IUserReq) {
-    this.id = (req.user as IUser).id;
+    this.id = (req.user as IUser).id.toString();
     const { name, birthDate, gender, phone, address } = req.body;
     this.name = name;
     this.birthDate = birthDate;

@@ -1,18 +1,24 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
-import { PaymentMethod, PaymentStatus } from '../types/order.type';
+import {
+  ICartProduct,
+  IDeliveryInfo,
+  PaymentMethod,
+  PaymentStatus,
+} from '../types/order.type';
+import { BaseModel, IUserId, schemaDef } from './baseModel';
 
-interface IOrder extends Document, ITimestamp {
+interface IOrder extends BaseModel, IUserId {
   thirdPartyPaymentId: string;
-  userId: Schema.Types.ObjectId;
-  products: [object];
+  products: [ICartProduct];
   price: number;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
-  paidAt: Date;
-  deliveryInfo: object;
+  paidAt?: Date;
+  deliveryInfo?: IDeliveryInfo;
 }
+
+const { userId } = schemaDef;
 
 const schema = new Schema<IOrder>(
   {
@@ -20,23 +26,9 @@ const schema = new Schema<IOrder>(
       type: String,
       required: true,
     },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+    userId,
     products: {
-      type: [
-        {
-          productId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Product',
-          },
-          name: String,
-          price: Number,
-          amount: Number,
-        },
-      ],
+      type: [schemaDef.cartProduct],
       required: true,
     },
     price: {

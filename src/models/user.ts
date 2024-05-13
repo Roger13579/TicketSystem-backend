@@ -1,9 +1,16 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
-import { ITimestamp, Status } from '../types/common.type';
+import { Schema, model } from 'mongoose';
+import { Status } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
 import { AccountType, Gender } from '../types/user.type';
+import {
+  BaseModel,
+  IGroupId,
+  IProductId,
+  ITicketId,
+  schemaDef,
+} from './baseModel';
 
-export interface IUser extends Document, ITimestamp {
+export interface IUser extends BaseModel {
   account: string;
   pwd: string;
   email: string;
@@ -13,15 +20,17 @@ export interface IUser extends Document, ITimestamp {
   phone: string;
   birthDate: Date;
   address: string;
-  thirdPartyId: string;
-  thirdPartyType: string;
+  thirdPartyId?: string;
+  thirdPartyType?: string;
   isThirdPartyVerified: boolean;
   accountType: AccountType;
   status: Status;
-  groups: [Schema.Types.ObjectId];
-  collects: [Schema.Types.ObjectId];
-  myTickets: [Schema.Types.ObjectId];
+  groups?: [IGroupId];
+  collects?: [IProductId];
+  myTickets?: [ITicketId];
 }
+
+const { productId, ticketId, groupId, photoPath } = schemaDef;
 
 const schema = new Schema<IUser>(
   {
@@ -35,6 +44,7 @@ const schema = new Schema<IUser>(
     pwd: {
       type: String,
       select: true,
+      required: true,
     },
     email: {
       type: String,
@@ -53,11 +63,7 @@ const schema = new Schema<IUser>(
       enum: Object.values(Gender),
       default: Gender.none,
     },
-    avatarPath: {
-      type: String,
-      trim: true,
-      default: '',
-    },
+    avatarPath: photoPath,
     phone: {
       type: String,
       trim: true,
@@ -95,34 +101,13 @@ const schema = new Schema<IUser>(
       default: Status.active,
     },
     groups: {
-      type: [
-        {
-          groupId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Group',
-          },
-        },
-      ],
+      type: [{ groupId }],
     },
     collects: {
-      type: [
-        {
-          productId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product',
-          },
-        },
-      ],
+      type: [{ productId }],
     },
     myTickets: {
-      type: [
-        {
-          ticketId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Ticket',
-          },
-        },
-      ],
+      type: [{ ticketId }],
     },
   },
   schemaOption,
