@@ -3,8 +3,9 @@ import { CustomResponseType } from '../types/customResponseType';
 import { CreateGroupDto } from '../dto/createGroupDto';
 import { GroupService } from '../service/groupService';
 import { IGroup } from '../models/group';
-import { TCreateGroupReq } from '../types/group.type';
+import { TCreateGroupReq, TUpdateGroupReq } from '../types/group.type';
 import { ResponseObject } from '../utils/responseObject';
+import { UpdateGroupDto } from '../dto/updateGroupDto';
 
 export class GroupController extends BaseController {
   private readonly groupService = new GroupService();
@@ -12,7 +13,6 @@ export class GroupController extends BaseController {
   public createGroup = async (
     req: TCreateGroupReq,
   ): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const createGroupDto = new CreateGroupDto(req);
     const group = (await this.groupService.createGroup(
       createGroupDto,
@@ -23,6 +23,17 @@ export class GroupController extends BaseController {
       {
         groupId: group.id,
       },
+    );
+  };
+  public updateGroup = async (
+    req: TUpdateGroupReq,
+  ): Promise<ResponseObject> => {
+    const updateGroupDto = new UpdateGroupDto(req);
+    console.log(updateGroupDto);
+    await this.groupService.updateGroup(updateGroupDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
     );
   };
 }
