@@ -12,7 +12,7 @@ export class JWTPayloadDTO {
 
   constructor(req: IUserReq) {
     const { id, account, accountType } = req.user as IUser;
-    this.id = id;
+    this.id = id.toString();
     this._account = account;
     this.accountType = accountType;
   }

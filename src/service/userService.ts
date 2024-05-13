@@ -110,7 +110,10 @@ export class UserService {
         CustomResponseType.EMAIL_VERIFICATION_FAILED,
       );
     } else {
-      await mailer(user, await this.generateForgotPasswordJWT(user.id));
+      await mailer(
+        user,
+        await this.generateForgotPasswordJWT(user.id.toString()),
+      );
     }
   }
 

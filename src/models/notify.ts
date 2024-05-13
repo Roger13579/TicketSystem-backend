@@ -1,20 +1,17 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
+import { BaseModel, IUserId, schemaDef } from './baseModel';
 
-interface INotify extends Document, ITimestamp {
-  userId: Schema.Types.ObjectId;
+interface INotify extends BaseModel, IUserId {
   isRead: boolean;
   content: string;
 }
 
+const { userId } = schemaDef;
+
 const schema = new Schema<INotify>(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+    userId,
     isRead: {
       type: Boolean,
       default: false,
@@ -22,6 +19,7 @@ const schema = new Schema<INotify>(
     content: {
       type: String,
       trim: true,
+      required: true,
     },
   },
   schemaOption,

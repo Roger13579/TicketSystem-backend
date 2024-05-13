@@ -21,7 +21,7 @@ export class ResetPwdDto {
   }
 
   constructor(req: IResetPwdReq) {
-    this.id = (req.user as IUser).id;
+    this.id = (req.user as IUser).id.toString();
     const { oldPwd, pwd, confirmPwd } = req.body;
     this.oldPwd = oldPwd;
     this.pwd = pwd;

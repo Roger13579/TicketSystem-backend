@@ -1,11 +1,9 @@
 import { Schema, model } from 'mongoose';
-import { ITimestamp } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
-import { GroupStatus } from '../types/group.type';
-import { BaseModel } from './baseModel';
+import { GroupStatus, IParticipant } from '../types/group.type';
+import { BaseModel, IUserId, schemaDef } from './baseModel';
 
-export interface IGroup extends Document, ITimestamp, BaseModel {
-  userId: Schema.Types.ObjectId;
+export interface IGroup extends BaseModel, IUserId {
   title: string;
   theater: string;
   movieTitle: string;
@@ -13,17 +11,15 @@ export interface IGroup extends Document, ITimestamp, BaseModel {
   time: Date;
   amount: number;
   haveTicket: boolean;
-  content: string;
-  participant: [object];
+  content?: string;
+  participant?: [IParticipant];
 }
+
+const { userId } = schemaDef;
 
 const schema = new Schema<IGroup>(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+    userId,
     title: {
       type: String,
       required: true,

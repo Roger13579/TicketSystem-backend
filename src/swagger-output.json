@@ -1060,19 +1060,19 @@
                   },
                   "sellEndAt": {
                     "type": "string",
-                    "example": "2024-05-14T17:57:16.091Z"
+                    "example": "2024-05-15T16:59:09.914Z"
                   },
                   "sellStartAt": {
                     "type": "string",
-                    "example": "2024-05-14T15:57:16.093Z"
+                    "example": "2024-05-15T14:59:09.916Z"
                   },
                   "endAt": {
                     "type": "string",
-                    "example": "2024-05-14T21:57:16.093Z"
+                    "example": "2024-05-15T20:59:09.916Z"
                   },
                   "startAt": {
                     "type": "string",
-                    "example": "2024-05-14T19:57:16.093Z"
+                    "example": "2024-05-15T18:59:09.916Z"
                   },
                   "tags": {
                     "type": "array",
@@ -1429,26 +1429,26 @@
               },
               "sellEndAt": {
                 "type": "Date",
-                "example": "2024-05-14T17:57:16.091Z",
-                "min": "2024-05-13T16:57:16.094Z",
+                "example": "2024-05-15T16:59:09.914Z",
+                "min": "2024-05-14T15:59:09.917Z",
                 "description": "販賣結束時間，必須晚於販賣開始時間至少一個小時"
               },
               "sellStartAt": {
                 "type": "Date",
-                "example": "2024-05-14T15:57:16.093Z",
-                "min": "2024-05-13T15:57:16.094Z",
+                "example": "2024-05-15T14:59:09.916Z",
+                "min": "2024-05-14T14:59:09.917Z",
                 "description": "販賣開始時間，必須晚於現在時間至少一天"
               },
               "endAt": {
                 "type": "Date",
-                "example": "2024-05-14T21:57:16.093Z",
-                "min": "2024-05-13T18:57:16.094Z",
+                "example": "2024-05-15T20:59:09.916Z",
+                "min": "2024-05-14T17:59:09.917Z",
                 "description": "活動結束時間，必須晚於活動開始時間至少一個小時"
               },
               "startAt": {
                 "type": "Date",
-                "example": "2024-05-14T19:57:16.093Z",
-                "min": "2024-05-13T17:57:16.094Z",
+                "example": "2024-05-15T18:59:09.916Z",
+                "min": "2024-05-14T16:59:09.917Z",
                 "description": "活動開始時間，必須晚於販售結束時間至少一個小時"
               },
               "tags": {
@@ -1611,7 +1611,7 @@
           "description": "活動標題",
           "example": "活動"
         },
-        "location": {
+        "theater": {
           "type": "string",
           "description": "活動地點",
           "example": "威秀影城"

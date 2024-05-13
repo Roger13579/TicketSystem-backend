@@ -15,7 +15,7 @@ export class CreateGroupDto {
   private readonly status: string;
 
   constructor(req: TCreateGroupReq) {
-    this.userId = new Types.ObjectId((req.user as IUser).id);
+    this.userId = new Types.ObjectId((req.user as IUser).id.toString());
     this.title = req.body.title;
     this.theater = req.body.theater;
     this.movieTitle = req.body.movieTitle;
