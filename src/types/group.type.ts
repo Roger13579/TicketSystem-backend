@@ -20,6 +20,13 @@ export interface TCreateGroupReq extends IUserReq {
   };
 }
 
+export interface TUpdateGroupReq extends IUserReq {
+  body: {
+    title: string;
+    content?: string;
+  };
+}
+
 export interface IParticipant {
   phone: string;
   name: string;

@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node src/dist/bin/www.js",
-    "dev": "tsc && node src/dist/bin/www.js",
+    "dev": "tsc && node src/dist/swagger/index.js && node src/dist/bin/www.js",
     "swagger": "node src/dist/swagger/index.js"
   },
   "keywords": [],
