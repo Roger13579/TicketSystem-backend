@@ -38,6 +38,10 @@
     {
       "name": "Admin",
       "description": "後台管理"
+    },
+    {
+      "name": "Upload",
+      "description": "上傳檔案"
     }
   ],
   "schemes": [
@@ -67,7 +71,7 @@
             "type": "string"
           },
           {
-            "name": "obj123",
+            "name": "obj",
             "in": "body",
             "description": "欲建立的揪團資料",
             "schema": {
@@ -507,6 +511,49 @@
             "description": "新增失敗",
             "schema": {
               "$ref": "#/definitions/CreateProductsError"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/uploadFile/{type}/{category}": {
+      "post": {
+        "tags": [
+          "Upload"
+        ],
+        "summary": "上傳檔案",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "上傳種類，e.g. photo"
+          },
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "上傳類型，e.g. user / product"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UploadFileSuccess"
             }
           }
         },
@@ -1013,19 +1060,19 @@
                   },
                   "sellEndAt": {
                     "type": "string",
-                    "example": "2024-05-14T13:43:22.770Z"
+                    "example": "2024-05-14T17:57:16.091Z"
                   },
                   "sellStartAt": {
                     "type": "string",
-                    "example": "2024-05-14T11:43:22.771Z"
+                    "example": "2024-05-14T15:57:16.093Z"
                   },
                   "endAt": {
                     "type": "string",
-                    "example": "2024-05-14T17:43:22.771Z"
+                    "example": "2024-05-14T21:57:16.093Z"
                   },
                   "startAt": {
                     "type": "string",
-                    "example": "2024-05-14T15:43:22.771Z"
+                    "example": "2024-05-14T19:57:16.093Z"
                   },
                   "tags": {
                     "type": "array",
@@ -1195,6 +1242,36 @@
         "data"
       ]
     },
+    "UploadFileSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6000"
+        },
+        "message": {
+          "type": "string",
+          "example": "成功"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "example": "https://storage.googleapis.com/moviego-5071c.appspot.com/photo/user/6640962ff1a9debcf89679de.png"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "message",
+        "data"
+      ]
+    },
     "CustomCreateProductsObj": {
       "type": "object",
       "required": [
@@ -1352,26 +1429,26 @@
               },
               "sellEndAt": {
                 "type": "Date",
-                "example": "2024-05-14T13:43:22.770Z",
-                "min": "2024-05-13T12:43:22.771Z",
+                "example": "2024-05-14T17:57:16.091Z",
+                "min": "2024-05-13T16:57:16.094Z",
                 "description": "販賣結束時間，必須晚於販賣開始時間至少一個小時"
               },
               "sellStartAt": {
                 "type": "Date",
-                "example": "2024-05-14T11:43:22.771Z",
-                "min": "2024-05-13T11:43:22.771Z",
+                "example": "2024-05-14T15:57:16.093Z",
+                "min": "2024-05-13T15:57:16.094Z",
                 "description": "販賣開始時間，必須晚於現在時間至少一天"
               },
               "endAt": {
                 "type": "Date",
-                "example": "2024-05-14T17:43:22.771Z",
-                "min": "2024-05-13T14:43:22.771Z",
+                "example": "2024-05-14T21:57:16.093Z",
+                "min": "2024-05-13T18:57:16.094Z",
                 "description": "活動結束時間，必須晚於活動開始時間至少一個小時"
               },
               "startAt": {
                 "type": "Date",
-                "example": "2024-05-14T15:43:22.771Z",
-                "min": "2024-05-13T13:43:22.771Z",
+                "example": "2024-05-14T19:57:16.093Z",
+                "min": "2024-05-13T17:57:16.094Z",
                 "description": "活動開始時間，必須晚於販售結束時間至少一個小時"
               },
               "tags": {

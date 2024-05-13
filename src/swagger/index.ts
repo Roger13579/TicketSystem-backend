@@ -20,6 +20,7 @@ const doc = {
     { name: 'Payment', description: '訂單相關' },
     { name: 'Group', description: '揪團' },
     { name: 'Admin', description: '後台管理' },
+    { name: 'Upload', description: '上傳檔案' },
   ],
   definitions,
   '@definitions': customDefinitions,

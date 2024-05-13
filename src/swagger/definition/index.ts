@@ -39,6 +39,7 @@ import {
   CustomGetProductTagQuery,
 } from './product';
 import { CreateGroupSuccess, CustomCreateGroupObj } from './group';
+import { UploadFileSuccess } from './upload';
 
 export const definitions = {
   Success,
@@ -59,6 +60,7 @@ export const definitions = {
   CreateProductsSuccess,
   CreateProductsError,
   CreateGroupSuccess,
+  UploadFileSuccess,
 };
 
 export const customDefinitions = {
