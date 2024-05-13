@@ -69,3 +69,20 @@ export const CustomCreateGroupObj = {
     },
   },
 };
+
+export const CustomUpdateGroupObj = {
+  type: 'object',
+  required: ['title', 'content'],
+  properties: {
+    title: {
+      type: 'string',
+      description: propName.title,
+      example: customGroup.title,
+    },
+    content: {
+      type: 'string',
+      description: propName.content,
+      example: customGroup.content,
+    },
+  },
+};

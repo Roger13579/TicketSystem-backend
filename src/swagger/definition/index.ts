@@ -38,7 +38,11 @@ import {
   CustomGetProductSortByQuery,
   CustomGetProductTagQuery,
 } from './product';
-import { CreateGroupSuccess, CustomCreateGroupObj } from './group';
+import {
+  CreateGroupSuccess,
+  CustomCreateGroupObj,
+  CustomUpdateGroupObj,
+} from './group';
 import { UploadFileSuccess } from './upload';
 
 export const definitions = {
@@ -84,4 +88,5 @@ export const customDefinitions = {
   CustomGetProductLimitQuery,
   CustomGetProductSortByQuery,
   CustomCreateGroupObj,
+  CustomUpdateGroupObj,
 };

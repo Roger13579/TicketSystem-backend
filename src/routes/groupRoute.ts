@@ -2,6 +2,7 @@ import { BaseRoute } from './baseRoute';
 import { GroupController } from '../controller/groupController';
 import { UserVerify } from '../middleware/userVerify';
 import { CreateGroupPipe } from '../validator/group/createGroup.pipe';
+import { UpdateGroupPipe } from '../validator/group/updateGroup.pipe';
 
 export class GroupRoute extends BaseRoute {
   protected controller!: GroupController;
@@ -42,6 +43,38 @@ export class GroupRoute extends BaseRoute {
       UserVerify,
       this.usePipe(CreateGroupPipe),
       this.responseHandler(this.controller.createGroup),
+    );
+    this.router.patch(
+      '/v1/group/:groupId',
+      /**
+       * #swagger.tags = ['Group']
+       * #swagger.summary = '修改揪團'
+       */
+      /*
+       #swagger.parameters['groupId'] ={
+          in:'path',
+          description:'揪團ID',
+          required: true,
+          type: 'string'
+       }
+       #swagger.parameters['obj'] ={
+         in:'body',
+         description:'欲修改的揪團資料',
+         schema:{
+           $ref:"#/definitions/CustomUpdateGroupObj"
+         }
+       }
+       */
+      /**
+       #swagger.responses[200] = {
+       description: 'OK',
+       schema: {
+       $ref: '#/definitions/Success' }
+       }
+       */
+      UserVerify,
+      this.usePipe(UpdateGroupPipe),
+      this.responseHandler(this.controller.updateGroup),
     );
   }
 }
