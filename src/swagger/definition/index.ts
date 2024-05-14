@@ -38,6 +38,7 @@ import {
   CustomGetProductSortByQuery,
   CustomGetProductTagQuery,
   GetProductDetailSuccess,
+  GetProductsSuccess,
 } from './product';
 import {
   CreateGroupSuccess,
@@ -67,6 +68,7 @@ export const definitions = {
   CreateGroupSuccess,
   UploadFileSuccess,
   GetProductDetailSuccess,
+  GetProductsSuccess,
 };
 
 export const customDefinitions = {
