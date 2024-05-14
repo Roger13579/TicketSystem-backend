@@ -13,7 +13,6 @@ class IndexController extends BaseController {
   private readonly userService = new UserService();
 
   public signUp = async (req: Request): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const { email, account, pwd, confirmPwd } = req.body;
     await this.userService.createUser(account, email, pwd, confirmPwd);
     return this.formatResponse(
@@ -22,7 +21,6 @@ class IndexController extends BaseController {
     );
   };
   public googleSignUp = async (req: Request): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const { account, pwd, confirmPwd } = req.body;
     const thirdPartyId = (req.user as IUser).thirdPartyId as string;
     await this.userService.updateUserFromGoogle(
@@ -38,7 +36,6 @@ class IndexController extends BaseController {
   };
 
   public login = async (req: ILoginReq): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const account = req.body.account;
     const pwd = req.body.pwd;
     const user = (await this.userService.findByAccount(account)) as IUser;
@@ -63,7 +60,6 @@ class IndexController extends BaseController {
   };
 
   public forgotPwd = async (req: Request): Promise<ResponseObject> => {
-    this.paramVerify(req);
     return this.userService.forgotPwd(req.body.email).then(() => {
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
@@ -73,7 +69,6 @@ class IndexController extends BaseController {
   };
 
   public resetPwd = async (req: Request): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const resetPwdDto = new ResetPwdDto(req);
     return this.userService.resetPwd(resetPwdDto).then(() => {
       return this.formatResponse(

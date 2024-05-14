@@ -15,7 +15,6 @@ class ProductController extends BaseController {
   public getProducts = async (
     req: TGetProductsReq,
   ): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const productFilterDto = new ProductFilterDTO(req);
     const { page, limit } = productFilterDto;
     const info = await this.productService.findProducts(productFilterDto);
@@ -29,7 +28,6 @@ class ProductController extends BaseController {
   public createProducts = async (
     req: TCreateProductsReq,
   ): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const products = await this.productService.createProducts(
       req.body.products,
     );
@@ -45,7 +43,6 @@ class ProductController extends BaseController {
     res: Response,
     next: NextFunction,
   ) => {
-    this.paramVerify(req);
     const product = await this.productService.getProductDetail(
       req.params.id,
       next,

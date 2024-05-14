@@ -16,13 +16,4 @@ export abstract class BaseController {
     };
     return new ResponseObject(options);
   }
-  public paramVerify(req: Request): ResponseObject | void {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-      return this.formatResponse(
-        result.array()[0].msg,
-        CustomResponseType.FORMAT_ERROR,
-      );
-    }
-  }
 }
