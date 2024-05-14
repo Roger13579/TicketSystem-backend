@@ -1,6 +1,6 @@
+import { FilterQuery, ProjectionType } from 'mongoose';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import ProductModel, { IProduct } from '../models/product';
-import { AccountType } from '../types/user.type';
 
 export class ProductRepository {
   private createProductFilter(productFilterDto: ProductFilterDTO) {
@@ -56,28 +56,37 @@ export class ProductRepository {
   public async createProducts(
     products: IProduct[],
   ): Promise<IProduct[] | void> {
-    return ProductModel.insertMany(products);
+    return await ProductModel.insertMany(products);
   }
 
   public async findProducts(
     productFilterDto: ProductFilterDTO,
+    projection: ProjectionType<IProduct>,
   ): Promise<IProduct[]> {
-    const { page, limit, sortBy, accountType } = productFilterDto;
+    const { page, limit, sortBy } = productFilterDto;
     const filter = this.createProductFilter(productFilterDto);
-    const selection =
-      accountType === AccountType.admin ? '' : '-recommendWeight -isPublic';
     const options = {
       ...(page && limit && { skip: (page - 1) * limit }),
       ...(limit && { limit }),
       sort: sortBy || '-createdAt',
     };
-    return ProductModel.find(filter, selection, options);
+    // TODO: 如果 projection 裡面 tags === 1，則 populate
+    return await ProductModel.find(filter, projection, options);
   }
+
+  public findProduct = async (
+    filter: FilterQuery<IProduct>,
+    projection: ProjectionType<IProduct>,
+  ) => {
+    return await ProductModel.find(filter, projection).populate({
+      path: 'tags',
+    });
+  };
 
   public async countProducts(
     productFilterDto: ProductFilterDTO,
   ): Promise<number> {
     const filter = this.createProductFilter(productFilterDto);
-    return ProductModel.countDocuments(filter);
+    return await ProductModel.countDocuments(filter);
   }
 }

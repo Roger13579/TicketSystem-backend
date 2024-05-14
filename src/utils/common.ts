@@ -14,7 +14,7 @@ export const parseValidEnums = <T extends Record<string, string>>(
       validValues.push(value as T[keyof T]);
     } else {
       throwError(
-        `${CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE}: ${prop} 不得為 ${value}`,
+        `${CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE}${prop} 不得為 ${value}`,
         CustomResponseType.INVALID_PRODUCT_FILTER,
       );
     }

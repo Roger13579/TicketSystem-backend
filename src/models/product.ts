@@ -31,6 +31,7 @@ export interface IProduct extends BaseModel {
   certificates?: [string];
   comments?: [{ commentId: Schema.Types.ObjectId }];
   soldAmount: number;
+  brief: string;
 }
 
 const { commentId, tagId, photoPath } = schemaDef;
@@ -38,6 +39,11 @@ const { commentId, tagId, photoPath } = schemaDef;
 const schema = new Schema<IProduct>(
   {
     title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    brief: {
       type: String,
       required: true,
       trim: true,
@@ -97,7 +103,7 @@ const schema = new Schema<IProduct>(
           },
           headCount: {
             type: Number,
-            min: 0,
+            min: 2,
           },
         },
       ],
@@ -128,7 +134,7 @@ const schema = new Schema<IProduct>(
       type: Date,
       required: true,
       validate: {
-        validator: function (sellStartAt: Date) {
+        validator: (sellStartAt: Date) => {
           return moment().isBefore(moment(sellStartAt), 'day');
         },
         message: '販賣開始時間必須晚於現在時間至少一天',
@@ -148,7 +154,7 @@ const schema = new Schema<IProduct>(
     recommendWeight: {
       type: Number,
       min: 1,
-      max: 10,
+      max: 5,
       required: true,
       select: true, // 只有管理者可以看到
     },
