@@ -1,3 +1,4 @@
+import { NextFunction } from 'express';
 import log4js from '../config/log4js';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import { IProduct } from '../models/product';
@@ -5,7 +6,8 @@ import { ProductRepository } from '../repository/productRepository';
 import { CustomResponseType } from '../types/customResponseType';
 import { AccountType } from '../types/user.type';
 import { checkDateOrder } from '../utils/common';
-import { createErrorMsg, throwError } from '../utils/errorHandler';
+import { AppError, createErrorMsg, throwError } from '../utils/errorHandler';
+import { HttpStatus } from '../types/responseType';
 
 const logger = log4js.getLogger(`ProductRepository`);
 
@@ -13,16 +15,19 @@ export class ProductService {
   private readonly productRepository: ProductRepository =
     new ProductRepository();
 
+  private readonly defaultProjection = {
+    _id: 1,
+    title: 1,
+    genre: 1,
+    type: 1,
+    brief: 1,
+    theater: 1,
+    photoPath: 1,
+  };
+
   public async createProducts(
     products: IProduct[],
   ): Promise<IProduct[] | void> {
-    // 沒有輸入任何新商品
-    if (products.length < 1) {
-      throwError(
-        CustomResponseType.INSERT_ERROR_MESSAGE,
-        CustomResponseType.INSERT_ERROR,
-      );
-    }
     return this.productRepository.createProducts(products).catch((err) => {
       const errMsg = createErrorMsg(err);
       logger.error('create new products error', err);
@@ -65,7 +70,7 @@ export class ProductService {
     if (priceMax && priceMin && priceMax < priceMin) {
       throwError(
         CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-          ': priceMax 不得小於 priceMin',
+          'priceMax 不得小於 priceMin',
         CustomResponseType.INVALID_PRODUCT_FILTER,
       );
     }
@@ -76,7 +81,7 @@ export class ProductService {
       if (!limit || limit > 100) {
         throwError(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-            ': 使用者只能一次取 100 則資料',
+            '使用者只能一次取 100 則資料',
           CustomResponseType.INVALID_PRODUCT_FILTER,
         );
       }
@@ -84,7 +89,7 @@ export class ProductService {
       if (!isPublic) {
         throwError(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-            ': 使用者只能查公開的商品',
+            '使用者只能查公開的商品',
           CustomResponseType.INVALID_PRODUCT_FILTER,
         );
       }
@@ -92,14 +97,35 @@ export class ProductService {
       if (recommendWeights) {
         throwError(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-            ': 使用者不能搜權重',
+            '使用者不能搜權重',
           CustomResponseType.INVALID_PRODUCT_FILTER,
         );
       }
     }
 
-    const products =
-      await this.productRepository.findProducts(productFilterDto);
+    const projection =
+      accountType === AccountType.admin
+        ? {
+            ...this.defaultProjection,
+            isPublic: 1,
+            isLaunched: 1,
+            sellStartAt: 1,
+            sellEndAt: 1,
+            startAt: 1,
+            endAt: 1,
+            vendor: 1,
+            tags: 1,
+            price: 1,
+            soldAmount: 1,
+            amount: 1,
+            // photoPath: 0, // admin 在後台商品列表不需要照片
+          }
+        : { ...this.defaultProjection, recommendWeight: 0, isPublic: 0 };
+
+    const products = await this.productRepository.findProducts(
+      productFilterDto,
+      projection,
+    );
 
     const totalCount =
       await this.productRepository.countProducts(productFilterDto);
@@ -109,4 +135,47 @@ export class ProductService {
       totalCount,
     };
   }
+
+  public getProductDetail = async (id: string, next: NextFunction) => {
+    // TODO: 根據是否為 admin 決定顯示欄位
+    const filter = {
+      _id: id,
+      isPublic: true, // TODO: admin 可以不用這項
+    };
+    const product = await this.productRepository.findProduct(filter, {
+      ...this.defaultProjection,
+      recommendWeight: 0,
+      isPublic: 0,
+      // brief: 0, // member 在前台商品詳細資料頁不需要簡短介紹
+      price: 1,
+      amount: 1,
+      plans: 1,
+      startAt: 1,
+      endAt: 1,
+      sellEndAt: 1,
+      sellStartAt: 1,
+      isLaunched: 1,
+      tags: 1,
+      notifications: 1,
+      highlights: 1,
+      introduction: 1,
+      cautions: 1,
+      confirmations: 1,
+      cancelPolicies: 1,
+      certificates: 1,
+      soldAmount: 1,
+    });
+
+    if (!product) {
+      return next(
+        new AppError(
+          CustomResponseType.PRODUCT_NOT_FOUND,
+          HttpStatus.BAD_REQUEST,
+          CustomResponseType.PRODUCT_NOT_FOUND_MESSAGE,
+        ),
+      );
+    }
+
+    return product;
+  };
 }

@@ -7,6 +7,7 @@ import { TCreateProductsReq, TGetProductsReq } from '../types/product.type';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import { GetProductVo } from '../vo/getProductVo';
 import { IProduct } from '../models/product';
+import { NextFunction, Request, Response } from 'express';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
@@ -14,7 +15,6 @@ class ProductController extends BaseController {
   public getProducts = async (
     req: TGetProductsReq,
   ): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const productFilterDto = new ProductFilterDTO(req);
     const { page, limit } = productFilterDto;
     const info = await this.productService.findProducts(productFilterDto);
@@ -28,7 +28,6 @@ class ProductController extends BaseController {
   public createProducts = async (
     req: TCreateProductsReq,
   ): Promise<ResponseObject> => {
-    this.paramVerify(req);
     const products = await this.productService.createProducts(
       req.body.products,
     );
@@ -36,6 +35,22 @@ class ProductController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       new NewProductVo(products as IProduct[]),
+    );
+  };
+
+  public getProductDetail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const product = await this.productService.getProductDetail(
+      req.params.id,
+      next,
+    );
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { product },
     );
   };
 }

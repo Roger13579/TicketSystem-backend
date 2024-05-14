@@ -97,7 +97,7 @@ export const enum CustomResponseType {
   VALIDATE_EMAIL_ERROR_MESSAGE = '信箱驗證失敗',
 
   INVALID_PRODUCT_FILTER = '6506',
-  INVALID_PRODUCT_FILTER_MESSAGE = '無效的商品條件',
+  INVALID_PRODUCT_FILTER_MESSAGE = '無效的商品條件：',
 
   INVALID_TIME = '6507',
   INVALID_TIME_MESSAGE = '無效的時間',
@@ -116,4 +116,7 @@ export const enum CustomResponseType {
 
   INVALID_UPLOAD = '6513',
   INVALID_UPLOAD_MESSAGE = '無效的檔案上傳：',
+
+  INVALID_CREATE_PRODUCT = '6514',
+  INVALID_CREATE_PRODUCT_MESSAGE = '無效的商品新增：',
 }

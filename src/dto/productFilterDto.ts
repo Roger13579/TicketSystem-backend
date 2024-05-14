@@ -124,8 +124,8 @@ export class ProductFilterDTO {
       this._accountType = AccountType.admin;
     }
 
-    this._types = (types || '').split(',') as ProductType[];
-    this._genres = (genres || '').split(',') as MovieGenre[];
+    this._types = types?.split(',') as ProductType[];
+    this._genres = genres?.split(',') as MovieGenre[];
 
     this._recommendWeights = recommendWeights
       ?.split(',')
@@ -134,8 +134,8 @@ export class ProductFilterDTO {
     this._sortBy = sortBy;
     this._title = title;
     this._limit = Number(limit);
-    this._priceMax = Number(priceMax);
-    this._priceMin = Number(priceMin);
+    this._priceMax = isNaN(Number(priceMax)) ? undefined : Number(priceMax);
+    this._priceMin = isNaN(Number(priceMin)) ? undefined : Number(priceMin);
     this._page = Number(page);
 
     this._vendors = vendors?.split(',');
