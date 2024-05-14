@@ -469,7 +469,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/CreateProductsSuccess"
+              "$ref": "#/definitions/GetProductsSuccess"
             }
           }
         },
@@ -511,6 +511,43 @@
             "description": "新增失敗",
             "schema": {
               "$ref": "#/definitions/CreateProductsError"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/product/{id}": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "summary": "取得商品詳細資料",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "商品 id",
+            "example": "abcdefg"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/GetProductDetailSuccess"
             }
           }
         },
@@ -990,6 +1027,10 @@
               "items": {
                 "type": "object",
                 "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "asdfasdfasd"
+                  },
                   "title": {
                     "type": "string",
                     "example": "這是一個商品名稱"
@@ -1002,13 +1043,17 @@
                     "type": "string",
                     "example": "action"
                   },
-                  "vendor": {
-                    "type": "string",
-                    "example": "貓咪影業"
-                  },
                   "theater": {
                     "type": "string",
                     "example": "信義威秀"
+                  },
+                  "brief": {
+                    "type": "string",
+                    "example": "簡短的介紹介紹"
+                  },
+                  "vendor": {
+                    "type": "string",
+                    "example": "貓咪影業"
                   },
                   "price": {
                     "type": "number",
@@ -1021,6 +1066,50 @@
                   "soldAmount": {
                     "type": "number",
                     "example": 0
+                  },
+                  "isLaunched": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "isPublic": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "recommendWeight": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "sellEndAt": {
+                    "type": "string",
+                    "example": "2024-05-16T12:26:32.516Z"
+                  },
+                  "sellStartAt": {
+                    "type": "string",
+                    "example": "2024-05-16T10:26:32.518Z"
+                  },
+                  "endAt": {
+                    "type": "string",
+                    "example": "2024-05-16T16:26:32.518Z"
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "example": "2024-05-16T14:26:32.518Z"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "tagId": {
+                          "type": "string",
+                          "example": "123"
+                        }
+                      }
+                    }
+                  },
+                  "photoPath": {
+                    "type": "string",
+                    "example": ""
                   },
                   "plans": {
                     "type": "array",
@@ -1046,47 +1135,6 @@
                     "type": "string",
                     "example": "<p>很棒的商品</p>"
                   },
-                  "isLaunched": {
-                    "type": "boolean",
-                    "example": false
-                  },
-                  "isPublic": {
-                    "type": "boolean",
-                    "example": false
-                  },
-                  "recommendWeight": {
-                    "type": "number",
-                    "example": 1
-                  },
-                  "sellEndAt": {
-                    "type": "string",
-                    "example": "2024-05-15T16:59:09.914Z"
-                  },
-                  "sellStartAt": {
-                    "type": "string",
-                    "example": "2024-05-15T14:59:09.916Z"
-                  },
-                  "endAt": {
-                    "type": "string",
-                    "example": "2024-05-15T20:59:09.916Z"
-                  },
-                  "startAt": {
-                    "type": "string",
-                    "example": "2024-05-15T18:59:09.916Z"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "tagId": {
-                          "type": "string",
-                          "example": "123"
-                        }
-                      }
-                    }
-                  },
-                  "photoPath": {},
                   "notifications": {
                     "type": "array",
                     "example": [
@@ -1149,43 +1197,19 @@
                   }
                 },
                 "required": [
+                  "_id",
                   "title",
                   "type",
                   "genre",
-                  "vendor",
                   "theater",
-                  "price",
-                  "amount",
-                  "soldAmount",
-                  "introduction",
-                  "isLaunched",
-                  "isPublic",
-                  "recommendWeight",
-                  "sellEndAt",
-                  "sellStartAt",
-                  "endAt",
-                  "startAt"
+                  "brief",
+                  "introduction"
                 ]
               }
-            },
-            "page": {
-              "type": "number",
-              "example": 1
-            },
-            "limit": {
-              "type": "number",
-              "example": 10
-            },
-            "totalCount": {
-              "type": "number",
-              "example": 1
             }
           },
           "required": [
-            "products",
-            "page",
-            "limit",
-            "totalCount"
+            "products"
           ]
         }
       },
@@ -1272,6 +1296,217 @@
         "data"
       ]
     },
+    "GetProductDetailSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "6000"
+        },
+        "message": {
+          "type": "string",
+          "example": "成功"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "product": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "asdfasdfasd"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "這是一個商品名稱"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "premier"
+                  },
+                  "genre": {
+                    "type": "string",
+                    "example": "action"
+                  },
+                  "theater": {
+                    "type": "string",
+                    "example": "信義威秀"
+                  },
+                  "brief": {
+                    "type": "string",
+                    "example": "簡短的介紹介紹"
+                  },
+                  "vendor": {
+                    "type": "string",
+                    "example": "貓咪影業"
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 1100
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 100
+                  },
+                  "soldAmount": {
+                    "type": "number",
+                    "example": 0
+                  },
+                  "isLaunched": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "isPublic": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "recommendWeight": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "sellEndAt": {
+                    "type": "string",
+                    "example": "2024-05-16T12:26:32.516Z"
+                  },
+                  "sellStartAt": {
+                    "type": "string",
+                    "example": "2024-05-16T10:26:32.518Z"
+                  },
+                  "endAt": {
+                    "type": "string",
+                    "example": "2024-05-16T16:26:32.518Z"
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "example": "2024-05-16T14:26:32.518Z"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "tagId": {
+                          "type": "string",
+                          "example": "123"
+                        }
+                      }
+                    }
+                  },
+                  "photoPath": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "plans": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "三人同行好棒棒"
+                        },
+                        "discount": {
+                          "type": "number",
+                          "example": 0.5
+                        },
+                        "headCount": {
+                          "type": "number",
+                          "example": 10
+                        }
+                      }
+                    }
+                  },
+                  "introduction": {
+                    "type": "string",
+                    "example": "<p>很棒的商品</p>"
+                  },
+                  "notifications": {
+                    "type": "array",
+                    "example": [
+                      "通知一",
+                      "通知二"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "highlights": {
+                    "type": "array",
+                    "example": [
+                      "亮點一",
+                      "亮點二"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "cautions": {
+                    "type": "array",
+                    "example": [
+                      "事項一",
+                      "事項二"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "confirmations": {
+                    "type": "array",
+                    "example": [
+                      "確認詳情一",
+                      "確認詳情二"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "cancelPolicies": {
+                    "type": "array",
+                    "example": [
+                      "取消政策一",
+                      "取消政策二"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "certificates": {
+                    "type": "array",
+                    "example": [
+                      "憑證類型一",
+                      "憑證類型二"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "_id",
+                  "title",
+                  "type",
+                  "genre",
+                  "theater",
+                  "brief",
+                  "introduction"
+                ]
+              }
+            }
+          },
+          "required": [
+            "product"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "message",
+        "data"
+      ]
+    },
     "CustomCreateProductsObj": {
       "type": "object",
       "required": [
@@ -1283,28 +1518,28 @@
           "items": {
             "type": "object",
             "required": [
+              "_id",
               "title",
               "type",
               "genre",
-              "vendor",
               "theater",
-              "price",
-              "amount",
-              "soldAmount",
-              "startAt",
-              "endAt",
-              "sellStartAt",
-              "sellEndAt",
-              "recommendWeight",
-              "isPublic",
-              "isLaunched",
-              "introduction"
+              "brief"
             ],
             "properties": {
+              "_id": {
+                "type": "string",
+                "example": "asdfasdfas",
+                "description": "id"
+              },
               "title": {
                 "type": "string",
                 "example": "這是一個商品名稱",
                 "description": "商品名稱"
+              },
+              "brief": {
+                "type": "string",
+                "example": "簡短的介紹介紹",
+                "description": "簡介"
               },
               "type": {
                 "type": "string",
@@ -1372,44 +1607,6 @@
                 "min": 0,
                 "description": "已銷售數量"
               },
-              "plans": {
-                "type": "array",
-                "description": "銷售方案",
-                "items": {
-                  "type": "object",
-                  "required": [
-                    "name",
-                    "discount",
-                    "headCount"
-                  ],
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "方案名稱",
-                      "example": "三人同行好棒棒",
-                      "min": 2
-                    },
-                    "discount": {
-                      "type": "number",
-                      "max": 1,
-                      "min": 0.1,
-                      "example": 0.5,
-                      "description": "方案折扣數"
-                    },
-                    "headCount": {
-                      "type": "number",
-                      "min": 0,
-                      "example": 10,
-                      "description": "方案包含人數"
-                    }
-                  }
-                }
-              },
-              "introduction": {
-                "type": "string",
-                "example": "<p>很棒的商品</p>",
-                "description": "商品介紹 (html)"
-              },
               "isLaunched": {
                 "type": "boolean",
                 "example": false,
@@ -1429,46 +1626,37 @@
               },
               "sellEndAt": {
                 "type": "Date",
-                "example": "2024-05-15T16:59:09.914Z",
-                "min": "2024-05-14T15:59:09.917Z",
+                "example": "2024-05-16T12:26:32.516Z",
+                "min": "2024-05-15T11:26:32.518Z",
                 "description": "販賣結束時間，必須晚於販賣開始時間至少一個小時"
               },
               "sellStartAt": {
                 "type": "Date",
-                "example": "2024-05-15T14:59:09.916Z",
-                "min": "2024-05-14T14:59:09.917Z",
+                "example": "2024-05-16T10:26:32.518Z",
+                "min": "2024-05-15T10:26:32.518Z",
                 "description": "販賣開始時間，必須晚於現在時間至少一天"
               },
               "endAt": {
                 "type": "Date",
-                "example": "2024-05-15T20:59:09.916Z",
-                "min": "2024-05-14T17:59:09.917Z",
+                "example": "2024-05-16T16:26:32.518Z",
+                "min": "2024-05-15T13:26:32.518Z",
                 "description": "活動結束時間，必須晚於活動開始時間至少一個小時"
               },
               "startAt": {
                 "type": "Date",
-                "example": "2024-05-15T18:59:09.916Z",
-                "min": "2024-05-14T16:59:09.917Z",
+                "example": "2024-05-16T14:26:32.518Z",
+                "min": "2024-05-15T12:26:32.518Z",
                 "description": "活動開始時間，必須晚於販售結束時間至少一個小時"
-              },
-              "tags": {
-                "type": "array",
-                "description": "標籤列表",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "tagId": {
-                      "type": "string",
-                      "example": "AAA",
-                      "description": "標籤，先把這個拿掉"
-                    }
-                  }
-                }
               },
               "photoPath": {
                 "type": "string",
                 "description": "商品圖片 Url",
-                "example": null
+                "example": ""
+              },
+              "introduction": {
+                "type": "string",
+                "example": "<p>很棒的商品</p>",
+                "description": "商品介紹 (html)"
               },
               "notifications": {
                 "type": "array",
@@ -1534,6 +1722,53 @@
                 ],
                 "items": {
                   "type": "string"
+                }
+              },
+              "tags": {
+                "type": "array",
+                "description": "標籤列表",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "tagId": {
+                      "type": "string",
+                      "example": "AAA",
+                      "description": "標籤，先把這個拿掉"
+                    }
+                  }
+                }
+              },
+              "plans": {
+                "type": "array",
+                "description": "銷售方案",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "discount",
+                    "headCount"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "方案名稱",
+                      "example": "三人同行好棒棒",
+                      "min": 2
+                    },
+                    "discount": {
+                      "type": "number",
+                      "max": 1,
+                      "min": 0.1,
+                      "example": 0.5,
+                      "description": "方案折扣數"
+                    },
+                    "headCount": {
+                      "type": "number",
+                      "min": 0,
+                      "example": 10,
+                      "description": "方案包含人數"
+                    }
+                  }
                 }
               }
             }

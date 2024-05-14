@@ -1,7 +1,9 @@
 import ProductController from '../controller/productController';
 import { IsAdmin } from '../middleware/isAdmin';
 import { UserCheck, UserVerify } from '../middleware/userVerify';
-import { FindProductPipe } from '../validator/product/findProduct.pipe';
+import { CreateProductsPipe } from '../validator/product/createProducts.pipe';
+import { GetProductDetailPipe } from '../validator/product/getProductDetail.pipe';
+import { GetProductsPipe } from '../validator/product/getProducts.pipe';
 import { BaseRoute } from './baseRoute';
 
 export class ProductRoute extends BaseRoute {
@@ -192,13 +194,40 @@ export class ProductRoute extends BaseRoute {
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/CreateProductsSuccess"
+              $ref: "#/definitions/GetProductsSuccess"
             }
           }
       */
       UserCheck,
-      this.usePipe(FindProductPipe),
+      this.usePipe(GetProductsPipe),
       this.responseHandler(this.controller.getProducts),
+    );
+
+    this.router.get(
+      '/v1/product/:id',
+      /**
+       * #swagger.tags = ['Product']
+       * #swagger.summary = '取得商品詳細資料'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+        #swagger.parameters['id'] = {
+          in: 'path',
+          description: '商品 id',
+          example: 'abcdefg',
+        }
+      */
+      /*
+        #swagger.responses[200] = {
+          description: 'OK',
+          schema:{
+          $ref: '#/definitions/GetProductDetailSuccess'
+          }
+        }
+       */
+      UserCheck,
+      this.usePipe(GetProductDetailPipe),
+      this.responseHandler(this.controller.getProductDetail),
     );
 
     this.router.post(
@@ -234,6 +263,7 @@ export class ProductRoute extends BaseRoute {
        */
       UserVerify,
       IsAdmin,
+      this.usePipe(CreateProductsPipe),
       this.responseHandler(this.controller.createProducts),
     );
   }
