@@ -2,6 +2,7 @@ import ProductController from '../controller/productController';
 import { IsAdmin } from '../middleware/isAdmin';
 import { UserCheck, UserVerify } from '../middleware/userVerify';
 import { CreateProductsPipe } from '../validator/product/createProducts.pipe';
+import { DeleteProductsPipe } from '../validator/product/deleteProducts.pipe';
 import { GetProductDetailPipe } from '../validator/product/getProductDetail.pipe';
 import { GetProductsPipe } from '../validator/product/getProducts.pipe';
 import { BaseRoute } from './baseRoute';
@@ -265,6 +266,28 @@ export class ProductRoute extends BaseRoute {
       IsAdmin,
       this.usePipe(CreateProductsPipe),
       this.responseHandler(this.controller.createProducts),
+    );
+
+    this.router.delete(
+      '/v1/product',
+      /**
+       * #swagger.tags = ['Product']
+       * #swagger.summary = '批次刪除商品'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+          #swagger.parameters['obj'] = {
+            in: 'body',
+            description: '欲刪除的商品 id 列表',
+            schema: {
+              $ref:"#/definitions/CustomDeleteProductsObj"
+            }
+          }
+       */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(DeleteProductsPipe),
+      this.responseHandler(this.controller.deleteProducts),
     );
   }
 }

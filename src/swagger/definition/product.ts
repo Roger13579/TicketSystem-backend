@@ -229,6 +229,20 @@ export const FindProductSuccess = {
   },
 };
 
+export const CustomDeleteProductsObj = {
+  type: 'object',
+  required: ['productIds'],
+  properties: {
+    productIds: {
+      type: 'array',
+      items: {
+        type: 'string',
+        example: 'thisIsAnId',
+      },
+    },
+  },
+};
+
 export const CustomCreateProductsObj = {
   type: 'object',
   required: ['products'],

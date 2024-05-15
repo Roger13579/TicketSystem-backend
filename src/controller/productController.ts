@@ -3,7 +3,11 @@ import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
 import { ProductService } from '../service/productService';
 import { NewProductVo } from '../vo/newProductVo';
-import { TCreateProductsReq, TGetProductsReq } from '../types/product.type';
+import {
+  IDeleteProductsReq,
+  TCreateProductsReq,
+  TGetProductsReq,
+} from '../types/product.type';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import { GetProductVo } from '../vo/getProductVo';
 import { IProduct } from '../models/product';
@@ -51,6 +55,17 @@ class ProductController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       { product },
+    );
+  };
+
+  public deleteProducts = async (req: IDeleteProductsReq) => {
+    const { deletedCount } = await this.productService.deleteProducts(
+      req.body.productIds,
+    );
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      deletedCount,
     );
   };
 }

@@ -178,4 +178,8 @@ export class ProductService {
 
     return product;
   };
+
+  public deleteProducts = async (ids: string[]) => {
+    return this.productRepository.deleteProducts(ids);
+  };
 }
