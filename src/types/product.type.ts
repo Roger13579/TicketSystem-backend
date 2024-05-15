@@ -87,3 +87,9 @@ export enum ProductSortBy {
   soldAmount = 'soldAmount',
   createdAt = 'createdAt',
 }
+
+export interface IDeleteProductsReq extends Request {
+  body: {
+    productIds: string[];
+  };
+}

@@ -89,4 +89,8 @@ export class ProductRepository {
     const filter = this.createProductFilter(productFilterDto);
     return await ProductModel.countDocuments(filter);
   }
+
+  public deleteProducts = async (ids: string[]) => {
+    return await ProductModel.deleteMany({ _id: { $in: ids } });
+  };
 }
