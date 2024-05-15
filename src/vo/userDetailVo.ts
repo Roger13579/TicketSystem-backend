@@ -6,7 +6,7 @@ export class UserDetailVo {
   private birthDate: string;
   private email: string;
   private gender: string;
-  private phone: number;
+  private phone: string;
   private address: string;
   private imgUrl: string;
 
