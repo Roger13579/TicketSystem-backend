@@ -270,6 +270,20 @@ export class ProductRoute extends BaseRoute {
 
     this.router.delete(
       '/v1/product',
+      /**
+       * #swagger.tags = ['Product']
+       * #swagger.summary = '批次刪除商品'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+          #swagger.parameters['obj'] = {
+            in: 'body',
+            description: '欲刪除的商品 id 列表',
+            schema: {
+              $ref:"#/definitions/CustomDeleteProductsObj"
+            }
+          }
+       */
       UserVerify,
       IsAdmin,
       this.usePipe(DeleteProductsPipe),
