@@ -221,6 +221,14 @@ export const GetProductsSuccess = {
   },
 };
 
+export const DeleteProductsSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $deletedCount: 1,
+  },
+};
+
 export const FindProductSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
