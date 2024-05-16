@@ -69,6 +69,20 @@ export class UserRepository {
     );
   }
 
+  public async updateGroupUser(
+    id: string,
+    groupId: string,
+  ): Promise<IUser | null> {
+    return UserModel.findByIdAndUpdate(
+      { _id: new Types.ObjectId(id) },
+      {
+        $push: {
+          groups: { groupId },
+        },
+      },
+    );
+  }
+
   public async findByEmail(email: string): Promise<IUser | null> {
     return UserModel.findOne({ email: email });
   }

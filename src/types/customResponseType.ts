@@ -119,4 +119,10 @@ export const enum CustomResponseType {
 
   INVALID_CREATE_PRODUCT = '6514',
   INVALID_CREATE_PRODUCT_MESSAGE = '無效的商品新增：',
+
+  GROUP_IS_FULL = '6515',
+  GROUP_IS_FULL_MESSAGE = '揪團人數已滿',
+
+  GROUP_ALREADY_JOINED = '6516',
+  GROUP_ALREADY_JOINED_MESSAGE = '已加入此揪團活動',
 }

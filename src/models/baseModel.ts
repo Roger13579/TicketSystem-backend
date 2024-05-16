@@ -1,29 +1,29 @@
-import { Schema, Document } from 'mongoose';
+import { Document, Schema, Types } from 'mongoose';
 
 export interface BaseModel extends Document {
-  id: Schema.Types.ObjectId;
+  id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface IUserId {
-  userId: Schema.Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 export interface IProductId {
-  productId: Schema.Types.ObjectId;
+  productId: Types.ObjectId;
 }
 
 export interface IOrderId {
-  orderId: Schema.Types.ObjectId;
+  orderId: Types.ObjectId;
 }
 
 export interface IGroupId {
-  groupId: Schema.Types.ObjectId;
+  groupId: Types.ObjectId;
 }
 
 export interface ITicketId {
-  ticketId: Schema.Types.ObjectId;
+  ticketId: Types.ObjectId;
 }
 
 export const schemaDef = {

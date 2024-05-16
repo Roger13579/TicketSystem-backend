@@ -102,12 +102,15 @@ const schema = new Schema<IUser>(
     },
     groups: {
       type: [{ groupId }],
+      default: [],
     },
     collects: {
       type: [{ productId }],
+      default: [],
     },
     myTickets: {
       type: [{ ticketId }],
+      default: [],
     },
   },
   schemaOption,
