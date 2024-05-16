@@ -39,6 +39,7 @@ import {
   CustomGetProductTagQuery,
   GetProductDetailSuccess,
   GetProductsSuccess,
+  CustomDeleteProductsObj,DeleteProductsSuccess
 } from './product';
 import {
   CreateGroupSuccess,
@@ -69,10 +70,11 @@ export const definitions = {
   CreateGroupSuccess,
   UploadFileSuccess,
   GetProductDetailSuccess,
-  GetProductsSuccess,
+  GetProductsSuccess,DeleteProductsSuccess
 };
 
 export const customDefinitions = {
+  CustomDeleteProductsObj,
   CustomCreateProductsObj,
   CustomGetProductTitleQuery,
   CustomGetProductTypesQuery,
