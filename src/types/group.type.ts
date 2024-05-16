@@ -27,6 +27,10 @@ export interface TUpdateGroupReq extends IUserReq {
   };
 }
 
+export interface TJoinGroupReq extends IUserReq {
+  body: IParticipant;
+}
+
 export interface IParticipant {
   phone: string;
   name: string;

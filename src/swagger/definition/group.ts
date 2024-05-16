@@ -8,6 +8,10 @@ const propName = {
   amount: '活動人數',
   haveTicket: '是否持有票券',
   content: '活動內容',
+  name: '姓名',
+  nickname: '暱稱',
+  phone: '電話',
+  lineId: 'line ID',
 };
 
 const customGroup = {
@@ -18,6 +22,10 @@ const customGroup = {
   amount: 5,
   haveTicket: true,
   content: '好活動',
+  name: '我的名字',
+  nickname: '我的暱稱',
+  phone: '我的電話',
+  lineId: '我的line ID',
 };
 
 export const CreateGroupSuccess = {
@@ -83,6 +91,32 @@ export const CustomUpdateGroupObj = {
       type: 'string',
       description: propName.content,
       example: customGroup.content,
+    },
+  },
+};
+export const CustomJoinGroupObj = {
+  type: 'object',
+  required: ['name', 'nickname', 'phone', 'lineId'],
+  properties: {
+    name: {
+      type: 'string',
+      description: propName.name,
+      example: customGroup.name,
+    },
+    nickname: {
+      type: 'string',
+      description: propName.nickname,
+      example: customGroup.nickname,
+    },
+    phone: {
+      type: 'string',
+      description: propName.phone,
+      example: customGroup.phone,
+    },
+    lineId: {
+      type: 'string',
+      description: propName.lineId,
+      example: customGroup.lineId,
     },
   },
 };

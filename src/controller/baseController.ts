@@ -1,7 +1,5 @@
 import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
-import { Request } from 'express';
-import { validationResult } from 'express-validator';
 
 export abstract class BaseController {
   public formatResponse<T>(

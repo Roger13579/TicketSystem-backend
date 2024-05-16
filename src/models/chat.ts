@@ -1,11 +1,11 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import { BaseModel, IUserId, schemaDef } from './baseModel';
 
 interface IChat extends BaseModel, IUserId {
-  userId: Schema.Types.ObjectId;
-  ticketId?: Schema.Types.ObjectId;
-  groupId?: Schema.Types.ObjectId;
+  userId: Types.ObjectId;
+  ticketId?: Types.ObjectId;
+  groupId?: Types.ObjectId;
   isRead: boolean;
   message: string;
 }
@@ -36,6 +36,4 @@ const schema = new Schema<IChat>(
   schemaOption,
 );
 
-const ChatModel = model<IChat>('Chat', schema);
-
-export default ChatModel;
+export const ChatModel = model<IChat>('Chat', schema);

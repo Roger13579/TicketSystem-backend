@@ -44,6 +44,7 @@ import {
 import {
   CreateGroupSuccess,
   CustomCreateGroupObj,
+  CustomJoinGroupObj,
   CustomUpdateGroupObj,
 } from './group';
 import { UploadFileSuccess } from './upload';
@@ -95,4 +96,5 @@ export const customDefinitions = {
   CustomGetProductSortByQuery,
   CustomCreateGroupObj,
   CustomUpdateGroupObj,
+  CustomJoinGroupObj,
 };
