@@ -284,6 +284,14 @@ export class ProductRoute extends BaseRoute {
             }
           }
        */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/DeleteProductsSuccess"
+            }
+          }
+       */
       UserVerify,
       IsAdmin,
       this.usePipe(DeleteProductsPipe),
