@@ -3,6 +3,7 @@ import { GroupController } from '../controller/groupController';
 import { UserVerify } from '../middleware/userVerify';
 import { CreateGroupPipe } from '../validator/group/createGroup.pipe';
 import { UpdateGroupPipe } from '../validator/group/updateGroup.pipe';
+import { JoinGroupPipe } from '../validator/group/joinGroup.pipe';
 
 export class GroupRoute extends BaseRoute {
   protected controller!: GroupController;
@@ -75,6 +76,32 @@ export class GroupRoute extends BaseRoute {
       UserVerify,
       this.usePipe(UpdateGroupPipe),
       this.responseHandler(this.controller.updateGroup),
+    );
+    this.router.patch(
+      '/v1/group/join/:groupId',
+      /**
+       * #swagger.tags = ['Group']
+       * #swagger.summary = '參加揪團'
+       */
+      /*
+       #swagger.parameters['obj'] ={
+         in:'body',
+         description:'參加揪團的資料',
+         schema:{
+           $ref:"#/definitions/CustomJoinGroupObj"
+         }
+       }
+       */
+      /**
+       #swagger.responses[200] = {
+       description: 'OK',
+       schema: {
+       $ref: '#/definitions/Success' }
+       }
+       */
+      UserVerify,
+      this.usePipe(JoinGroupPipe),
+      this.responseHandler(this.controller.joinGroup),
     );
   }
 }

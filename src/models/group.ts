@@ -61,6 +61,7 @@ const schema = new Schema<IGroup>(
           lineId: String,
         },
       ],
+      default: [],
     },
   },
   schemaOption,
