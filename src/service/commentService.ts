@@ -18,6 +18,20 @@ export class CommentService {
           CustomResponseType.EXISTED_COMMENT_MESSAGE,
           CustomResponseType.EXISTED_COMMENT,
         );
+        return;
+      }
+      return next(err);
+    });
+  };
+
+  public deleteComments = async (ids: string[], next: NextFunction) => {
+    return await this.commentRepository.deleteComments(ids).catch((err) => {
+      if (err.name === 'CastError') {
+        throwError(
+          CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentId',
+          CustomResponseType.INVALID_DELETE_COMMENT,
+        );
+        return;
       }
       return next(err);
     });

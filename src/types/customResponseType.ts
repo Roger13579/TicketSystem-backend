@@ -134,6 +134,10 @@ export const enum CustomResponseType {
 
   EXISTED_COMMENT = '6519',
   EXISTED_COMMENT_MESSAGE = '該使用者已經對該商品進行評論',
+
   INVALID_COMMENT_PRODUCT = '6520',
   INVALID_COMMENT_PRODUCT_MESSAGE = '無效的新增評論：',
+
+  INVALID_DELETE_COMMENT = '6521',
+  INVALID_DELETE_COMMENT_MESSAGE = '無效的刪除評論：',
 }

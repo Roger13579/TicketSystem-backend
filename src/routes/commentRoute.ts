@@ -1,6 +1,8 @@
 import { CommentController } from '../controller/commentController';
+import { IsAdmin } from '../middleware/isAdmin';
 import { UserVerify } from '../middleware/userVerify';
 import { CreateCommentPipe } from '../validator/comment/createComment.pipe';
+import { DeleteCommentsPipe } from '../validator/comment/deleteComments.pipe';
 import { BaseRoute } from './baseRoute';
 
 export class CommentRoute extends BaseRoute {
@@ -43,6 +45,36 @@ export class CommentRoute extends BaseRoute {
       UserVerify,
       this.usePipe(CreateCommentPipe),
       this.responseHandler(this.controller.commentProduct),
+    );
+
+    this.router.delete(
+      '/v1/comment',
+      /**
+       * #swagger.tags = ['Comment']
+       * #swagger.summary = '批次刪除評論'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+          #swagger.parameters['obj'] = {
+            in: 'body',
+            description: '欲刪除的評論 id 列表',
+            schema: {
+              $ref:"#/definitions/CustomDeleteCommentsObj"
+            }
+          }
+       */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/DeleteSuccess"
+            }
+          }
+       */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(DeleteCommentsPipe),
+      this.responseHandler(this.controller.deleteComments),
     );
   }
 }
