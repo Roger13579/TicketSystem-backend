@@ -6,8 +6,8 @@ import { BaseModel, schemaDef } from './baseModel';
 
 export interface IProduct extends BaseModel {
   title: string;
-  type: string;
-  genre: string;
+  type: ProductType;
+  genre: MovieGenre;
   vendor: string;
   theater: string;
   price: number;
@@ -21,7 +21,7 @@ export interface IProduct extends BaseModel {
   isPublic: boolean;
   isLaunched: boolean;
   tags?: [{ tagId: Schema.Types.ObjectId }];
-  photoPath: string | null;
+  photoPath: string;
   notifications?: [string];
   highlights?: [string];
   introduction?: string;

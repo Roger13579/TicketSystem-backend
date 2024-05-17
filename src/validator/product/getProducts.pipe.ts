@@ -1,14 +1,45 @@
-import { query } from 'express-validator';
+import { Meta, query } from 'express-validator';
 import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
 import {
+  IGetProductsReq,
   MovieGenre,
   ProductSortBy,
   ProductType,
   RecommendWeightRange,
 } from '../../types/product.type';
+import moment from 'moment';
 
 export class GetProductsPipe extends PipeBase {
+  private isRecommendWeightValid = (value: string | undefined) => {
+    if (!!value) {
+      value.split(',').forEach((item) => {
+        const isValid = Object.keys(RecommendWeightRange).includes(item);
+        if (!isValid) {
+          throw new Error(
+            CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
+              'recommendWeight',
+          );
+        }
+      });
+    }
+    return true;
+  };
+
+  private isSortByValid = (value: string | undefined) => {
+    if (!!value) {
+      const isValid = Object.keys(ProductSortBy).includes(
+        value.replace('-', ''),
+      );
+      if (!isValid) {
+        throw new Error(
+          CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'sortBy',
+        );
+      }
+    }
+    return true;
+  };
+
   public transform() {
     return [
       query('limit')
@@ -67,60 +98,73 @@ export class GetProductsPipe extends PipeBase {
         .withMessage(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + ': priceMin',
         ),
-      query('recommendWeights')
-        .optional()
-        .custom((value: string) => {
-          value.split(',').forEach((item) => {
-            const isValid = Object.keys(RecommendWeightRange).includes(item);
-            if (!isValid) {
-              throw new Error(
-                CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE +
-                  'recommendWeight',
-              );
-            }
-          });
-          return true;
-        }),
-      query('sortBy')
-        .optional()
-        .custom((value: string | undefined) => {
-          if (!!value) {
-            const isValid = Object.keys(ProductSortBy).includes(
-              value.replace('-', ''),
-            );
-            if (!isValid) {
-              throw new Error(
-                CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'sortBy',
-              );
-            }
-          }
-          return true;
-        }),
+      query('recommendWeights').optional().custom(this.isRecommendWeightValid),
+      query('sortBy').optional().custom(this.isSortByValid),
       query('startAtFrom')
         .optional()
-        .toDate()
-        .isDate()
+        .custom(this.isValidDate)
+        .custom((value: string, { req }: Meta) => {
+          const { startAtTo } = (req as IGetProductsReq).query;
+          if (
+            startAtTo &&
+            this.isValidDate(value) &&
+            this.isValidDate(startAtTo)
+          ) {
+            return moment(startAtTo).isAfter(moment(value));
+          }
+          return true;
+        })
         .withMessage(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'startAtTo',
         ),
       query('startAtTo')
         .optional()
-        .toDate()
-        .isDate()
+        .custom(this.isValidDate)
+        .custom((value: string, { req }: Meta) => {
+          const { startAtFrom } = (req as IGetProductsReq).query;
+          if (
+            startAtFrom &&
+            this.isValidDate(value) &&
+            this.isValidDate(startAtFrom)
+          ) {
+            return moment(startAtFrom).isBefore(moment(value));
+          }
+          return true;
+        })
         .withMessage(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'startAtTo',
         ),
       query('sellStartAtFrom')
         .optional()
-        .toDate()
-        .isDate()
+        .custom(this.isValidDate)
+        .custom((value: string, { req }: Meta) => {
+          const { sellStartAtTo } = (req as IGetProductsReq).query;
+          if (
+            sellStartAtTo &&
+            this.isValidDate(value) &&
+            this.isValidDate(sellStartAtTo)
+          ) {
+            return moment(sellStartAtTo).isAfter(moment(value));
+          }
+          return true;
+        })
         .withMessage(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'startAtTo',
         ),
       query('sellStartAtTo')
         .optional()
-        .toDate()
-        .isDate()
+        .custom(this.isValidDate)
+        .custom((value: string, { req }: Meta) => {
+          const { sellStartAtFrom } = (req as IGetProductsReq).query;
+          if (
+            sellStartAtFrom &&
+            this.isValidDate(value) &&
+            this.isValidDate(sellStartAtFrom)
+          ) {
+            return moment(sellStartAtFrom).isBefore(moment(value));
+          }
+          return true;
+        })
         .withMessage(
           CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'startAtTo',
         ),

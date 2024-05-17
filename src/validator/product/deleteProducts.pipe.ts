@@ -1,17 +1,22 @@
 import { body } from 'express-validator';
 import { PipeBase } from '../pipe.base';
+import { CustomResponseType } from '../../types/customResponseType';
 
 export class DeleteProductsPipe extends PipeBase {
   public transform = () => [
     body('productIds')
       .exists()
-      .withMessage('無效的商品 id 列表')
+      .withMessage(
+        CustomResponseType.INVALID_DELETE_PRODUCT_MESSAGE + 'productIds',
+      )
       .isArray()
-      .isLength({ min: 1 }),
-    body('productIds.*').exists().isString().withMessage('無效的商品 id 列表'),
+      .custom(this.isNotEmptyArray),
+    body('productIds.*')
+      .exists()
+      .isString()
+      .withMessage(CustomResponseType.INVALID_DELETE_PRODUCT_MESSAGE + 'id'),
     this.validationHandler,
   ];
-
   constructor() {
     super();
   }

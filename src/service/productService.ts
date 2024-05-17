@@ -8,6 +8,7 @@ import { AccountType } from '../types/user.type';
 import { checkDateOrder } from '../utils/common';
 import { AppError, createErrorMsg, throwError } from '../utils/errorHandler';
 import { HttpStatus } from '../types/responseType';
+import { EditProductDTO } from '../dto/editProductsDto';
 
 const logger = log4js.getLogger(`ProductRepository`);
 
@@ -181,5 +182,9 @@ export class ProductService {
 
   public deleteProducts = async (ids: string[]) => {
     return this.productRepository.deleteProducts(ids);
+  };
+
+  public editProducts = async (editProductDto: EditProductDTO) => {
+    return this.productRepository.findByIdAndUploadProducts(editProductDto);
   };
 }

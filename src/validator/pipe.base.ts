@@ -7,6 +7,13 @@ export abstract class PipeBase {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public abstract transform(): any;
 
+  protected isValidDate = (value: string) => {
+    const date = new Date(value);
+    return date instanceof Date && !isNaN(date.getTime());
+  };
+
+  protected isNotEmptyArray = (array: unknown[]) => array.length > 0;
+
   protected validationHandler(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

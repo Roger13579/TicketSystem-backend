@@ -17,36 +17,12 @@ import {
   CreateProductsError,
 } from './common';
 import {
-  CustomCreateProductsObj,
-  CreateProductsSuccess,
-  CustomGetProductTitleQuery,
-  CustomGetProductTypesQuery,
-  CustomGetProductGenresQuery,
-  CustomGetProductTheatersQuery,
-  CustomGetProductVendorsQuery,
-  CustomGetProductIsPublicQuery,
-  CustomGetProductIsLaunchedQuery,
-  CustomGetProductSellStartFromQuery,
-  CustomGetProductStartAtFromQuery,
-  CustomGetProductStartAtToQuery,
-  CustomGetProductRecommendWeightQuery,
-  CustomGetProductPriceMaxQuery,
-  CustomGetProductSellStartToQuery,
-  CustomGetProductLimitQuery,
-  CustomGetProductPageQuery,
-  CustomGetProductPriceMinQuery,
-  CustomGetProductSortByQuery,
-  CustomGetProductTagQuery,
-  GetProductDetailSuccess,
-  GetProductsSuccess,
-  CustomDeleteProductsObj,DeleteProductsSuccess
-} from './product';
-import {
   CreateGroupSuccess,
   CustomCreateGroupObj,
   CustomJoinGroupObj,
   CustomUpdateGroupObj,
 } from './group';
+import { productDefinition, productCustomDefinition } from './product';
 import { UploadFileSuccess } from './upload';
 
 export const definitions = {
@@ -65,35 +41,14 @@ export const definitions = {
   RegisterEmailSuccess,
   RegisterEmailError,
   ValidateEmailError,
-  CreateProductsSuccess,
   CreateProductsError,
   CreateGroupSuccess,
   UploadFileSuccess,
-  GetProductDetailSuccess,
-  GetProductsSuccess,DeleteProductsSuccess
+  ...productDefinition,
 };
 
 export const customDefinitions = {
-  CustomDeleteProductsObj,
-  CustomCreateProductsObj,
-  CustomGetProductTitleQuery,
-  CustomGetProductTypesQuery,
-  CustomGetProductGenresQuery,
-  CustomGetProductVendorsQuery,
-  CustomGetProductTheatersQuery,
-  CustomGetProductIsLaunchedQuery,
-  CustomGetProductIsPublicQuery,
-  CustomGetProductStartAtFromQuery,
-  CustomGetProductStartAtToQuery,
-  CustomGetProductSellStartFromQuery,
-  CustomGetProductSellStartToQuery,
-  CustomGetProductRecommendWeightQuery,
-  CustomGetProductPriceMaxQuery,
-  CustomGetProductPriceMinQuery,
-  CustomGetProductTagQuery,
-  CustomGetProductPageQuery,
-  CustomGetProductLimitQuery,
-  CustomGetProductSortByQuery,
+  ...productCustomDefinition,
   CustomCreateGroupObj,
   CustomUpdateGroupObj,
   CustomJoinGroupObj,

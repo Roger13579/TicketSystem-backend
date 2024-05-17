@@ -5,19 +5,21 @@ import { ProductService } from '../service/productService';
 import { NewProductVo } from '../vo/newProductVo';
 import {
   IDeleteProductsReq,
-  TCreateProductsReq,
-  TGetProductsReq,
+  IEditProductsReq,
+  ICreateProductsReq,
+  IGetProductsReq,
 } from '../types/product.type';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import { GetProductVo } from '../vo/getProductVo';
 import { IProduct } from '../models/product';
 import { NextFunction, Request, Response } from 'express';
+import { EditProductDTO } from '../dto/editProductsDto';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
 
   public getProducts = async (
-    req: TGetProductsReq,
+    req: IGetProductsReq,
   ): Promise<ResponseObject> => {
     const productFilterDto = new ProductFilterDTO(req);
     const { page, limit } = productFilterDto;
@@ -30,7 +32,7 @@ class ProductController extends BaseController {
   };
 
   public createProducts = async (
-    req: TCreateProductsReq,
+    req: ICreateProductsReq,
   ): Promise<ResponseObject> => {
     const products = await this.productService.createProducts(
       req.body.products,
@@ -66,6 +68,16 @@ class ProductController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       deletedCount,
+    );
+  };
+
+  public editProducts = async (req: IEditProductsReq) => {
+    const editProductDto = new EditProductDTO(req);
+    const products = await this.productService.editProducts(editProductDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { products },
     );
   };
 }
