@@ -9,3 +9,9 @@ export interface ICommentProductReq extends IUserReq {
     status: Status;
   };
 }
+
+export interface IDeleteCommentsReq extends IUserReq {
+  body: {
+    commentIds: string[];
+  };
+}
