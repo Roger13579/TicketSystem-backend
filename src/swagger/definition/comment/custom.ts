@@ -34,3 +34,21 @@ export const CustomCreateCommentObj = {
     },
   },
 };
+
+/**
+ * @description 自己定義的 definition，適用於包含刪除評論 id 列表 request.body
+ */
+export const CustomDeleteCommentsObj = {
+  type: 'object',
+  required: ['commentIds'],
+  properties: {
+    commentIds: {
+      type: 'array',
+      items: {
+        type: 'string',
+        example: 'thisIsAnId',
+        description: '要刪除的評論 id',
+      },
+    },
+  },
+};

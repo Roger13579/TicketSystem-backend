@@ -6,4 +6,8 @@ export class CommentRepository {
     const { comment } = newCommentDto;
     return await CommentModel.create(comment);
   };
+
+  public deleteComments = async (ids: string[]) => {
+    return await CommentModel.deleteMany({ _id: { $in: ids } });
+  };
 }

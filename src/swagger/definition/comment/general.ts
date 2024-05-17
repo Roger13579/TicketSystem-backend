@@ -16,3 +16,11 @@ export const CreateCommentSuccess = {
     },
   },
 };
+
+export const DeleteSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $deletedCount: 1,
+  },
+};

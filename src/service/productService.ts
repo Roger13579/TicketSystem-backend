@@ -9,12 +9,16 @@ import { checkDateOrder } from '../utils/common';
 import { AppError, createErrorMsg, throwError } from '../utils/errorHandler';
 import { HttpStatus } from '../types/responseType';
 import { EditProductDTO } from '../dto/editProductsDto';
+import { CommentRepository } from '../repository/commentRepository';
 
 const logger = log4js.getLogger(`ProductRepository`);
 
 export class ProductService {
   private readonly productRepository: ProductRepository =
     new ProductRepository();
+
+  private readonly commentRepository: CommentRepository =
+    new CommentRepository();
 
   private readonly defaultProjection = {
     _id: 1,
@@ -181,7 +185,14 @@ export class ProductService {
   };
 
   public deleteProducts = async (ids: string[]) => {
-    return this.productRepository.deleteProducts(ids);
+    const { deletedCount } = await this.productRepository.deleteProducts(ids);
+
+    if (deletedCount > 0) {
+      // 真的有商品刪掉了，就要去把相應的 comment 刪掉
+      await this.commentRepository.deleteComments(ids);
+    }
+
+    return { deletedCount };
   };
 
   public editProducts = async (editProductDto: EditProductDTO) => {
