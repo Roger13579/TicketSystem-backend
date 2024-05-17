@@ -24,6 +24,7 @@ import {
 } from './group';
 import { productDefinition, productCustomDefinition } from './product';
 import { UploadFileSuccess } from './upload';
+import { commentDefinitions, commentCustomDefinitions } from './comment';
 
 export const definitions = {
   Success,
@@ -45,6 +46,7 @@ export const definitions = {
   CreateGroupSuccess,
   UploadFileSuccess,
   ...productDefinition,
+  ...commentDefinitions,
 };
 
 export const customDefinitions = {
@@ -52,4 +54,5 @@ export const customDefinitions = {
   CustomCreateGroupObj,
   CustomUpdateGroupObj,
   CustomJoinGroupObj,
+  ...commentCustomDefinitions,
 };

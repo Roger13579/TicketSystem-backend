@@ -158,6 +158,7 @@ export const CustomDeleteProductsObj = {
       items: {
         type: 'string',
         example: 'thisIsAnId',
+        description: '要刪除的商品 id',
       },
     },
   },
@@ -310,7 +311,7 @@ export const CustomEditProductObj = {
           id: {
             type: 'string',
             example: 'asdfasdfas',
-            description: 'id',
+            description: '商品 id',
           },
           ...CustomProductProperties,
           ...CustomProductDetailProperties,
