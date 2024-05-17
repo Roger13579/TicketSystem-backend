@@ -1,6 +1,7 @@
 import { IProduct } from '../models/product';
 import { Request } from 'express';
 import { IUserReq } from './common.type';
+import { Types } from 'mongoose';
 
 export enum ProductType {
   premier = 'premier',
@@ -46,13 +47,13 @@ export type TPlan = {
   headCount: number; // 該方案包含幾張票
 };
 
-export interface TCreateProductsReq extends Request {
+export interface ICreateProductsReq extends Request {
   body: {
     products: IProduct[];
   };
 }
 
-export interface TGetProductsReq extends IUserReq {
+export interface IGetProductsReq extends IUserReq {
   query: {
     title?: string;
     types?: string;
@@ -91,5 +92,38 @@ export enum ProductSortBy {
 export interface IDeleteProductsReq extends Request {
   body: {
     productIds: string[];
+  };
+}
+
+export interface IEditContent {
+  title?: string;
+  type?: ProductType;
+  genre?: MovieGenre;
+  vendor?: string;
+  theater?: string;
+  price?: number;
+  amount?: number; // 票券總量
+  plans?: TPlan[];
+  startAt?: Date;
+  endAt?: Date;
+  sellStartAt?: Date;
+  sellEndAt?: Date;
+  recommendWeight?: number;
+  isPublic?: boolean;
+  isLaunched?: boolean;
+  photoPath?: string;
+  notifications?: [string];
+  highlights?: [string];
+  introduction?: string;
+  cautions?: [string];
+  confirmations?: [string];
+  cancelPolicies?: [string];
+  certificates?: [string];
+  brief?: string;
+}
+
+export interface IEditProductsReq extends Request {
+  body: {
+    products: (IEditContent & { id: Types.ObjectId })[];
   };
 }

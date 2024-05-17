@@ -1,6 +1,7 @@
 import { FilterQuery, ProjectionType } from 'mongoose';
 import { ProductFilterDTO } from '../dto/productFilterDto';
 import ProductModel, { IProduct } from '../models/product';
+import { EditProductDTO } from '../dto/editProductsDto';
 
 export class ProductRepository {
   private createProductFilter(productFilterDto: ProductFilterDTO) {
@@ -92,5 +93,18 @@ export class ProductRepository {
 
   public deleteProducts = async (ids: string[]) => {
     return await ProductModel.deleteMany({ _id: { $in: ids } });
+  };
+
+  public findByIdAndUploadProducts = async (editProductDto: EditProductDTO) => {
+    const { updatedProducts } = editProductDto;
+
+    const promises = updatedProducts.map(({ id, content }) => {
+      return ProductModel.findByIdAndUpdate(id, content, { new: true });
+    });
+
+    const newProducts = await Promise.all(promises).then((values) => {
+      return values;
+    });
+    return newProducts;
   };
 }

@@ -2,7 +2,7 @@ import { IUser } from '../models/user';
 import {
   MovieGenre,
   ProductType,
-  TGetProductsReq,
+  IGetProductsReq,
 } from '../types/product.type';
 import { AccountType } from '../types/user.type';
 import moment from 'moment';
@@ -98,7 +98,7 @@ export class ProductFilterDTO {
     return this._accountType;
   }
 
-  constructor(req: TGetProductsReq) {
+  constructor(req: IGetProductsReq) {
     const {
       title,
       types,
@@ -142,8 +142,9 @@ export class ProductFilterDTO {
     this._theaters = theaters?.split(',');
     this._tags = tags?.split(',');
 
-    this._isLaunched = isLaunched === 'true';
-    this._isPublic = isPublic === 'true';
+    this._isLaunched =
+      isLaunched === undefined ? undefined : isLaunched === 'true';
+    this._isPublic = isPublic === undefined ? undefined : isPublic === 'true';
 
     this._startAtTo = startAtTo ? moment(startAtTo).toDate() : undefined;
     this._startAtFrom = startAtFrom ? moment(startAtFrom).toDate() : undefined;

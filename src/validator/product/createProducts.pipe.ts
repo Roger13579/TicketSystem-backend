@@ -3,13 +3,12 @@ import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
 import { MovieGenre, ProductType } from '../../types/product.type';
 
-// TODO:補齊驗證
-
 export class CreateProductsPipe extends PipeBase {
   public transform() {
     return [
       body('products')
         .exists()
+        .custom(this.isNotEmptyArray)
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'products',
         ),
@@ -52,12 +51,19 @@ export class CreateProductsPipe extends PipeBase {
       body('products.*.vendor')
         .exists()
         .trim()
+        .isString()
+        .withMessage(
+          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'vendor',
+        )
+        .isLength({ min: 1 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'vendor',
         ),
       body('products.*.theater')
         .exists()
         .trim()
+        .isString()
+        .isLength({ min: 1 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'theater',
         ),
@@ -73,49 +79,53 @@ export class CreateProductsPipe extends PipeBase {
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'amount',
         ),
+      body('products.*.plans')
+        .optional()
+        .isArray()
+        .isLength({ min: 1 })
+        .withMessage(CustomResponseType.INVALID_CREATE_PRODUCT + 'plans'),
       body('products.*.plans.*.name')
         .if(body('products.*.plans').isArray().isLength({ min: 1 }))
+        .exists()
         .isString()
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.name',
         ),
       body('products.*.plans.*.discount')
         .if(body('products.*.plans').isArray().isLength({ min: 1 }))
+        .exists()
         .isFloat({ min: 0.1, max: 1 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.discount',
         ),
       body('products.*.plans.*.headCount')
         .if(body('products.*.plans').isArray().isLength({ min: 1 }))
+        .exists()
         .isInt({ min: 2 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.headCount',
         ),
-      // TODO: 這裡的驗證要修
-      // body('products.*.startAt')
-      //   .toDate()
-      //   .isDate()
-      //   .withMessage(
-      //     CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'startAt',
-      //   ),
-      // body('products.*.endAt')
-      //   .toDate()
-      //   .isDate({ format: '' })
-      //   .withMessage(
-      //     CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'endAt',
-      //   ),
-      // body('products.*.sellStartAt')
-      //   .toDate()
-      //   .isDate()
-      //   .withMessage(
-      //     CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'sellStartAt',
-      //   ),
-      // body('products.*.sellStartEnd')
-      //   .toDate()
-      //   .isDate()
-      //   .withMessage(
-      //     CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'sellStartEnd',
-      //   ),
+      body('products.*.startAt')
+        .exists()
+        .custom(this.isValidDate)
+        .withMessage(
+          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'startAt',
+        ),
+      body('products.*.endAt')
+        .custom(this.isValidDate)
+        .withMessage(
+          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'endAt',
+        ),
+      body('products.*.sellStartAt')
+        .custom(this.isValidDate)
+        .withMessage(
+          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'sellStartAt',
+        ),
+      body('products.*.sellEndAt')
+        .custom(this.isValidDate)
+        .withMessage(
+          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'sellStartEnd',
+        ),
       body('products.*.recommendWeight')
         .isInt({ min: 1, max: 5 })
         .withMessage(
@@ -130,6 +140,12 @@ export class CreateProductsPipe extends PipeBase {
         .isBoolean()
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'isLaunched',
+        ),
+      body('products.*.photoPath')
+        .optional()
+        .isString()
+        .withMessage(
+          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'photoPath',
         ),
       this.validationHandler,
     ];

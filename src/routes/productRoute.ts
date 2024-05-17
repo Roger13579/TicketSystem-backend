@@ -3,6 +3,7 @@ import { IsAdmin } from '../middleware/isAdmin';
 import { UserCheck, UserVerify } from '../middleware/userVerify';
 import { CreateProductsPipe } from '../validator/product/createProducts.pipe';
 import { DeleteProductsPipe } from '../validator/product/deleteProducts.pipe';
+import { EditProductsPipe } from '../validator/product/editProducts.pipe';
 import { GetProductDetailPipe } from '../validator/product/getProductDetail.pipe';
 import { GetProductsPipe } from '../validator/product/getProducts.pipe';
 import { BaseRoute } from './baseRoute';
@@ -296,6 +297,36 @@ export class ProductRoute extends BaseRoute {
       IsAdmin,
       this.usePipe(DeleteProductsPipe),
       this.responseHandler(this.controller.deleteProducts),
+    );
+
+    this.router.patch(
+      '/v1/product',
+      /**
+       * #swagger.tags = ['Product']
+       * #swagger.summary = '批次編輯商品'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+          #swagger.parameters['obj'] ={
+            in:'body',
+            description:'欲編輯之商品列表',
+            schema:{
+              $ref:"#/definitions/CustomEditProductObj"
+            }
+       } 
+       */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/EditProductsSuccess"
+            }
+          }
+      */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(EditProductsPipe),
+      this.responseHandler(this.controller.editProducts),
     );
   }
 }
