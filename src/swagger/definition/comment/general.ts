@@ -24,3 +24,25 @@ export const DeleteSuccess = {
     $deletedCount: 1,
   },
 };
+
+export const GetCommentsSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $comments: [
+      {
+        $_id: '664760bfb43426ed855d1b2c',
+        $rating: 5,
+        $content: '宇宙讚讚 A',
+        $createdAt: '2024-05-17T13:50:55.720Z',
+        $user: {
+          $account: 'yjadmin0001',
+          $avatarPath: '',
+        },
+      },
+    ],
+    $page: 1,
+    $limit: 10,
+    $totalCount: 1,
+  },
+};

@@ -140,4 +140,7 @@ export const enum CustomResponseType {
 
   INVALID_DELETE_COMMENT = '6521',
   INVALID_DELETE_COMMENT_MESSAGE = '無效的刪除評論：',
+
+  INVALID_COMMENT_FILTER = '6523',
+  INVALID_COMMENT_FILTER_MESSAGE = '無效的評論條件：',
 }

@@ -1,8 +1,9 @@
 import { NextFunction } from 'express';
-import { NewCommentDTO } from '../dto/newCommentDto';
+import { NewCommentDTO } from '../dto/comment/newCommentDto';
 import { CommentRepository } from '../repository/commentRepository';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
+import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 
 export class CommentService {
   private readonly commentRepository: CommentRepository =
@@ -35,5 +36,12 @@ export class CommentService {
       }
       return next(err);
     });
+  };
+
+  public getComments = async (getCommentsDto: GetCommentsDTO) => {
+    const comments = await this.commentRepository.findComments(getCommentsDto);
+    const totalCount =
+      await this.commentRepository.countComments(getCommentsDto);
+    return { comments, totalCount };
   };
 }

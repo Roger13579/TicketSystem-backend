@@ -52,3 +52,15 @@ export const CustomDeleteCommentsObj = {
     },
   },
 };
+
+export const CustomGetCommentsRatingsQuery = {
+  example: '1,2',
+};
+
+export const CustomGetCommentsProductIdsQuery = {
+  example: 'asdfasdf,asdfasdfasd',
+};
+
+export const CustomGetCommentsContentQuery = {
+  example: '讚讚的內容',
+};

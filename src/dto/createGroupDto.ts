@@ -1,7 +1,7 @@
-import { parseDate } from '../utils/common';
 import { Types } from 'mongoose';
 import { GroupStatus, TCreateGroupReq } from '../types/group.type';
 import { IUser } from '../models/user';
+import moment from 'moment';
 
 export class CreateGroupDto {
   private readonly userId: Types.ObjectId;
@@ -19,7 +19,7 @@ export class CreateGroupDto {
     this.title = req.body.title;
     this.theater = req.body.theater;
     this.movieTitle = req.body.movieTitle;
-    this.time = parseDate('time', req.body.time.toString()) as Date;
+    this.time = moment(req.body.time).toDate();
     this.amount = req.body.amount;
     this.haveTicket = req.body.haveTicket;
     this.content = req.body.content;

@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import { GroupStatus, IParticipant } from '../types/group.type';
-import { BaseModel, IUserId, schemaDef } from './baseModel';
+import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 
 export interface IGroup extends BaseModel, IUserId {
   title: string;
@@ -67,4 +67,4 @@ const schema = new Schema<IGroup>(
   schemaOption,
 );
 
-export const GroupModel = model<IGroup>('Group', schema);
+export const GroupModel = model<IGroup>(ModelName.group, schema);

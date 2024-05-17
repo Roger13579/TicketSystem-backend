@@ -6,6 +6,7 @@ import {
   IOrderId,
   IProductId,
   IUserId,
+  ModelName,
   schemaDef,
 } from './baseModel';
 
@@ -56,6 +57,6 @@ const schema = new Schema<ITicket>(
   schemaOption,
 );
 
-const TicketModel = model<ITicket>('Ticket', schema);
+const TicketModel = model<ITicket>(ModelName.ticket, schema);
 
 export default TicketModel;
