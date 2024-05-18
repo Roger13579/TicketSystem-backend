@@ -5,7 +5,7 @@ import { CustomResponseType } from '../types/customResponseType';
 import bcrypt from 'bcrypt';
 import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
-import { ResetPwdDto } from '../dto/resetPwdDto';
+import { ResetPwdDto } from '../dto/user/resetPwdDto';
 import { IUser } from '../models/user';
 import { ILoginReq } from '../types/user.type';
 

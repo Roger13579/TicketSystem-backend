@@ -1,5 +1,5 @@
-import { IUser } from '../models/user';
-import { IUserReq } from '../types/common.type';
+import { IUser } from '../../models/user';
+import { IUserReq } from '../../types/common.type';
 
 export class UserDetailDto {
   private readonly id: string;

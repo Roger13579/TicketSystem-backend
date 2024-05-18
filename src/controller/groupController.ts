@@ -1,6 +1,6 @@
 import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
-import { CreateGroupDto } from '../dto/createGroupDto';
+import { CreateGroupDto } from '../dto/group/createGroupDto';
 import { GroupService } from '../service/groupService';
 import { IGroup } from '../models/group';
 import {
@@ -9,8 +9,10 @@ import {
   TUpdateGroupReq,
 } from '../types/group.type';
 import { ResponseObject } from '../utils/responseObject';
-import { UpdateGroupDto } from '../dto/updateGroupDto';
-import { JoinGroupDto } from '../dto/joinGroupDto';
+import { UpdateGroupDto } from '../dto/group/updateGroupDto';
+import { JoinGroupDto } from '../dto/group/joinGroupDto';
+import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
+import { Request } from 'express';
 
 export class GroupController extends BaseController {
   private readonly groupService = new GroupService();
@@ -43,6 +45,15 @@ export class GroupController extends BaseController {
   public joinGroup = async (req: TJoinGroupReq): Promise<ResponseObject> => {
     const joinGroupDto = new JoinGroupDto(req);
     await this.groupService.joinGroup(joinGroupDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      {},
+    );
+  };
+  public leaveGroup = async (req: Request): Promise<ResponseObject> => {
+    const leaveGroupDto = new LeaveGroupDto(req);
+    await this.groupService.leaveGroup(leaveGroupDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,

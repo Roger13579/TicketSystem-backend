@@ -84,6 +84,12 @@ export class GroupRoute extends BaseRoute {
        * #swagger.summary = '參加揪團'
        */
       /*
+      #swagger.parameters['groupId'] ={
+          in:'path',
+          description:'揪團ID',
+          required: true,
+          type: 'string'
+       }
        #swagger.parameters['obj'] ={
          in:'body',
          description:'參加揪團的資料',
@@ -102,6 +108,30 @@ export class GroupRoute extends BaseRoute {
       UserVerify,
       this.usePipe(JoinGroupPipe),
       this.responseHandler(this.controller.joinGroup),
+    );
+    this.router.patch(
+      '/v1/group/leave/:groupId',
+      /**
+       * #swagger.tags = ['Group']
+       * #swagger.summary = '退出揪團'
+       */
+      /*
+       #swagger.parameters['groupId'] ={
+          in:'path',
+          description:'揪團ID',
+          required: true,
+          type: 'string'
+       }
+       */
+      /**
+       #swagger.responses[200] = {
+       description: 'OK',
+       schema: {
+       $ref: '#/definitions/Success' }
+       }
+       */
+      UserVerify,
+      this.responseHandler(this.controller.leaveGroup),
     );
   }
 }
