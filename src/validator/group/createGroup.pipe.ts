@@ -8,6 +8,9 @@ export class CreateGroupPipe extends PipeBase {
       body('title')
         .exists()
         .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '活動標題'),
+      body('placeholderImg')
+        .exists()
+        .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '活動圖片'),
       body('theater')
         .exists()
         .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + '活動地點'),

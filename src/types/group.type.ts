@@ -11,12 +11,14 @@ export interface TCreateGroupReq extends IUserReq {
   body: {
     userId: Types.ObjectId;
     title: string;
+    placeholderImg: string;
     theater: string;
     movieTitle: string;
     time: Date;
     amount: number;
     haveTicket: boolean;
     content?: string;
+    participant: IParticipant;
   };
 }
 
@@ -32,6 +34,7 @@ export interface TJoinGroupReq extends IUserReq {
 }
 
 export interface IParticipant {
+  userId: Types.ObjectId;
   phone: string;
   name: string;
   nickname: string;

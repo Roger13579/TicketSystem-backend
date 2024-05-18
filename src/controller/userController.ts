@@ -4,7 +4,7 @@ import { ResponseObject } from '../utils/responseObject';
 import { UserService } from '../service/userService';
 import { JWTPayloadDTO } from '../dto/jwtPayloadDto';
 import { UserDetailVo } from '../vo/userDetailVo';
-import { UserDetailDto } from '../dto/userDetailDto';
+import { UserDetailDto } from '../dto/user/userDetailDto';
 import { IUserReq } from '../types/common.type';
 import { IUser } from '../models/user';
 

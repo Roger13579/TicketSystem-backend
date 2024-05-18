@@ -2,6 +2,7 @@ import { CustomResponseType } from '../../types/customResponseType';
 
 const propName = {
   title: '活動標題',
+  placeholderImg: '活動照片',
   theater: '活動地點',
   movieTitle: '電影名稱',
   time: '活動時間',
@@ -12,10 +13,12 @@ const propName = {
   nickname: '暱稱',
   phone: '電話',
   lineId: 'line ID',
+  participant: '建立人資料',
 };
 
 const customGroup = {
   title: '活動',
+  placeholderImg: '我是照片網址',
   theater: '威秀影城',
   movieTitle: '好看的電影',
   time: '2024-05-10 10:10',
@@ -26,6 +29,12 @@ const customGroup = {
   nickname: '我的暱稱',
   phone: '我的電話',
   lineId: '我的line ID',
+  participant: {
+    name: '我是主揪',
+    nickname: '主揪',
+    phone: '主揪電話',
+    lineId: '主揪line ID',
+  },
 };
 
 export const CreateGroupSuccess = {
@@ -38,12 +47,26 @@ export const CreateGroupSuccess = {
 
 export const CustomCreateGroupObj = {
   type: 'object',
-  required: ['title', 'location', 'movieTitle', 'time', 'amount', 'haveTicket'],
+  required: [
+    'title',
+    'placeholderImg',
+    'location',
+    'movieTitle',
+    'time',
+    'amount',
+    'haveTicket',
+    'participant',
+  ],
   properties: {
     title: {
       type: 'string',
       description: propName.title,
       example: customGroup.title,
+    },
+    placeholderImg: {
+      type: 'string',
+      description: propName.placeholderImg,
+      example: customGroup.placeholderImg,
     },
     theater: {
       type: 'string',
@@ -74,6 +97,11 @@ export const CustomCreateGroupObj = {
       type: 'string',
       description: propName.content,
       example: customGroup.content,
+    },
+    participant: {
+      type: 'object',
+      description: propName.participant,
+      example: customGroup.participant,
     },
   },
 };
