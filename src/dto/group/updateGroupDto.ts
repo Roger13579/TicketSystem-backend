@@ -1,4 +1,4 @@
-import { TUpdateGroupReq } from '../types/group.type';
+import { TUpdateGroupReq } from '../../types/group.type';
 
 export class UpdateGroupDto {
   private readonly _groupId: string;

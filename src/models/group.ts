@@ -5,6 +5,7 @@ import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 
 export interface IGroup extends BaseModel, IUserId {
   title: string;
+  placeholderImg: string;
   theater: string;
   movieTitle: string;
   status: GroupStatus;
@@ -21,6 +22,10 @@ const schema = new Schema<IGroup>(
   {
     userId,
     title: {
+      type: String,
+      required: true,
+    },
+    placeholderImg: {
       type: String,
       required: true,
     },
@@ -55,6 +60,7 @@ const schema = new Schema<IGroup>(
     participant: {
       type: [
         {
+          userId,
           phone: String,
           name: String,
           nickname: String,

@@ -1,5 +1,5 @@
-import { IUser } from '../models/user';
-import { IResetPwdReq } from '../types/user.type';
+import { IUser } from '../../models/user';
+import { IResetPwdReq } from '../../types/user.type';
 
 export class ResetPwdDto {
   private readonly id: string;

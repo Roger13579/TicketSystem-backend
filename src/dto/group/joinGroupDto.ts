@@ -1,5 +1,5 @@
-import { IParticipant, TJoinGroupReq } from '../types/group.type';
-import { IUser } from '../models/user';
+import { IParticipant, TJoinGroupReq } from '../../types/group.type';
+import { IUser } from '../../models/user';
 
 export class JoinGroupDto {
   private readonly _groupId: string;
@@ -20,7 +20,9 @@ export class JoinGroupDto {
 
   constructor(req: TJoinGroupReq) {
     this._groupId = req.params['groupId'];
-    this._userId = (req.user as IUser).id.toString();
+    const id = (req.user as IUser).id;
+    this._userId = id.toString();
     this._participant = req.body;
+    this._participant.userId = id;
   }
 }

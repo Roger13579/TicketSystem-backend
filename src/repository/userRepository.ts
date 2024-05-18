@@ -1,7 +1,7 @@
 import { UserModel, IUser } from '../models/user';
-import { UserDetailDto } from '../dto/userDetailDto';
+import { UserDetailDto } from '../dto/user/userDetailDto';
 import { Types } from 'mongoose';
-import { GoogleProfileDto } from '../dto/googleProfileDto';
+import { GoogleProfileDto } from '../dto/user/googleProfileDto';
 
 export class UserRepository {
   public async createUser(
@@ -69,7 +69,7 @@ export class UserRepository {
     );
   }
 
-  public async updateGroupUser(
+  public async addGroupToUser(
     id: string,
     groupId: string,
   ): Promise<IUser | null> {
@@ -77,7 +77,20 @@ export class UserRepository {
       { _id: new Types.ObjectId(id) },
       {
         $push: {
-          groups: { groupId },
+          groups: { groupId: new Types.ObjectId(groupId) },
+        },
+      },
+    );
+  }
+  public async removeGroupFromUser(
+    id: string,
+    groupId: string,
+  ): Promise<IUser | null> {
+    return UserModel.findByIdAndUpdate(
+      { _id: new Types.ObjectId(id) },
+      {
+        $pull: {
+          groups: { groupId: new Types.ObjectId(groupId) },
         },
       },
     );

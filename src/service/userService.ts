@@ -3,14 +3,14 @@ import { CustomResponseType } from '../types/customResponseType';
 import bcrypt from 'bcrypt';
 import { UserRepository } from '../repository/userRepository';
 import { throwError } from '../utils/errorHandler';
-import { UserDetailDto } from '../dto/userDetailDto';
+import { UserDetailDto } from '../dto/user/userDetailDto';
 import { IUser } from '../models/user';
 import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
-import { ResetPwdDto } from '../dto/resetPwdDto';
+import { ResetPwdDto } from '../dto/user/resetPwdDto';
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
-import { GoogleProfileDto } from '../dto/googleProfileDto';
+import { GoogleProfileDto } from '../dto/user/googleProfileDto';
 import { TGoogleUser } from '../types/user.type';
 const logger = log4js.getLogger(`UserService`);
 

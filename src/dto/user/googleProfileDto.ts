@@ -1,4 +1,4 @@
-import { TGoogleUser } from '../types/user.type';
+import { TGoogleUser } from '../../types/user.type';
 
 export class GoogleProfileDto {
   private readonly id: string;
