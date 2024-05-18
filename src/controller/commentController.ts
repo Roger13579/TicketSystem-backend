@@ -1,9 +1,15 @@
 import { NextFunction, Response } from 'express';
-import { NewCommentDTO } from '../dto/newCommentDto';
+import { NewCommentDTO } from '../dto/comment/newCommentDto';
 import { CommentService } from '../service/commentService';
-import { ICommentProductReq, IDeleteCommentsReq } from '../types/comment.type';
+import {
+  ICommentProductReq,
+  IDeleteCommentsReq,
+  IGetCommentsReq,
+} from '../types/comment.type';
 import { CustomResponseType } from '../types/customResponseType';
 import { BaseController } from './baseController';
+import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
+import { GetCommentsVo } from '../vo/comment/getCommentsVo';
 
 export class CommentController extends BaseController {
   private readonly commentService = new CommentService();
@@ -38,6 +44,17 @@ export class CommentController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       info ? { deletedCount: info.deletedCount } : {},
+    );
+  };
+
+  public readonly getComments = async (req: IGetCommentsReq) => {
+    const getCommentsDto = new GetCommentsDTO(req);
+    const { page, limit } = getCommentsDto;
+    const info = await this.commentService.getComments(getCommentsDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      new GetCommentsVo(info, page, limit),
     );
   };
 }

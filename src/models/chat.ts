@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import { schemaOption } from '../utils/constants';
-import { BaseModel, IUserId, schemaDef } from './baseModel';
+import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 
 interface IChat extends BaseModel, IUserId {
   userId: Types.ObjectId;
@@ -36,4 +36,4 @@ const schema = new Schema<IChat>(
   schemaOption,
 );
 
-export const ChatModel = model<IChat>('Chat', schema);
+export const ChatModel = model<IChat>(ModelName.chat, schema);

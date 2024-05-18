@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { MovieGenre, ProductType, TPlan } from '../types/product.type';
 import { schemaOption } from '../utils/constants';
 import moment from 'moment';
-import { BaseModel, schemaDef } from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
 
 export interface IProduct extends BaseModel {
   title: string;
@@ -220,6 +220,6 @@ schema.index(
   { unique: true },
 );
 
-const ProductModel = model<IProduct>('Product', schema);
+const ProductModel = model<IProduct>(ModelName.product, schema);
 
 export default ProductModel;

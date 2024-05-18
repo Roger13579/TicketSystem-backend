@@ -1,9 +1,15 @@
 import { Schema, model } from 'mongoose';
 import { Status } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
-import { BaseModel, IProductId, IUserId, schemaDef } from './baseModel';
+import {
+  BaseModel,
+  IProductId,
+  IUserId,
+  ModelName,
+  schemaDef,
+} from './baseModel';
 
-interface IComment extends BaseModel, IProductId, IUserId {
+export interface IComment extends BaseModel, IProductId, IUserId {
   rating: number;
   content: string;
   status: Status;
@@ -32,6 +38,6 @@ const schema = new Schema<IComment>(
   schemaOption,
 );
 
-const CommentModel = model<IComment>('Comment', schema);
+const CommentModel = model<IComment>(ModelName.comment, schema);
 
 export default CommentModel;

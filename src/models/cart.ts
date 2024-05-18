@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { schemaOption } from '../utils/constants';
-import { BaseModel, IUserId, schemaDef } from './baseModel';
+import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 import { ICartProduct } from '../types/order.type';
 
 interface ICart extends BaseModel, IUserId {
@@ -20,6 +20,6 @@ const schema = new Schema<ICart>(
   schemaOption,
 );
 
-const CartModel = model<ICart>('Cart', schema);
+const CartModel = model<ICart>(ModelName.cart, schema);
 
 export default CartModel;

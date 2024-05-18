@@ -1,7 +1,8 @@
 import { FilterQuery, ProjectionType } from 'mongoose';
-import { ProductFilterDTO } from '../dto/productFilterDto';
+
 import ProductModel, { IProduct } from '../models/product';
-import { EditProductDTO } from '../dto/editProductsDto';
+import { EditProductDTO } from '../dto/product/editProductsDto';
+import { ProductFilterDTO } from '../dto/product/productFilterDto';
 
 export class ProductRepository {
   private createProductFilter(productFilterDto: ProductFilterDTO) {

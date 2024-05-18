@@ -9,11 +9,11 @@ import {
   ICreateProductsReq,
   IGetProductsReq,
 } from '../types/product.type';
-import { ProductFilterDTO } from '../dto/productFilterDto';
-import { GetProductVo } from '../vo/getProductVo';
 import { IProduct } from '../models/product';
 import { NextFunction, Request, Response } from 'express';
-import { EditProductDTO } from '../dto/editProductsDto';
+import { EditProductDTO } from '../dto/product/editProductsDto';
+import { ProductFilterDTO } from '../dto/product/productFilterDto';
+import { GetProductVo } from '../vo/product/getProductVo';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { schemaOption } from '../utils/constants';
-import { BaseModel, IUserId, schemaDef } from './baseModel';
+import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 
 interface INotify extends BaseModel, IUserId {
   isRead: boolean;
@@ -25,6 +25,6 @@ const schema = new Schema<INotify>(
   schemaOption,
 );
 
-const NotifyModel = model<INotify>('Notify', schema);
+const NotifyModel = model<INotify>(ModelName.notify, schema);
 
 export default NotifyModel;

@@ -80,7 +80,7 @@ export class ProductRoute extends BaseRoute {
             description: '是否販售',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductIsLaunchedQuery"
+              $ref: "#/definitions/CustomBooleanQuery"
             }
           }
           #swagger.parameters['isPublic'] = {
@@ -89,7 +89,7 @@ export class ProductRoute extends BaseRoute {
             description: '是否公開',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductIsPublicQuery"
+              $ref: "#/definitions/CustomBooleanQuery"
             }
           }
           #swagger.parameters['startAtFrom'] = {
@@ -98,7 +98,7 @@ export class ProductRoute extends BaseRoute {
             description: '開始活動時間-起',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductStartAtFromQuery"
+              $ref: "#/definitions/CustomTimeAtFromQuery"
             }
           }
           #swagger.parameters['startAtTo'] = {
@@ -107,7 +107,7 @@ export class ProductRoute extends BaseRoute {
             description: '開始活動時間-迄',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductStartAtToQuery"
+              $ref: "#/definitions/CustomTimeAtToQuery"
             }
           }
           #swagger.parameters['sellStartAtFrom'] = {
@@ -116,7 +116,7 @@ export class ProductRoute extends BaseRoute {
             description: '開始販售時間-迄',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductSellStartFromQuery"
+              $ref: "#/definitions/CustomTimeAtFromQuery"
             }
           }
           #swagger.parameters['sellStartAtTo'] = {
@@ -125,7 +125,7 @@ export class ProductRoute extends BaseRoute {
             description: '開始販售時間-迄',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductSellStartToQuery"
+              $ref: "#/definitions/CustomTimeAtToQuery"
             }
           }
           #swagger.parameters['recommendWeights'] = {
@@ -170,7 +170,7 @@ export class ProductRoute extends BaseRoute {
             description: '頁數',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductPageQuery"
+              $ref: "#/definitions/CustomPageQuery"
             }
           }
           #swagger.parameters['limit'] = {
@@ -179,7 +179,7 @@ export class ProductRoute extends BaseRoute {
             description: '每頁資料數',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductLimitQuery"
+              $ref: "#/definitions/CustomLimitQuery"
             }
           }
           #swagger.parameters['sortBy'] = {
@@ -188,7 +188,7 @@ export class ProductRoute extends BaseRoute {
             description: '排序根據, e.g. startAt, price, sellStartAt, type, vendor, theater, title, _id, soldAmount,createdAt,降冪則在前面加上 - ',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetProductSortByQuery"
+              $ref: "#/definitions/CustomSortByQuery"
             }
           }
       */

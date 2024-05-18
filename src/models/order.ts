@@ -6,7 +6,7 @@ import {
   PaymentMethod,
   PaymentStatus,
 } from '../types/order.type';
-import { BaseModel, IUserId, schemaDef } from './baseModel';
+import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 
 interface IOrder extends BaseModel, IUserId {
   thirdPartyPaymentId: string;
@@ -60,6 +60,6 @@ const schema = new Schema<IOrder>(
   schemaOption,
 );
 
-const OrderModel = model<IOrder>('Order', schema);
+const OrderModel = model<IOrder>(ModelName.order, schema);
 
 export default OrderModel;
