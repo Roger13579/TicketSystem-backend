@@ -74,30 +74,19 @@ export class GroupService {
         );
       }
       // 加入group中的participant
-      return await this.groupRepository
-        .joinGroup(group, joinGroupDto)
-        .then(async () => {
-          // 把groupId加入user groups中
-          try {
-            return await this.userRepository.addGroupToUser(
-              joinGroupDto.userId,
-              joinGroupDto.groupId,
-            );
-          } catch (err) {
-            logger.error('join group fail', err);
-            throwError(
-              CustomResponseType.UPDATE_ERROR_MESSAGE,
-              CustomResponseType.UPDATE_ERROR,
-            );
-          }
-        })
-        .catch((err) => {
-          logger.error('join group fail', err);
-          throwError(
-            CustomResponseType.UPDATE_ERROR_MESSAGE,
-            CustomResponseType.UPDATE_ERROR,
-          );
-        });
+      try {
+        await this.groupRepository.joinGroup(group, joinGroupDto);
+        await this.userRepository.addGroupToUser(
+          joinGroupDto.userId,
+          joinGroupDto.groupId,
+        );
+      } catch (err) {
+        logger.error('join group fail', err);
+        throwError(
+          CustomResponseType.UPDATE_ERROR_MESSAGE,
+          CustomResponseType.UPDATE_ERROR,
+        );
+      }
     }
   }
   public async leaveGroup(
@@ -111,27 +100,19 @@ export class GroupService {
         CustomResponseType.NO_DATA_FOUND,
       );
     } else {
-      return await this.groupRepository
-        .leaveGroup(leaveGroupDto)
-        .then(async () => {
-          // 把groupId從user groups中移除
-          return await this.userRepository
-            .removeGroupFromUser(leaveGroupDto.userId, leaveGroupDto.groupId)
-            .catch((err) => {
-              logger.error('leave group fail', err);
-              throwError(
-                CustomResponseType.UPDATE_ERROR_MESSAGE,
-                CustomResponseType.UPDATE_ERROR,
-              );
-            });
-        })
-        .catch((err) => {
-          logger.error('update group error', err);
-          throwError(
-            CustomResponseType.UPDATE_ERROR_MESSAGE,
-            CustomResponseType.UPDATE_ERROR,
-          );
-        });
+      try {
+        await this.groupRepository.leaveGroup(leaveGroupDto);
+        await this.userRepository.removeGroupFromUser(
+          leaveGroupDto.userId,
+          leaveGroupDto.groupId,
+        );
+      } catch (err) {
+        logger.error('leave group fail', err);
+        throwError(
+          CustomResponseType.UPDATE_ERROR_MESSAGE,
+          CustomResponseType.UPDATE_ERROR,
+        );
+      }
     }
   }
 }
