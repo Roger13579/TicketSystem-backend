@@ -1,6 +1,6 @@
 import { NextFunction } from 'express';
 import log4js from '../config/log4js';
-import { ProductFilterDTO } from '../dto/productFilterDto';
+
 import { IProduct } from '../models/product';
 import { ProductRepository } from '../repository/productRepository';
 import { CustomResponseType } from '../types/customResponseType';
@@ -8,8 +8,10 @@ import { AccountType } from '../types/user.type';
 import { checkDateOrder } from '../utils/common';
 import { AppError, createErrorMsg, throwError } from '../utils/errorHandler';
 import { HttpStatus } from '../types/responseType';
-import { EditProductDTO } from '../dto/editProductsDto';
+
 import { CommentRepository } from '../repository/commentRepository';
+import { EditProductDTO } from '../dto/product/editProductsDto';
+import { ProductFilterDTO } from '../dto/product/productFilterDto';
 
 const logger = log4js.getLogger(`ProductRepository`);
 

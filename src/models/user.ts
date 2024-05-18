@@ -7,6 +7,7 @@ import {
   IGroupId,
   IProductId,
   ITicketId,
+  ModelName,
   schemaDef,
 } from './baseModel';
 
@@ -116,4 +117,4 @@ const schema = new Schema<IUser>(
   schemaOption,
 );
 
-export const UserModel = model<IUser>('User', schema);
+export const UserModel = model<IUser>(ModelName.user, schema);

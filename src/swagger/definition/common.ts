@@ -96,3 +96,28 @@ export const ValidateEmailError = {
   $status: CustomResponseType.VALIDATE_EMAIL_ERROR,
   $message: CustomResponseType.VALIDATE_EMAIL_ERROR_MESSAGE,
 };
+
+export const CustomBooleanQuery = {
+  example: 'true',
+};
+
+export const CustomPageQuery = {
+  example: '1',
+};
+export const CustomLimitQuery = {
+  example: '10',
+};
+export const CustomSortByQuery = {
+  example: '-createdAt',
+};
+
+export const CustomTimeAtFromQuery = {
+  example: '2024-05-16T03:33:20.000+00:00',
+};
+export const CustomTimeAtToQuery = {
+  example: '2024-05-17T03:33:20.000+00:00',
+};
+
+export const CustomStatusQuery = {
+  example: 'active',
+};

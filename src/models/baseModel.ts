@@ -1,5 +1,18 @@
 import { Document, Schema, Types } from 'mongoose';
 
+export enum ModelName {
+  cart = 'Cart',
+  ticket = 'Ticket',
+  group = 'Group',
+  product = 'Product',
+  user = 'User',
+  comment = 'Comment',
+  tag = 'Tag',
+  order = 'Order',
+  chat = 'Chat',
+  notify = 'Notify',
+}
+
 export interface BaseModel extends Document {
   id: Types.ObjectId;
   createdAt: Date;
@@ -30,7 +43,7 @@ export const schemaDef = {
   cartProduct: {
     productId: {
       type: Schema.Types.ObjectId,
-      ref: 'Product',
+      ref: ModelName.product,
       required: true,
     },
     name: String,
@@ -39,32 +52,32 @@ export const schemaDef = {
   },
   groupId: {
     type: Schema.Types.ObjectId,
-    ref: 'Group',
+    ref: ModelName.group,
     required: true,
   },
   productId: {
     type: Schema.Types.ObjectId,
-    ref: 'Product',
+    ref: ModelName.product,
     required: true,
   },
   ticketId: {
     type: Schema.Types.ObjectId,
-    ref: 'Ticket',
+    ref: ModelName.ticket,
     required: true,
   },
   userId: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: ModelName.user,
     required: true,
   },
   commentId: {
     type: Schema.Types.ObjectId,
-    ref: 'Comment',
+    ref: ModelName.comment,
     required: true,
   },
   tagId: {
     type: Schema.Types.ObjectId,
-    ref: 'Tag',
+    ref: ModelName.tag,
     required: true,
   },
   photoPath: {
@@ -74,7 +87,7 @@ export const schemaDef = {
   },
   orderId: {
     type: Schema.Types.ObjectId,
-    ref: 'Order',
+    ref: ModelName.order,
     required: true,
   },
 };

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { schemaOption } from '../utils/constants';
-import { BaseModel } from './baseModel';
+import { BaseModel, ModelName } from './baseModel';
 
 interface ITag extends BaseModel {
   name: string;
@@ -16,6 +16,6 @@ const schema = new Schema<ITag>(
   schemaOption,
 );
 
-const TagModel = model<ITag>('Tag', schema);
+const TagModel = model<ITag>(ModelName.tag, schema);
 
 export default TagModel;

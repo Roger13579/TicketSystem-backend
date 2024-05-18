@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IEditContent, IEditProductsReq } from '../types/product.type';
+import { IEditContent, IEditProductsReq } from '../../types/product.type';
 
 export class EditProductDTO {
   private _updatedProducts: {

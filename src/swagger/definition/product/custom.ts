@@ -340,24 +340,6 @@ export const CustomGetProductVendorsQuery = {
 export const CustomGetProductTheatersQuery = {
   example: '信義威秀,晶站威秀',
 };
-export const CustomGetProductIsLaunchedQuery = {
-  example: 'true',
-};
-export const CustomGetProductIsPublicQuery = {
-  example: 'true',
-};
-export const CustomGetProductStartAtFromQuery = {
-  example: '2024-05-16T03:33:20.000+00:00',
-};
-export const CustomGetProductStartAtToQuery = {
-  example: '2024-05-17T03:33:20.000+00:00',
-};
-export const CustomGetProductSellStartFromQuery = {
-  example: '2024-05-18T03:33:20.000+00:00',
-};
-export const CustomGetProductSellStartToQuery = {
-  example: '2024-05-19T03:33:20.000+00:00',
-};
 
 export const CustomGetProductRecommendWeightQuery = {
   example: '1,2,3',
@@ -370,13 +352,4 @@ export const CustomGetProductPriceMinQuery = {
 };
 export const CustomGetProductTagQuery = {
   example: '日舞影展,金馬影展',
-};
-export const CustomGetProductPageQuery = {
-  example: '1',
-};
-export const CustomGetProductLimitQuery = {
-  example: '10',
-};
-export const CustomGetProductSortByQuery = {
-  example: '-createdAt',
 };

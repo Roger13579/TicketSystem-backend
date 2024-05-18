@@ -1,11 +1,11 @@
-import { IUser } from '../models/user';
-import {
-  MovieGenre,
-  ProductType,
-  IGetProductsReq,
-} from '../types/product.type';
-import { AccountType } from '../types/user.type';
 import moment from 'moment';
+import { IUser } from '../../models/user';
+import {
+  ProductType,
+  MovieGenre,
+  IGetProductsReq,
+} from '../../types/product.type';
+import { AccountType } from '../../types/user.type';
 
 export class ProductFilterDTO {
   private readonly _title?: string;

@@ -1,21 +1,4 @@
-import {
-  Success,
-  Error6202,
-  ErrorToken,
-  Error404,
-  Error500,
-  SignUpForm,
-  ForgotPwdForm,
-  ResetPwdForm,
-  LoginForm,
-  LoginSuccess,
-  UserDetail,
-  UpdateUserDetail,
-  RegisterEmailSuccess,
-  RegisterEmailError,
-  ValidateEmailError,
-  CreateProductsError,
-} from './common';
+import * as commonDefinitions from './common';
 import {
   CreateGroupSuccess,
   CustomCreateGroupObj,
@@ -27,22 +10,7 @@ import { UploadFileSuccess } from './upload';
 import { commentDefinitions, commentCustomDefinitions } from './comment';
 
 export const definitions = {
-  Success,
-  Error6202,
-  ErrorToken,
-  Error404,
-  Error500,
-  SignUpForm,
-  ForgotPwdForm,
-  ResetPwdForm,
-  LoginForm,
-  LoginSuccess,
-  UserDetail,
-  UpdateUserDetail,
-  RegisterEmailSuccess,
-  RegisterEmailError,
-  ValidateEmailError,
-  CreateProductsError,
+  ...commonDefinitions,
   CreateGroupSuccess,
   UploadFileSuccess,
   ...productDefinition,

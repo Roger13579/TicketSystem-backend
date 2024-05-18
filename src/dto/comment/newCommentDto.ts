@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
-import { Status } from '../types/common.type';
-import { ICommentProductReq } from '../types/comment.type';
-import { IUser } from '../models/user';
+import { Status } from '../../types/common.type';
+import { ICommentProductReq } from '../../types/comment.type';
+import { IUser } from '../../models/user';
 
 export class NewCommentDTO {
   private readonly _userId: Types.ObjectId;
