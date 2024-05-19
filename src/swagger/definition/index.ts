@@ -4,8 +4,9 @@ import {
   CustomCreateGroupObj,
   CustomJoinGroupObj,
   CustomUpdateGroupObj,
-} from './group';
+} from './group/group';
 import { productDefinition, productCustomDefinition } from './product';
+import { groupDefinition, groupCustomDefinition } from './group';
 import { UploadFileSuccess } from './upload';
 import { commentDefinitions, commentCustomDefinitions } from './comment';
 
@@ -14,6 +15,7 @@ export const definitions = {
   CreateGroupSuccess,
   UploadFileSuccess,
   ...productDefinition,
+  ...groupDefinition,
   ...commentDefinitions,
 };
 
@@ -23,4 +25,5 @@ export const customDefinitions = {
   CustomUpdateGroupObj,
   CustomJoinGroupObj,
   ...commentCustomDefinitions,
+  ...groupCustomDefinition,
 };
