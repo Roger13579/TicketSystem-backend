@@ -143,4 +143,7 @@ export const enum CustomResponseType {
 
   INVALID_COMMENT_FILTER = '6523',
   INVALID_COMMENT_FILTER_MESSAGE = '無效的評論條件：',
+
+  INVALID_GROUP_FILTER = '6524',
+  INVALID_GROUP_FILTER_MESSAGE = '無效的揪團查詢條件：',
 }

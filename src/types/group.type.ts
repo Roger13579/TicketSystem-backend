@@ -29,6 +29,23 @@ export interface TUpdateGroupReq extends IUserReq {
   };
 }
 
+export interface IGetGroupsReq extends IUserReq {
+  query: {
+    title?: string;
+    movieTitle?: string;
+    theater?: string;
+    participantCount?: string;
+    status?: string;
+    hasTicket?: string;
+    startAt?: string;
+    endAt?: string;
+    page?: string;
+    limit?: string;
+    sortBy?: string;
+    accountType?: string;
+  };
+}
+
 export interface TJoinGroupReq extends IUserReq {
   body: IParticipant;
 }
@@ -39,4 +56,12 @@ export interface IParticipant {
   name: string;
   nickname: string;
   lineId: string;
+}
+
+export enum GroupSortBy {
+  startAt = 'startAt',
+  title = 'title',
+  movieTitle = 'movieTitle',
+  theater = 'theater',
+  id = 'id',
 }

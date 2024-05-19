@@ -4,6 +4,7 @@ import { CreateGroupDto } from '../dto/group/createGroupDto';
 import { GroupService } from '../service/groupService';
 import { IGroup } from '../models/group';
 import {
+  IGetGroupsReq,
   TCreateGroupReq,
   TJoinGroupReq,
   TUpdateGroupReq,
@@ -13,6 +14,8 @@ import { UpdateGroupDto } from '../dto/group/updateGroupDto';
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { Request } from 'express';
+import { GroupFilterDto } from '../dto/group/groupFilterDto';
+import { GetGroupVo } from '../vo/group/getGroupVo';
 
 export class GroupController extends BaseController {
   private readonly groupService = new GroupService();
@@ -58,6 +61,15 @@ export class GroupController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       {},
+    );
+  };
+  public getGroups = async (req: IGetGroupsReq): Promise<ResponseObject> => {
+    const groupFilterDto = new GroupFilterDto(req);
+    const groups = await this.groupService.findGroups(groupFilterDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      new GetGroupVo(groups),
     );
   };
 }

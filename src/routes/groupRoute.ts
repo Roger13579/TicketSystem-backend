@@ -1,9 +1,10 @@
 import { BaseRoute } from './baseRoute';
 import { GroupController } from '../controller/groupController';
-import { UserVerify } from '../middleware/userVerify';
+import { UserCheck, UserVerify } from '../middleware/userVerify';
 import { CreateGroupPipe } from '../validator/group/createGroup.pipe';
 import { UpdateGroupPipe } from '../validator/group/updateGroup.pipe';
 import { JoinGroupPipe } from '../validator/group/joinGroup.pipe';
+import { GetGroupsPipe } from '../validator/group/getGroup.pipe';
 
 export class GroupRoute extends BaseRoute {
   protected controller!: GroupController;
@@ -132,6 +133,116 @@ export class GroupRoute extends BaseRoute {
        */
       UserVerify,
       this.responseHandler(this.controller.leaveGroup),
+    );
+    this.router.get(
+      '/v1/group',
+      /**
+       * #swagger.tags = ['Group']
+       * #swagger.summary = '取得揪團列表'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*  #swagger.parameters['title'] = {
+            in: 'query',
+            required: false,
+            description: '模糊搜尋：揪團名稱',
+            type: 'string',
+            schema:{
+              $ref:"#/definitions/CustomGetGroupTitleQuery"
+            }
+          }
+          #swagger.parameters['movieTitle'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：電影名稱',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomGetGroupMovieTitleQuery"
+            }
+          }
+          #swagger.parameters['status'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：揪團狀態',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomGetGroupStatusQuery"
+            }
+          }
+          #swagger.parameters['participantCount'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：開團人數',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomGetGroupCountQuery"
+            }
+          }
+          #swagger.parameters['hasTicket'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：是否持有票券',
+            type: 'boolean',
+            schema:{
+              $ref: "#/definitions/CustomGetGroupHasTicketQuery"
+            }
+          }
+          #swagger.parameters['startAt'] = {
+            in: 'query',
+            required: false,
+            description: '開始活動時間-起',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomTimeAtFromQuery"
+            }
+          }
+          #swagger.parameters['endAt'] = {
+            in: 'query',
+            required: false,
+            description: '開始活動時間-迄',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomTimeAtToQuery"
+            }
+          }
+          #swagger.parameters['page'] = {
+            in: 'query',
+            required: true,
+            description: '頁數',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomPageQuery"
+            }
+          }
+          #swagger.parameters['limit'] = {
+            in: 'query',
+            required: true,
+            description: '每頁資料數',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomLimitQuery"
+            }
+          }
+          #swagger.parameters['sortBy'] = {
+            in: 'query',
+            required: true,
+            description: '排序根據, e.g. startAt, title,降冪則在前面加上 - ',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomSortByQuery"
+            }
+          }
+      */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/GetGroupsSuccess"
+            }
+          }
+      */
+      UserCheck,
+      this.usePipe(GetGroupsPipe),
+      this.responseHandler(this.controller.getGroups),
     );
   }
 }

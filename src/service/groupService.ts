@@ -7,16 +7,17 @@ import { IGroup } from '../models/group';
 import { UpdateGroupDto } from '../dto/group/updateGroupDto';
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { UserRepository } from '../repository/userRepository';
-import { Types } from 'mongoose';
+import { PaginateDocument, PaginateOptions, PaginateResult } from 'mongoose';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { IUser } from '../models/user';
 import { IParticipant } from '../types/group.type';
+import { GroupFilterDto } from '../dto/group/groupFilterDto';
+
 const logger = log4js.getLogger(`GroupService`);
 
 export class GroupService {
   private readonly groupRepository: GroupRepository = new GroupRepository();
   private readonly userRepository: UserRepository = new UserRepository();
-
   public async createGroup(
     createGroupDto: CreateGroupDto,
   ): Promise<IGroup | void> {
@@ -54,10 +55,9 @@ export class GroupService {
     } else {
       // 檢查是否已加入過此揪團活動
       const participant = group.participant as IParticipant[];
-      const objectId = new Types.ObjectId(joinGroupDto.userId).toString();
       const matchGroup = participant
         .map((user) => user.userId)
-        .filter((userId) => userId.toString() === objectId);
+        .filter((userId) => userId === joinGroupDto.userId);
       if (matchGroup.length > 0) {
         throwError(
           CustomResponseType.GROUP_ALREADY_JOINED_MESSAGE,
@@ -114,5 +114,14 @@ export class GroupService {
         );
       }
     }
+  }
+  public async findGroups(
+    groupFilterDto: GroupFilterDto,
+  ): Promise<
+    PaginateResult<
+      PaginateDocument<IGroup, NonNullable<unknown>, PaginateOptions>
+    >
+  > {
+    return await this.groupRepository.findGroups(groupFilterDto);
   }
 }
