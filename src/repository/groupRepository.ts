@@ -55,6 +55,9 @@ export class GroupRepository {
       { new: true },
     );
   }
+  public async deleteGroup(groupId: Types.ObjectId): Promise<IGroup | null> {
+    return GroupModel.findByIdAndDelete({ _id: groupId });
+  }
   public async findGroups(
     groupFilterDto: GroupFilterDto,
   ): Promise<
