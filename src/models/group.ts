@@ -1,7 +1,8 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, PaginateModel } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import { GroupStatus, IParticipant } from '../types/group.type';
 import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
+import paginate from 'mongoose-paginate-v2';
 
 export interface IGroup extends BaseModel, IUserId {
   title: string;
@@ -60,6 +61,10 @@ const schema = new Schema<IGroup>(
     participant: {
       type: [
         {
+          _id: {
+            type: String,
+            select: false,
+          },
           userId,
           phone: String,
           name: String,
@@ -71,6 +76,9 @@ const schema = new Schema<IGroup>(
     },
   },
   schemaOption,
-);
+).plugin(paginate);
 
-export const GroupModel = model<IGroup>(ModelName.group, schema);
+export const GroupModel = model<IGroup, PaginateModel<IGroup>>(
+  ModelName.group,
+  schema,
+);

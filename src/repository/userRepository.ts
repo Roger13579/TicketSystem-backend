@@ -70,27 +70,27 @@ export class UserRepository {
   }
 
   public async addGroupToUser(
-    id: string,
-    groupId: string,
+    id: Types.ObjectId,
+    groupId: Types.ObjectId,
   ): Promise<IUser | null> {
     return UserModel.findByIdAndUpdate(
-      { _id: new Types.ObjectId(id) },
+      { _id: id },
       {
         $push: {
-          groups: { groupId: new Types.ObjectId(groupId) },
+          groups: { groupId: groupId },
         },
       },
     );
   }
   public async removeGroupFromUser(
-    id: string,
-    groupId: string,
+    id: Types.ObjectId,
+    groupId: Types.ObjectId,
   ): Promise<IUser | null> {
     return UserModel.findByIdAndUpdate(
-      { _id: new Types.ObjectId(id) },
+      { _id: id },
       {
         $pull: {
-          groups: { groupId: new Types.ObjectId(groupId) },
+          groups: { groupId: groupId },
         },
       },
     );

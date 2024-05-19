@@ -1,4 +1,4 @@
-import { CustomResponseType } from '../../types/customResponseType';
+import { CustomResponseType } from '../../../types/customResponseType';
 
 const propName = {
   title: '活動標題',

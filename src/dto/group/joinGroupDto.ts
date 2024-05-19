@@ -1,16 +1,17 @@
 import { IParticipant, TJoinGroupReq } from '../../types/group.type';
 import { IUser } from '../../models/user';
+import { Types } from 'mongoose';
 
 export class JoinGroupDto {
-  private readonly _groupId: string;
-  private readonly _userId: string;
+  private readonly _groupId: Types.ObjectId;
+  private readonly _userId: Types.ObjectId;
   private readonly _participant: IParticipant;
 
-  get groupId(): string {
+  get groupId(): Types.ObjectId {
     return this._groupId;
   }
 
-  get userId(): string {
+  get userId(): Types.ObjectId {
     return this._userId;
   }
 
@@ -19,9 +20,9 @@ export class JoinGroupDto {
   }
 
   constructor(req: TJoinGroupReq) {
-    this._groupId = req.params['groupId'];
+    this._groupId = new Types.ObjectId(req.params['groupId']);
     const id = (req.user as IUser).id;
-    this._userId = id.toString();
+    this._userId = id;
     this._participant = req.body;
     this._participant.userId = id;
   }
