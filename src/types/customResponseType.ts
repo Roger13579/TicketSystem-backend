@@ -146,4 +146,10 @@ export const enum CustomResponseType {
 
   INVALID_GROUP_FILTER = '6524',
   INVALID_GROUP_FILTER_MESSAGE = '無效的揪團查詢條件：',
+
+  GROUP_MEMBER_NOT_EMPTY = '6525',
+  GROUP_MEMBER_NOT_EMPTY_MESSAGE = '揪團中尚有團員，無法刪除',
+
+  NOT_GROUP_OWNER = '6526',
+  NOT_GROUP_OWNER_MESSAGE = '非揪團發起人，無法刪除',
 }

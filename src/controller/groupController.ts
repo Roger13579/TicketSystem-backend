@@ -16,6 +16,8 @@ import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { Request } from 'express';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
 import { GetGroupVo } from '../vo/group/getGroupVo';
+import { Types } from 'mongoose';
+import { IUser } from '../models/user';
 
 export class GroupController extends BaseController {
   private readonly groupService = new GroupService();
@@ -57,6 +59,16 @@ export class GroupController extends BaseController {
   public leaveGroup = async (req: Request): Promise<ResponseObject> => {
     const leaveGroupDto = new LeaveGroupDto(req);
     await this.groupService.leaveGroup(leaveGroupDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      {},
+    );
+  };
+  public deleteGroup = async (req: Request): Promise<ResponseObject> => {
+    const userId = (req.user as IUser)._id;
+    const groupId = new Types.ObjectId(req.params['groupId']);
+    await this.groupService.deleteGroup(userId, groupId);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,

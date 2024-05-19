@@ -7,7 +7,12 @@ import { IGroup } from '../models/group';
 import { UpdateGroupDto } from '../dto/group/updateGroupDto';
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { UserRepository } from '../repository/userRepository';
-import { PaginateDocument, PaginateOptions, PaginateResult } from 'mongoose';
+import {
+  PaginateDocument,
+  PaginateOptions,
+  PaginateResult,
+  Types,
+} from 'mongoose';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { IUser } from '../models/user';
 import { IParticipant } from '../types/group.type';
@@ -111,6 +116,42 @@ export class GroupService {
         throwError(
           CustomResponseType.UPDATE_ERROR_MESSAGE,
           CustomResponseType.UPDATE_ERROR,
+        );
+      }
+    }
+  }
+  public async deleteGroup(
+    userId: Types.ObjectId,
+    groupId: Types.ObjectId,
+  ): Promise<IUser | null | void> {
+    const group = await this.groupRepository.findById(groupId);
+    if (!group) {
+      throwError(
+        CustomResponseType.NO_DATA_FOUND_MESSAGE + ` : ${groupId.toString()}`,
+        CustomResponseType.NO_DATA_FOUND,
+      );
+    } else {
+      if ((group.participant as IParticipant[]).length > 1) {
+        throwError(
+          CustomResponseType.GROUP_MEMBER_NOT_EMPTY_MESSAGE,
+          CustomResponseType.GROUP_MEMBER_NOT_EMPTY,
+        );
+      }
+      console.log(userId);
+      console.log(group.userId);
+      if (userId.toString() !== group.userId.toString()) {
+        throwError(
+          CustomResponseType.NOT_GROUP_OWNER_MESSAGE,
+          CustomResponseType.NOT_GROUP_OWNER,
+        );
+      }
+      try {
+        await this.groupRepository.deleteGroup(groupId);
+      } catch (err) {
+        logger.error('delete group fail', err);
+        throwError(
+          CustomResponseType.DELETE_ERROR_MESSAGE,
+          CustomResponseType.DELETE_ERROR,
         );
       }
     }

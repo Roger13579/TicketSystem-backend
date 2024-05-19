@@ -25,6 +25,7 @@ export class GroupRoute extends BaseRoute {
       /**
        * #swagger.tags = ['Group']
        * #swagger.summary = '建立揪團'
+       * #swagger.security=[{"Bearer": []}],
        */
       /*
           #swagger.parameters['obj'] ={
@@ -51,6 +52,7 @@ export class GroupRoute extends BaseRoute {
       /**
        * #swagger.tags = ['Group']
        * #swagger.summary = '修改揪團'
+       * #swagger.security=[{"Bearer": []}],
        */
       /*
        #swagger.parameters['groupId'] ={
@@ -83,6 +85,7 @@ export class GroupRoute extends BaseRoute {
       /**
        * #swagger.tags = ['Group']
        * #swagger.summary = '參加揪團'
+       * #swagger.security=[{"Bearer": []}],
        */
       /*
       #swagger.parameters['groupId'] ={
@@ -115,6 +118,7 @@ export class GroupRoute extends BaseRoute {
       /**
        * #swagger.tags = ['Group']
        * #swagger.summary = '退出揪團'
+       * #swagger.security=[{"Bearer": []}],
        */
       /*
        #swagger.parameters['groupId'] ={
@@ -133,6 +137,31 @@ export class GroupRoute extends BaseRoute {
        */
       UserVerify,
       this.responseHandler(this.controller.leaveGroup),
+    );
+    this.router.delete(
+      '/v1/group/:groupId',
+      /**
+       * #swagger.tags = ['Group']
+       * #swagger.summary = '刪除揪團'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+       #swagger.parameters['groupId'] ={
+          in:'path',
+          description:'揪團ID',
+          required: true,
+          type: 'string'
+       }
+       */
+      /**
+       #swagger.responses[200] = {
+       description: 'OK',
+       schema: {
+       $ref: '#/definitions/Success' }
+       }
+       */
+      UserVerify,
+      this.responseHandler(this.controller.deleteGroup),
     );
     this.router.get(
       '/v1/group',
@@ -215,7 +244,7 @@ export class GroupRoute extends BaseRoute {
           }
           #swagger.parameters['limit'] = {
             in: 'query',
-            required: true,
+            required: false,
             description: '每頁資料數',
             type: 'number',
             schema:{
@@ -224,7 +253,7 @@ export class GroupRoute extends BaseRoute {
           }
           #swagger.parameters['sortBy'] = {
             in: 'query',
-            required: true,
+            required: false,
             description: '排序根據, e.g. startAt, title,降冪則在前面加上 - ',
             type: 'string',
             schema:{
