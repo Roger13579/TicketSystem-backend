@@ -61,6 +61,10 @@ const schema = new Schema<IGroup>(
     participant: {
       type: [
         {
+          _id: {
+            type: String,
+            select: false,
+          },
           userId,
           phone: String,
           name: String,
