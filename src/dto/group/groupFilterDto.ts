@@ -9,7 +9,7 @@ export class GroupFilterDto {
   private readonly _theater?: string[];
   private readonly _participantCount?: number;
   private readonly _status: string;
-  private readonly _hasTicket?: boolean;
+  private readonly _haveTicket?: boolean;
   private readonly _startAt?: Date;
   private readonly _endAt?: Date;
   private readonly _page: number;
@@ -36,8 +36,8 @@ export class GroupFilterDto {
     return this._status;
   }
 
-  get hasTicket() {
-    return this._hasTicket;
+  get haveTicket() {
+    return this._haveTicket;
   }
   get startAt() {
     return this._startAt;
@@ -69,7 +69,7 @@ export class GroupFilterDto {
       theater,
       participantCount,
       status,
-      hasTicket,
+      haveTicket,
       startAt,
       endAt,
       page,
@@ -85,8 +85,8 @@ export class GroupFilterDto {
     this._participantCount = Number(participantCount);
     this._movieTitle = movieTitle?.split(',');
     this._theater = theater?.split(',');
-    this._hasTicket =
-      hasTicket === undefined ? undefined : hasTicket === 'true';
+    this._haveTicket =
+      haveTicket === undefined ? undefined : haveTicket === 'true';
     this._startAt = startAt ? moment(startAt).toDate() : undefined;
     this._endAt = endAt ? moment(endAt).toDate() : undefined;
     this._userId = req.user !== undefined ? (req.user as IUser).id : undefined;

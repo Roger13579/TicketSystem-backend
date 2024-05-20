@@ -1,8 +1,8 @@
 export const CustomGetGroupTitleQuery = {
-  example: '讚讚揪團',
+  example: 'test12345',
 };
 export const CustomGetGroupMovieTitleQuery = {
-  example: '讚讚電影',
+  example: 'movie',
 };
 export const CustomGetGroupStatusQuery = {
   example: 'ongoing',
