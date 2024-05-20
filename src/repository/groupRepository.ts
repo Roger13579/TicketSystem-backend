@@ -82,7 +82,7 @@ export class GroupRepository {
       movieTitle,
       status,
       theater,
-      hasTicket,
+      haveTicket,
       startAt,
       endAt,
       participantCount,
@@ -95,7 +95,7 @@ export class GroupRepository {
       ...(status && { status: { $eq: status } }),
       ...(theater && { theater: { $in: theater } }),
       ...(participantCount && { amount: { $eq: participantCount } }),
-      ...(hasTicket !== undefined && { hasTicket }),
+      ...(haveTicket !== undefined && { haveTicket }),
       ...((startAt || endAt) && {
         time: {
           ...(endAt && { $lte: endAt }),
