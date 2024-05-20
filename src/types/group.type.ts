@@ -36,7 +36,7 @@ export interface IGetGroupsReq extends IUserReq {
     theater?: string;
     participantCount?: string;
     status?: string;
-    hasTicket?: string;
+    haveTicket?: string;
     startAt?: string;
     endAt?: string;
     page?: string;
