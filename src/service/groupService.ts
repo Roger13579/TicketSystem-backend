@@ -62,7 +62,9 @@ export class GroupService {
       const participant = group.participant as IParticipant[];
       const matchGroup = participant
         .map((user) => user.userId)
-        .filter((userId) => userId === joinGroupDto.userId);
+        .filter(
+          (userId) => userId.toString() === joinGroupDto.userId.toString(),
+        );
       if (matchGroup.length > 0) {
         throwError(
           CustomResponseType.GROUP_ALREADY_JOINED_MESSAGE,
@@ -105,6 +107,12 @@ export class GroupService {
         CustomResponseType.NO_DATA_FOUND,
       );
     } else {
+      if (leaveGroupDto.userId.toString() === group.userId.toString()) {
+        throwError(
+          CustomResponseType.GROUP_OWNER_CAN_NOT_LEAVE_MESSAGE,
+          CustomResponseType.GROUP_OWNER_CAN_NOT_LEAVE,
+        );
+      }
       try {
         await this.groupRepository.leaveGroup(leaveGroupDto);
         await this.userRepository.removeGroupFromUser(
@@ -137,8 +145,6 @@ export class GroupService {
           CustomResponseType.GROUP_MEMBER_NOT_EMPTY,
         );
       }
-      console.log(userId);
-      console.log(group.userId);
       if (userId.toString() !== group.userId.toString()) {
         throwError(
           CustomResponseType.NOT_GROUP_OWNER_MESSAGE,

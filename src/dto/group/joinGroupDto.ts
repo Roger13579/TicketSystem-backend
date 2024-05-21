@@ -21,7 +21,7 @@ export class JoinGroupDto {
 
   constructor(req: TJoinGroupReq) {
     this._groupId = new Types.ObjectId(req.params['groupId']);
-    const id = (req.user as IUser).id;
+    const id = (req.user as IUser)._id;
     this._userId = id;
     this._participant = req.body;
     this._participant.userId = id;
