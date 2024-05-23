@@ -36,3 +36,8 @@ export interface ILoginReq extends Request {
     pwd: string;
   };
 }
+export interface IRefreshTokenReq extends Request {
+  body: {
+    refreshToken: string;
+  };
+}

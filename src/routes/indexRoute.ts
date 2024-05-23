@@ -8,6 +8,7 @@ import { LoginPipe } from '../validator/user/login.pipe';
 import { ForgetPwdPipe } from '../validator/user/forgetPwd.pipe';
 import { ResetPwdPipe } from '../validator/user/resetPwd.pipe';
 import { GoogleUpdatePipe } from '../validator/user/googleUpdate.pipe';
+import { RefreshTokenPipe } from '../validator/user/refreshToken.pipe';
 export class IndexRoute extends BaseRoute {
   protected controller!: IndexController;
 
@@ -70,6 +71,30 @@ export class IndexRoute extends BaseRoute {
          */
       this.usePipe(LoginPipe),
       this.responseHandler(this.controller.login),
+    );
+    this.router.post(
+      '/v1/user/refresh',
+      /**
+       * #swagger.tags = ['Sign-in']
+       * #swagger.summary = 'refresh token'
+       */
+      /*
+
+      /*	#swagger.parameters['obj'] = {
+                  in: 'body',
+                  description: 'refresh token',
+                  required: true,
+                  schema: { $ref: "#/definitions/RefreshForm" }
+          } */
+      /* #swagger.responses[200] = {
+              description: 'OK',
+              schema:{
+                $ref: "#/definitions/RefreshSuccess"
+              }
+            }
+         */
+      this.usePipe(RefreshTokenPipe),
+      this.responseHandler(this.controller.refreshToken),
     );
 
     this.router.post(
