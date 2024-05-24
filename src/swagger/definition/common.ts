@@ -45,6 +45,9 @@ export const LoginForm = {
   account: 'rrroger',
   pwd: '123123123',
 };
+export const RefreshForm = {
+  refreshToken: 'refreshToken',
+};
 export const LoginSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
@@ -52,7 +55,15 @@ export const LoginSuccess = {
     account: 'rrroger',
     email: 'roger@gmail.com',
     token: 'token',
+    refeshToken: 'refeshToken',
     accountType: 'member',
+  },
+};
+export const RefreshSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    token: 'new token',
   },
 };
 

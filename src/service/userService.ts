@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { CustomResponseType } from '../types/customResponseType';
 import bcrypt from 'bcrypt';
 import { UserRepository } from '../repository/userRepository';
@@ -116,6 +116,27 @@ export class UserService {
       );
     }
   }
+  public async refreshToken(token: string): Promise<string | undefined> {
+    let payload: jwt.JwtPayload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRETS) as JwtPayload;
+      const user = await this.userRepository.findById(payload.id);
+      if (user) {
+        return jwt.sign(
+          { id: user.id.toString(), accountType: user.accountType },
+          process.env.JWT_SECRETS,
+          Object.assign({ expiresIn: process.env.JWT_EXPIRES }),
+        );
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      throwError(
+        CustomResponseType.TOKEN_EXPIRED_MESSAGE,
+        CustomResponseType.TOKEN_EXPIRED,
+      );
+    }
+  }
 
   public async resetPwd(resetPwdDto: ResetPwdDto): Promise<unknown> {
     const user = await this.userRepository.findById(resetPwdDto.getId);
@@ -156,10 +177,34 @@ export class UserService {
     }
   }
 
-  public generateJWT(userId: string, accountType: string): string {
+  public generateJWT(
+    userId: string,
+    accountType: string,
+  ): { accessToken: string; refreshToken: string } {
     const privateKey = process.env.JWT_SECRETS;
     const defaultOptions: object = {
       expiresIn: process.env.JWT_EXPIRES,
+    };
+    const refreshOptions: object = {
+      expiresIn: process.env.JWT_REFRESH_EXPIRES,
+    };
+    const accessToken = jwt.sign(
+      { id: userId, accountType: accountType },
+      privateKey,
+      Object.assign(defaultOptions),
+    );
+
+    const refreshToken = jwt.sign(
+      { id: userId, accountType: accountType },
+      privateKey,
+      Object.assign(refreshOptions),
+    );
+    return { accessToken, refreshToken };
+  }
+  public generateRefreshJWT(userId: string, accountType: string): string {
+    const privateKey = process.env.JWT_SECRETS;
+    const defaultOptions: object = {
+      expiresIn: process.env.JWT_REFRESH_EXPIRES,
     };
     return jwt.sign(
       { id: userId, accountType: accountType },

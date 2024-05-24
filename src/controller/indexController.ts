@@ -7,7 +7,7 @@ import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
 import { ResetPwdDto } from '../dto/user/resetPwdDto';
 import { IUser } from '../models/user';
-import { ILoginReq } from '../types/user.type';
+import { ILoginReq, IRefreshTokenReq } from '../types/user.type';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
@@ -42,14 +42,14 @@ class IndexController extends BaseController {
     const dbPwd = user.pwd;
     const compare = await bcrypt.compare(pwd, dbPwd);
     if (compare) {
-      const jwt = this.userService.generateJWT(
+      const { accessToken, refreshToken } = this.userService.generateJWT(
         user._id.toString(),
         user.accountType.toString(),
       );
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
-        new LoginVo(user, jwt),
+        new LoginVo(user, accessToken, refreshToken),
       );
     } else {
       return this.formatResponse(
@@ -78,6 +78,18 @@ class IndexController extends BaseController {
     });
   };
 
+  public refreshToken = async (
+    req: IRefreshTokenReq,
+  ): Promise<ResponseObject> => {
+    const token = req.body.refreshToken;
+    const accessToken = await this.userService.refreshToken(token);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { token: accessToken },
+    );
+  };
+
   public googleCallback = async (
     req: Request,
     res: Response,
@@ -85,14 +97,14 @@ class IndexController extends BaseController {
   ): Promise<ResponseObject> => {
     const authUser = await this.userService.googleAuth(req, res, next);
     if (authUser) {
-      const jwt = this.userService.generateJWT(
-        authUser.id.toString(),
-        authUser.accountType,
+      const { accessToken, refreshToken } = this.userService.generateJWT(
+        authUser._id.toString(),
+        authUser.accountType.toString(),
       );
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
-        new LoginVo(authUser, jwt),
+        new LoginVo(authUser, accessToken, refreshToken),
       );
     } else {
       return this.formatResponse(
