@@ -76,11 +76,15 @@ export class ProductRepository {
     return await ProductModel.find(filter, projection, options);
   }
 
-  public findProduct = async (
+  public findProduct = async (filter: FilterQuery<IProduct>) => {
+    return await ProductModel.findOne(filter);
+  };
+
+  public findProductDetail = async (
     filter: FilterQuery<IProduct>,
     projection: ProjectionType<IProduct>,
   ) => {
-    return await ProductModel.find(filter, projection).populate({
+    return await ProductModel.findOne(filter, projection).populate({
       path: 'tags',
     });
   };

@@ -155,4 +155,10 @@ export const enum CustomResponseType {
 
   NOT_GROUP_OWNER = '6527',
   NOT_GROUP_OWNER_MESSAGE = '非揪團發起人，無法刪除',
+
+  INVALID_EDIT_CART = '6528',
+  INVALID_EDIT_CART_MESSAGE = '無效的購物車編輯行為：',
+
+  INVALID_ADD_CART = '6529',
+  INVALID_ADD_CART_MESSAGE = '無效的購物車新增行為：',
 }

@@ -1,16 +1,22 @@
 import { Schema, model } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import {
-  ICartProduct,
   IDeliveryInfo,
   PaymentMethod,
   PaymentStatus,
 } from '../types/order.type';
-import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
+import {
+  BaseModel,
+  IUserId,
+  ModelName,
+  productSnapshotSchemaDef,
+  schemaDef,
+} from './baseModel';
+import { IProductSnapshot } from '../types/product.type';
 
 interface IOrder extends BaseModel, IUserId {
   thirdPartyPaymentId: string;
-  products: [ICartProduct];
+  products: (IProductSnapshot & { productId: string })[];
   price: number;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
@@ -18,7 +24,7 @@ interface IOrder extends BaseModel, IUserId {
   deliveryInfo?: IDeliveryInfo;
 }
 
-const { userId } = schemaDef;
+const { userId, productId } = schemaDef;
 
 const schema = new Schema<IOrder>(
   {
@@ -28,7 +34,7 @@ const schema = new Schema<IOrder>(
     },
     userId,
     products: {
-      type: [schemaDef.cartProduct],
+      type: [{ ...productSnapshotSchemaDef, productId }],
       required: true,
     },
     price: {

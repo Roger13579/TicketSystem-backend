@@ -10,6 +10,8 @@ import { groupDefinition, groupCustomDefinition } from './group';
 import { UploadFileSuccess } from './upload';
 import { commentDefinitions, commentCustomDefinitions } from './comment';
 
+import { cartDefinitions, cartCustomDefinitions } from './cart';
+
 export const definitions = {
   ...commonDefinitions,
   CreateGroupSuccess,
@@ -17,6 +19,7 @@ export const definitions = {
   ...productDefinition,
   ...groupDefinition,
   ...commentDefinitions,
+  ...cartDefinitions,
 };
 
 export const customDefinitions = {
@@ -26,4 +29,5 @@ export const customDefinitions = {
   CustomJoinGroupObj,
   ...commentCustomDefinitions,
   ...groupCustomDefinition,
+  ...cartCustomDefinitions,
 };
