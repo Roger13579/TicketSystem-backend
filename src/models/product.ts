@@ -1,23 +1,22 @@
 import { Schema, model } from 'mongoose';
-import { MovieGenre, ProductType, TPlan } from '../types/product.type';
+import { IProductSnapshot, TPlan } from '../types/product.type';
 import { schemaOption } from '../utils/constants';
 import moment from 'moment';
-import { BaseModel, ModelName, schemaDef } from './baseModel';
+import {
+  BaseModel,
+  ModelName,
+  productSnapshotSchemaDef,
+  schemaDef,
+} from './baseModel';
 
-export interface IProduct extends BaseModel {
-  title: string;
-  type: ProductType;
-  genre: MovieGenre;
-  vendor: string;
-  theater: string;
-  price: number;
-  amount: number; // 票券總量
+export interface IProduct extends BaseModel, IProductSnapshot {
   plans?: TPlan[];
   startAt: Date;
   endAt: Date;
   sellStartAt: Date;
   sellEndAt: Date;
   recommendWeight: number;
+  amount: number; // 票券總量
   isPublic: boolean;
   isLaunched: boolean;
   tags?: [{ tagId: Schema.Types.ObjectId }];
@@ -38,41 +37,7 @@ const { commentId, tagId, photoPath } = schemaDef;
 
 const schema = new Schema<IProduct>(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    brief: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    type: {
-      type: String,
-      enum: Object.values(ProductType),
-      required: true,
-    },
-    genre: {
-      type: String,
-      enum: Object.values(MovieGenre),
-      required: true,
-    },
-    vendor: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    theater: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 100,
-    },
+    ...productSnapshotSchemaDef,
     amount: {
       type: Number,
       required: true,

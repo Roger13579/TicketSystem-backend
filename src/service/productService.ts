@@ -149,7 +149,7 @@ export class ProductService {
       _id: id,
       isPublic: true, // TODO: admin 可以不用這項
     };
-    const product = await this.productRepository.findProduct(filter, {
+    const product = await this.productRepository.findProductDetail(filter, {
       ...this.defaultProjection,
       recommendWeight: 0,
       isPublic: 0,
