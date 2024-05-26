@@ -132,6 +132,7 @@ export interface IEditProductsReq extends Request {
  * @description 商品在訂單中需要被 snapshot 的部分
  */
 export interface IProductSnapshot {
+  productId: Types.ObjectId;
   title: string;
   type: ProductType;
   genre: MovieGenre;

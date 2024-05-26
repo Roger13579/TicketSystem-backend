@@ -161,4 +161,10 @@ export const enum CustomResponseType {
 
   INVALID_ADD_CART = '6529',
   INVALID_ADD_CART_MESSAGE = '無效的購物車新增行為：',
+
+  PRODUCT_SOLD_OUT = '6530',
+  PRODUCT_SOLD_OUT_MESSAGE = '商品已售完',
+
+  PAYMENT_ERROR_TRADESHA = '6531',
+  PAYMENT_ERROR_TRADESHA_MESSAGE = '付款失敗：TradeSha 不一致',
 }
