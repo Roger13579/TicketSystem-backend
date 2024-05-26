@@ -14,7 +14,7 @@ import {
 } from './baseModel';
 import { IProductSnapshot } from '../types/product.type';
 
-interface IOrder extends BaseModel, IUserId {
+export interface IOrder extends BaseModel, IUserId {
   thirdPartyPaymentId: string;
   products: (IProductSnapshot & { productId: string })[];
   price: number;

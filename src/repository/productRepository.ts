@@ -1,4 +1,4 @@
-import { FilterQuery, ProjectionType } from 'mongoose';
+import { FilterQuery, ProjectionType, Types } from 'mongoose';
 
 import ProductModel, { IProduct } from '../models/product';
 import { EditProductDTO } from '../dto/product/editProductsDto';
@@ -78,6 +78,12 @@ export class ProductRepository {
 
   public findProduct = async (filter: FilterQuery<IProduct>) => {
     return await ProductModel.findOne(filter);
+  };
+
+  public findById = async (
+    productId: Types.ObjectId,
+  ): Promise<IProduct | null> => {
+    return ProductModel.findOne({ _id: productId });
   };
 
   public findProductDetail = async (

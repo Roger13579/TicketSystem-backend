@@ -1,20 +1,23 @@
 import { Request } from 'express';
-import { UserRepository } from '../repository/userRepository';
-import { IUser } from '../models/user';
 import log4js from '../config/log4js';
 import * as crypto from 'node:crypto';
-import { CreateOrderDto } from "../dto/order/createOrderDto";
-import { OrderRepository } from "../repository/orderRepository";
-import { IOrder } from "../models/order";
-import { ProductRepository } from "../repository/productRepository";
-import product from "../models/product";
-import { throwError } from "../utils/errorHandler";
-import { CustomResponseType } from "../types/customResponseType";
+import { CreateOrderDto } from '../dto/order/createOrderDto';
+import { OrderRepository } from '../repository/orderRepository';
+import { IOrder } from '../models/order';
+import { ProductRepository } from '../repository/productRepository';
+import { throwError } from '../utils/errorHandler';
+import { CustomResponseType } from '../types/customResponseType';
+import { NewebpayOrderDto } from '../dto/order/newebpayOrderDto';
+import { NewebpayOrderVo } from '../vo/order/newebpayOrderVo';
+import { NewebpayResponse } from '../types/order.type';
+import { Types } from 'mongoose';
+
 const logger = log4js.getLogger(`OrderService`);
 
 export class OrderService {
   private readonly orderRepository: OrderRepository = new OrderRepository();
-  private readonly productRepository: ProductRepository = new ProductRepository();
+  private readonly productRepository: ProductRepository =
+    new ProductRepository();
 
   public async createOrder(createOrderDto: CreateOrderDto): Promise<IOrder> {
     const productIds = createOrderDto.products.map(
@@ -32,67 +35,86 @@ export class OrderService {
       } else {
         throwError(
           CustomResponseType.PRODUCT_NOT_FOUND_MESSAGE,
-          CustomResponseType.PRODUCT_NOT_FOUND)
+          CustomResponseType.PRODUCT_NOT_FOUND,
+        );
       }
     }
     return await this.orderRepository.createOrder(createOrderDto);
   }
+  public async newebpayProcess(order: IOrder): Promise<NewebpayOrderVo> {
+    // 使用 Unix Timestamp 作為訂單編號（金流也需要加入時間戳記）
+    const newebpayOrderDto = new NewebpayOrderDto(order);
 
-  public async checkOrder(req: Request): Promise<IOrder | void> {
-    console.log('req.body notify data', req.body);
+    // 進行訂單加密
+    // 加密第一段字串，此段主要是提供交易內容給予藍新金流
+    const aesEncrypt = this.createSesEncrypt(newebpayOrderDto);
+    logger.info('aesEncrypt:', aesEncrypt);
+
+    // 使用 HASH 再次 SHA 加密字串，作為驗證使用
+    const shaEncrypt = this.createShaEncrypt(aesEncrypt);
+    logger.info('shaEncrypt:', shaEncrypt);
+    return new NewebpayOrderVo(shaEncrypt, aesEncrypt);
+  }
+
+  public async checkOrder(req: Request): Promise<IOrder | null> {
+    logger.info('req.body notify data', req.body);
     const response = req.body;
 
     // 解密交易內容
     const data = this.createSesDecrypt(response.TradeInfo);
-    console.log('data:', data);
+    logger.info('data:', data);
 
     // 取得交易內容，並查詢本地端資料庫是否有相符的訂單
-    console.log(orders[data?.Result?.MerchantOrderNo]);
-    if (!orders[data?.Result?.MerchantOrderNo]) {
-      console.log('找不到訂單');
+    const order = await this.orderRepository.findById(
+      new Types.ObjectId(data?.Result?.MerchantOrderNo),
+    );
+    if (!order) {
+      throwError(
+        CustomResponseType.NO_DATA_FOUND_MESSAGE,
+        CustomResponseType.NO_DATA_FOUND,
+      );
     }
-
     // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
     const thisShaEncrypt = this.createShaEncrypt(response.TradeInfo);
     if (!thisShaEncrypt === response.TradeSha) {
-      console.log('付款失敗：TradeSha 不一致');
+      throwError(
+        CustomResponseType.PAYMENT_ERROR_TRADESHA_MESSAGE,
+        CustomResponseType.PAYMENT_ERROR_TRADESHA,
+      );
     }
-
     // 交易完成，將成功資訊儲存於資料庫
-    console.log('付款完成，訂單：', orders[data?.Result?.MerchantOrderNo]);
-
+    return await this.orderRepository.updateOrder(
+      new Types.ObjectId(data?.Result?.MerchantOrderNo),
+      data.Result.TradeNo,
+    );
+    //TODO 派發票券Ticket
   }
   // 字串組合
-  private genDataChain(order: IOrder): string {
-    return `MerchantID=${order.MerchantID}&TimeStamp=${
-      order.TimeStamp
-    }&Version=${process.env.VERSION}&RespondType=${String}&MerchantOrderNo=${
-      order.MerchantOrderNo
-    }&Amt=${order.Amt}&NotifyURL=${encodeURIComponent(
-      process.env.NOTIFY_URL,
-    )}&ReturnURL=${encodeURIComponent(process.env.RETURN_URL)}&ItemDesc=${encodeURIComponent(
-      order.ItemDesc,
-    )}&Email=${encodeURIComponent(order.Email)}`;
+  private genDataChain(newebpayOrderDto: NewebpayOrderDto): string {
+    return `MerchantID=${process.env.MERCHANT_ID}&TimeStamp=${
+      newebpayOrderDto.TimeStamp
+    }&Version=${process.env.VERSION}&RespondType=JSON&MerchantOrderNo=${
+      newebpayOrderDto.MerchantOrderNo
+    }&Amt=${newebpayOrderDto.Amt}&NotifyURL=${encodeURIComponent(
+      process.env.NOTIFY_URL as string,
+    )}&ReturnURL=${encodeURIComponent(process.env.RETURN_URL as string)}&ItemDesc=${encodeURIComponent(
+      'test',
+    )}&Email=${encodeURIComponent(newebpayOrderDto.email)}`;
   }
-  // 對應文件 P17
-  // MerchantID=MS12345678&TimeStamp=1663040304&Version=2.0&RespondType=Stri
-  // ng&MerchantOrderNo=Vanespl_ec_1663040304&Amt=30&NotifyURL=https%3A%2F%2
-  // Fwebhook.site%2Fd4db5ad1-2278-466a-9d66-
-  // 78585c0dbadb&ReturnURL=&ItemDesc=test
-
-  // 對應文件 P17：使用 aes 加密
-  // $edata1=bin2hex(openssl_encrypt($data1, "AES-256-CBC", $key, OPENSSL_RAW_DATA, $iv));
-  private createSesEncrypt(tradeInfo: string): string {
+  private createSesEncrypt(newebpayOrderDto: NewebpayOrderDto): string {
     const encrypt = crypto.createCipheriv(
       'aes-256-gcm',
       process.env.HASHKEY as string,
-      process.env.HASHIV as string,);
-    const enc = encrypt.update(this.genDataChain(tradeInfo), 'utf8', 'hex');
+      process.env.HASHIV as string,
+    );
+    const enc = encrypt.update(
+      this.genDataChain(newebpayOrderDto),
+      'utf8',
+      'hex',
+    );
     return enc + encrypt.final('hex');
   }
 
-  // 對應文件 P18：使用 sha256 加密
-  // $hashs="HashKey=".$key."&".$edata1."&HashIV=".$iv;
   private createShaEncrypt(aesEncrypt: string): string {
     const sha = crypto.createHash('sha256');
     const plainText = `HashKey=${process.env.HASHKEY}&${aesEncrypt}&HashIV=${process.env.HASHIV}`;
@@ -100,8 +122,7 @@ export class OrderService {
     return sha.update(plainText).digest('hex').toUpperCase();
   }
 
-  // 對應文件 21, 22 頁：將 aes 解密
-  private createSesDecrypt(tradeInfo: string): object {
+  private createSesDecrypt(tradeInfo: string): NewebpayResponse {
     const decrypt = crypto.createDecipheriv(
       'aes-256-gcm',
       process.env.HASHKEY as string,

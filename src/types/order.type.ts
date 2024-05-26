@@ -1,3 +1,7 @@
+import { IUserReq } from './common.type';
+import { Types } from 'mongoose';
+import { IProductSnapshot } from './product.type';
+
 export enum PaymentMethod {
   linePay = 'linePay',
   ecPay = 'ecPay',
@@ -18,3 +22,34 @@ export interface IDeliveryInfo {
   phone: string;
   email: string;
 }
+
+export interface ICreateOrderReq extends IUserReq {
+  body: {
+    userId: Types.ObjectId;
+    products: [IProductSnapshot];
+    price: string;
+    paymentMethod: string;
+    paidAt: Date;
+    deliveryInfo: {
+      name: string;
+      address: string;
+      phone: string;
+      email: string;
+    };
+  };
+}
+export type NewebpayResponse = {
+  Status: string;
+  Message: string;
+  Result: {
+    MerchantID: string;
+    Amt: number;
+    TradeNo: string;
+    MerchantOrderNo: string;
+    PaymentType: string;
+    RespondType: string;
+    PayTime: Date;
+    IP: string;
+    EscrowBank: string;
+  };
+};

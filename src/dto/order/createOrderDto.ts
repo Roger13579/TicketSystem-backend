@@ -1,17 +1,11 @@
-import { Schema, Types } from "mongoose";
-import { IUser } from "../../models/user";
-import { ICreateOrderReq } from "../../types/order.type";
+import { Types } from 'mongoose';
+import { IUser } from '../../models/user';
+import { ICreateOrderReq } from '../../types/order.type';
+import { IProductSnapshot } from '../../types/product.type';
 
 export class CreateOrderDto {
   private readonly _userId: Types.ObjectId;
-  private readonly _products: [
-    {
-      productId: { type: Schema.Types.ObjectId };
-      title: string;
-      price: number;
-      amount: number;
-    },
-  ];
+  private readonly _products: [IProductSnapshot];
   private readonly _price: string;
   private readonly _paymentMethod: string;
   private readonly _paidAt: Date;
@@ -31,17 +25,11 @@ export class CreateOrderDto {
     this._deliveryInfo = req.body.deliveryInfo;
   }
 
-
   get userId(): Types.ObjectId {
     return this._userId;
   }
 
-  get products(): [{
-    productId: { type: Schema.Types.ObjectId };
-    title: string;
-    price: number;
-    amount: number;
-  }] {
+  get products(): [IProductSnapshot] {
     return this._products;
   }
 
@@ -57,7 +45,12 @@ export class CreateOrderDto {
     return this._paidAt;
   }
 
-  get deliveryInfo(): { name: string; address: string; phone: string; email: string } {
+  get deliveryInfo(): {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+  } {
     return this._deliveryInfo;
   }
 }

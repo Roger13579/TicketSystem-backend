@@ -1,7 +1,7 @@
 import { BaseRoute } from './baseRoute';
-import UserController from '../controller/userController';
 import { UserVerify } from '../middleware/userVerify';
-import OrderController from "../controller/orderController";
+import OrderController from '../controller/orderController';
+import { CreateOrderPipe } from '../validator/order/createOrderPipe';
 
 export class OrderRoute extends BaseRoute {
   protected controller!: OrderController;
@@ -20,35 +20,28 @@ export class OrderRoute extends BaseRoute {
     this.router.post(
       '/v1/order',
       /**
-       * #swagger.tags = ['Account']
-       * #swagger.summary = '取得使用者資料'
+       * #swagger.tags = ['Order']
+       * #swagger.summary = '新增訂單'
        * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+          #swagger.parameters['obj'] ={
+            in:'body',
+            description:'從購物車取得的訂單資訊',
+            schema:{
+              $ref:"#/definitions/CustomCreateOrderObj"
+            }
+       }
        */
       /**
        #swagger.responses[200] = {
        description: 'OK',
        schema: {
-       $ref: '#/definitions/UserDetail' }
+       $ref: '#/definitions/Success' }
        }
        */
       UserVerify,
-      this.responseHandler(this.controller.createOrder),
-    );
-    this.router.post(
-      '/v1/order/newebpay_return',
-      /**
-       * #swagger.tags = ['Account']
-       * #swagger.summary = '取得使用者資料'
-       * #swagger.security=[{"Bearer": []}],
-       */
-      /**
-       #swagger.responses[200] = {
-       description: 'OK',
-       schema: {
-       $ref: '#/definitions/UserDetail' }
-       }
-       */
-      UserVerify,
+      this.usePipe(CreateOrderPipe),
       this.responseHandler(this.controller.createOrder),
     );
     this.router.post(
@@ -57,13 +50,6 @@ export class OrderRoute extends BaseRoute {
        * #swagger.tags = ['Order']
        * #swagger.summary = '藍新金流回傳交易結果'
        * #swagger.security=[{"Bearer": []}],
-       */
-      /**
-       #swagger.responses[200] = {
-       description: 'OK',
-       schema: {
-       $ref: '#/definitions/UserDetail' }
-       }
        */
       this.responseHandler(this.controller.newebpayNotify),
     );
