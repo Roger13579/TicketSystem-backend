@@ -127,3 +127,15 @@ export interface IEditProductsReq extends Request {
     products: (IEditContent & { id: Types.ObjectId })[];
   };
 }
+
+/**
+ * @description 商品在訂單中需要被 snapshot 的部分
+ */
+export interface IProductSnapshot {
+  title: string;
+  type: ProductType;
+  genre: MovieGenre;
+  vendor: string;
+  theater: string;
+  price: number;
+}

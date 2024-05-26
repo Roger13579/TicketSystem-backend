@@ -1,4 +1,5 @@
 import { Document, Schema, Types } from 'mongoose';
+import { ProductType, MovieGenre } from '../types/product.type';
 
 export enum ModelName {
   cart = 'Cart',
@@ -40,16 +41,6 @@ export interface ITicketId {
 }
 
 export const schemaDef = {
-  cartProduct: {
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: ModelName.product,
-      required: true,
-    },
-    name: String,
-    price: Number,
-    amount: Number,
-  },
   groupId: {
     type: Schema.Types.ObjectId,
     ref: ModelName.group,
@@ -89,5 +80,43 @@ export const schemaDef = {
     type: Schema.Types.ObjectId,
     ref: ModelName.order,
     required: true,
+  },
+};
+
+export const productSnapshotSchemaDef = {
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  brief: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  type: {
+    type: String,
+    enum: Object.values(ProductType),
+    required: true,
+  },
+  genre: {
+    type: String,
+    enum: Object.values(MovieGenre),
+    required: true,
+  },
+  vendor: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  theater: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: 100,
   },
 };

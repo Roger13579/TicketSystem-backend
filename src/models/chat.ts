@@ -3,7 +3,6 @@ import { schemaOption } from '../utils/constants';
 import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
 
 interface IChat extends BaseModel, IUserId {
-  userId: Types.ObjectId;
   ticketId?: Types.ObjectId;
   groupId?: Types.ObjectId;
   isRead: boolean;
