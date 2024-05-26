@@ -1,11 +1,8 @@
+import { defaultItem, optionalItem } from './general';
+
 const propName = {
   productId: '商品 id',
   amount: '商品數量',
-};
-
-const customItem = {
-  productId: '6653237c397ee87231916356',
-  amount: 200,
 };
 
 export const CustomEditCartObj = {
@@ -15,12 +12,12 @@ export const CustomEditCartObj = {
     productId: {
       type: 'string',
       description: propName.productId,
-      example: customItem.productId,
+      example: optionalItem.$product,
     },
     amount: {
       type: 'number',
       description: propName.amount,
-      example: customItem.amount,
+      example: defaultItem.$amount,
     },
   },
 };
