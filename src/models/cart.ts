@@ -1,24 +1,64 @@
-import { Schema, model } from 'mongoose';
-import { schemaOption } from '../utils/constants';
-import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
-import { ICartProduct } from '../types/order.type';
+import { PopulateOptions, Schema, model } from 'mongoose';
+import { schemaOption, virtualSchemaOption } from '../utils/constants';
+import {
+  BaseModel,
+  IProductId,
+  IUserId,
+  ModelName,
+  schemaDef,
+} from './baseModel';
 
-interface ICart extends BaseModel, IUserId {
-  products: [ICartProduct];
+const { userId, productId } = schemaDef;
+
+interface IItem extends IProductId, BaseModel {
+  amount: number;
 }
 
-const { userId, cartProduct } = schemaDef;
+const ItemSchema = new Schema<IItem>(
+  {
+    productId: { ...productId, unique: true },
+    amount: { type: Number, required: true, min: 1 },
+  },
+  { ...schemaOption, _id: false, ...virtualSchemaOption },
+);
+
+ItemSchema.index({ productId: 1 }, { unique: true });
+
+ItemSchema.virtual('product').get(function () {
+  return this.productId;
+});
+
+ItemSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.productId;
+  return obj;
+};
+
+export interface ICart extends BaseModel, IUserId {
+  items: [IItem];
+}
 
 const schema = new Schema<ICart>(
   {
     userId,
-    products: {
-      type: [cartProduct],
+    items: {
+      type: [ItemSchema],
       required: true,
     },
   },
-  schemaOption,
+  { ...schemaOption, ...virtualSchemaOption },
 );
+
+schema.pre('findOne', function (this, next) {
+  const options: PopulateOptions = {
+    path: 'items.productId',
+    select:
+      '_id title type genre price soldAmount amount isLaunched isPublic photoPath -recommendWeight sellStartAt sellEndAt',
+  };
+
+  this.populate(options);
+  next();
+});
 
 const CartModel = model<ICart>(ModelName.cart, schema);
 
