@@ -5,8 +5,9 @@ import { ProductRoute } from './productRoute';
 import { GroupRoute } from './groupRoute';
 import { UploadRoute } from './uploadRoute';
 import { CommentRoute } from './commentRoute';
-import { cartRoute } from './cartRoute';
 import { OrderRoute } from './orderRoute';
+import { CartRoute } from './cartRoute';
+import { TagRoute } from './tagRoute';
 
 export const router: Array<BaseRoute> = [
   new IndexRoute(),
@@ -16,5 +17,6 @@ export const router: Array<BaseRoute> = [
   new UploadRoute(),
   new CommentRoute(),
   new OrderRoute(),
-  new cartRoute(),
+  new CartRoute(),
+  new TagRoute(),
 ];
