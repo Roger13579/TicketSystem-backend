@@ -1,12 +1,7 @@
-import { QueryOptions, Types } from 'mongoose';
-import CartModel, { ICart } from '../models/cart';
+import { Types } from 'mongoose';
+import CartModel from '../models/cart';
 import { EditCartProductDTO } from '../dto/cart/editCartProductDto';
-
-const options: QueryOptions<ICart> = {
-  new: true,
-  runValidators: true,
-  returnDocument: 'after',
-};
+import { updateOptions } from '../utils/constants';
 
 export class CartRepository {
   public createCart = async (userId: Types.ObjectId) => {
@@ -22,7 +17,7 @@ export class CartRepository {
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $ne: productId } },
       { $push: { items: { productId, amount } } },
-      options,
+      updateOptions,
     );
   };
 
@@ -31,7 +26,7 @@ export class CartRepository {
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $eq: productId } },
       { $pull: { items: { productId } } },
-      options,
+      updateOptions,
     );
   };
 

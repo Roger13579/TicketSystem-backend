@@ -52,7 +52,7 @@ export const enum CustomResponseType {
   PRODUCT_NOT_FOUND_MESSAGE = '無此商品 ID',
 
   INSERT_ERROR = '6213',
-  INSERT_ERROR_MESSAGE = '新增錯誤',
+  INSERT_ERROR_MESSAGE = '新增錯誤：',
 
   UPDATE_ERROR = '6214',
   UPDATE_ERROR_MESSAGE = '更新錯誤',
@@ -167,4 +167,7 @@ export const enum CustomResponseType {
 
   PAYMENT_ERROR_TRADESHA = '6531',
   PAYMENT_ERROR_TRADESHA_MESSAGE = '付款失敗：TradeSha 不一致',
+
+  INVALID_TAG_FILTER = '6532',
+  INVALID_TAG_FILTER_MESSAGE = '無效的標籤條件：',
 }

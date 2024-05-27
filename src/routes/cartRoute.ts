@@ -3,7 +3,7 @@ import { UserVerify } from '../middleware/userVerify';
 import { EditCartProductPipe } from '../validator/cart/editCartProduct.pipe';
 import { BaseRoute } from './baseRoute';
 
-export class cartRoute extends BaseRoute {
+export class CartRoute extends BaseRoute {
   protected controller!: CartController;
 
   constructor() {

@@ -3,6 +3,7 @@ import { FilterQuery, ProjectionType, Types } from 'mongoose';
 import ProductModel, { IProduct } from '../models/product';
 import { EditProductDTO } from '../dto/product/editProductsDto';
 import { ProductFilterDTO } from '../dto/product/productFilterDto';
+import { updateOptions } from '../utils/constants';
 
 export class ProductRepository {
   private createProductFilter(productFilterDto: ProductFilterDTO) {
@@ -58,6 +59,7 @@ export class ProductRepository {
   public async createProducts(
     products: IProduct[],
   ): Promise<IProduct[] | void> {
+    // TODO: 新增標籤邏輯
     return await ProductModel.insertMany(products);
   }
 
@@ -109,8 +111,10 @@ export class ProductRepository {
   public findByIdAndUploadProducts = async (editProductDto: EditProductDTO) => {
     const { updatedProducts } = editProductDto;
 
+    // TODO: 新增標籤邏輯
+
     const promises = updatedProducts.map(({ id, content }) => {
-      return ProductModel.findByIdAndUpdate(id, content, { new: true });
+      return ProductModel.findByIdAndUpdate(id, content, updateOptions);
     });
 
     const newProducts = await Promise.all(promises).then((values) => {

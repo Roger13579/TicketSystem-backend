@@ -10,8 +10,8 @@ import { productDefinition, productCustomDefinition } from './product';
 import { groupDefinition, groupCustomDefinition } from './group';
 import { UploadFileSuccess } from './upload';
 import { commentDefinitions, commentCustomDefinitions } from './comment';
-
 import { cartDefinitions, cartCustomDefinitions } from './cart';
+import { tagCustomDefinitions, tagDefinitions } from './tag';
 
 export const definitions = {
   ...commonDefinitions,
@@ -21,6 +21,7 @@ export const definitions = {
   ...groupDefinition,
   ...commentDefinitions,
   ...cartDefinitions,
+  ...tagDefinitions,
 };
 
 export const customDefinitions = {
@@ -32,4 +33,5 @@ export const customDefinitions = {
   ...commentCustomDefinitions,
   ...groupCustomDefinition,
   ...cartCustomDefinitions,
+  ...tagCustomDefinitions,
 };
