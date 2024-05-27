@@ -21,17 +21,15 @@ export class TagRepository {
   };
 
   public deleteTag = async (id: string) => {
-    return await TagModel.findOneAndDelete(
-      {
-        _id: id,
-        usedByProducts: { $size: 0 }, // 確定沒有商品在使用
-      },
-      updateOptions,
-    );
+    return await TagModel.findOneAndDelete({ _id: id }, updateOptions);
   };
 
   public createTag = async (name: string) => {
-    return await TagModel.create({ name });
+    return await TagModel.findOneAndUpdate(
+      { name },
+      { $setOnInsert: { name } },
+      { new: true, upsert: true, returnDocument: 'after' },
+    );
   };
 
   public updateTag = async (editTagDto: EditTagDTO) => {

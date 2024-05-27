@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+import { PaginateModel, PopulateOptions, Schema, Types, model } from 'mongoose';
 import { IProductSnapshot, TPlan } from '../types/product.type';
-import { schemaOption } from '../utils/constants';
+import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import moment from 'moment';
 import {
   BaseModel,
@@ -8,6 +8,7 @@ import {
   productSnapshotSchemaDef,
   schemaDef,
 } from './baseModel';
+import paginate from 'mongoose-paginate-v2';
 
 export interface IProduct extends BaseModel, IProductSnapshot {
   plans?: TPlan[];
@@ -19,7 +20,7 @@ export interface IProduct extends BaseModel, IProductSnapshot {
   amount: number; // 票券總量
   isPublic: boolean;
   isLaunched: boolean;
-  tags?: [{ tagId: Schema.Types.ObjectId }];
+  tags?: { tagId: Types.ObjectId }[];
   photoPath: string;
   notifications?: [string];
   highlights?: [string];
@@ -28,7 +29,7 @@ export interface IProduct extends BaseModel, IProductSnapshot {
   confirmations?: [string];
   cancelPolicies?: [string];
   certificates?: [string];
-  comments?: [{ commentId: Schema.Types.ObjectId }];
+  comments?: { commentId: Types.ObjectId }[];
   soldAmount: number;
   brief: string;
 }
@@ -170,8 +171,8 @@ const schema = new Schema<IProduct>(
       type: [commentId],
     },
   },
-  schemaOption,
-);
+  { ...schemaOption, ...virtualSchemaOption },
+).plugin(paginate);
 
 // 避免重複商品
 schema.index(
@@ -185,6 +186,21 @@ schema.index(
   { unique: true },
 );
 
-const ProductModel = model<IProduct>(ModelName.product, schema);
+schema.pre(/^find/, function (this, next) {
+  const options: PopulateOptions = {
+    path: 'tags.tagId',
+    select: 'name _id',
+  };
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  this.populate(options);
+  next();
+});
+
+const ProductModel = model<IProduct, PaginateModel<IProduct>>(
+  ModelName.product,
+  schema,
+);
 
 export default ProductModel;

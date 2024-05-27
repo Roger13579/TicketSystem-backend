@@ -49,7 +49,7 @@ export type TPlan = {
 
 export interface ICreateProductsReq extends Request {
   body: {
-    products: IProduct[];
+    products: (Omit<IProduct, 'tags'> & { tagNames: string[] })[];
   };
 }
 
@@ -91,7 +91,7 @@ export enum ProductSortBy {
 
 export interface IDeleteProductsReq extends Request {
   body: {
-    productIds: string[];
+    productIds: Types.ObjectId[];
   };
 }
 
@@ -120,6 +120,7 @@ export interface IEditContent {
   cancelPolicies?: [string];
   certificates?: [string];
   brief?: string;
+  tagNames?: string[];
 }
 
 export interface IEditProductsReq extends Request {

@@ -2,7 +2,7 @@ import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
 import { ProductService } from '../service/productService';
-import { NewProductVo } from '../vo/newProductVo';
+import { NewProductVo } from '../vo/product/newProductVo';
 import {
   IDeleteProductsReq,
   IEditProductsReq,
@@ -14,6 +14,7 @@ import { NextFunction, Request, Response } from 'express';
 import { EditProductDTO } from '../dto/product/editProductsDto';
 import { ProductFilterDTO } from '../dto/product/productFilterDto';
 import { GetProductVo } from '../vo/product/getProductVo';
+import { CreateProductDTO } from '../dto/product/createProductDto';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
@@ -22,21 +23,19 @@ class ProductController extends BaseController {
     req: IGetProductsReq,
   ): Promise<ResponseObject> => {
     const productFilterDto = new ProductFilterDTO(req);
-    const { page, limit } = productFilterDto;
     const info = await this.productService.findProducts(productFilterDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new GetProductVo(info, page, limit),
+      new GetProductVo(info),
     );
   };
 
   public createProducts = async (
     req: ICreateProductsReq,
   ): Promise<ResponseObject> => {
-    const products = await this.productService.createProducts(
-      req.body.products,
-    );
+    const createProductDto = new CreateProductDTO(req);
+    const products = await this.productService.createProducts(createProductDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
@@ -53,21 +52,22 @@ class ProductController extends BaseController {
       req.params.id,
       next,
     );
+    const { products } = new NewProductVo([product] as IProduct[]);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { product },
+      { product: products[0] },
     );
   };
 
   public deleteProducts = async (req: IDeleteProductsReq) => {
-    const { deletedCount } = await this.productService.deleteProducts(
+    const products = await this.productService.deleteProducts(
       req.body.productIds,
     );
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      deletedCount,
+      new NewProductVo(products as IProduct[]),
     );
   };
 
@@ -77,7 +77,7 @@ class ProductController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { products },
+      new NewProductVo(products as IProduct[]),
     );
   };
 }

@@ -3,10 +3,11 @@ import { IGetCommentsReq } from '../../types/comment.type';
 import { Status } from '../../types/common.type';
 import { AccountType } from '../../types/user.type';
 import { IUser } from '../../models/user';
+import { Types } from 'mongoose';
 
 export class GetCommentsDTO {
   private readonly _productName?: string;
-  private readonly _productIds?: string[];
+  private readonly _productIds?: Types.ObjectId[];
   private readonly _limit: number = 10;
   private readonly _page: number = 1;
   private readonly _status?: Status;
@@ -79,7 +80,9 @@ export class GetCommentsDTO {
 
     this._accountType = (req.user as IUser).accountType;
 
-    this._productIds = productIds?.split(',');
+    this._productIds = productIds
+      ?.split(',')
+      .map((id) => new Types.ObjectId(id));
     this._productName = productName;
 
     this._limit = limit ? Number(limit) : 10;

@@ -1,9 +1,8 @@
 import { FilterQuery, ProjectionType, Types } from 'mongoose';
-
 import ProductModel, { IProduct } from '../models/product';
-import { EditProductDTO } from '../dto/product/editProductsDto';
 import { ProductFilterDTO } from '../dto/product/productFilterDto';
 import { updateOptions } from '../utils/constants';
+import { IEditContent } from '../types/product.type';
 
 export class ProductRepository {
   private createProductFilter(productFilterDto: ProductFilterDTO) {
@@ -56,27 +55,25 @@ export class ProductRepository {
     };
   }
 
-  public async createProducts(
-    products: IProduct[],
-  ): Promise<IProduct[] | void> {
-    // TODO: 新增標籤邏輯
+  public createProducts = async (products: IProduct[]) => {
     return await ProductModel.insertMany(products);
-  }
+  };
 
-  public async findProducts(
+  public findProducts = async (
     productFilterDto: ProductFilterDTO,
     projection: ProjectionType<IProduct>,
-  ): Promise<IProduct[]> {
+  ) => {
     const { page, limit, sortBy } = productFilterDto;
     const filter = this.createProductFilter(productFilterDto);
     const options = {
       ...(page && limit && { skip: (page - 1) * limit }),
       ...(limit && { limit }),
       sort: sortBy || '-createdAt',
+      projection,
     };
     // TODO: 如果 projection 裡面 tags === 1，則 populate
-    return await ProductModel.find(filter, projection, options);
-  }
+    return await ProductModel.paginate(filter, options);
+  };
 
   public findProduct = async (filter: FilterQuery<IProduct>) => {
     return await ProductModel.findOne(filter);
@@ -92,28 +89,26 @@ export class ProductRepository {
     filter: FilterQuery<IProduct>,
     projection: ProjectionType<IProduct>,
   ) => {
-    return await ProductModel.findOne(filter, projection).populate({
-      path: 'tags',
-    });
+    return await ProductModel.findOne(filter, projection);
   };
 
-  public async countProducts(
-    productFilterDto: ProductFilterDTO,
-  ): Promise<number> {
-    const filter = this.createProductFilter(productFilterDto);
-    return await ProductModel.countDocuments(filter);
-  }
-
-  public deleteProducts = async (ids: string[]) => {
-    return await ProductModel.deleteMany({ _id: { $in: ids } });
+  public deleteProducts = async (ids: Types.ObjectId[]) => {
+    const promises = ids.map((id) =>
+      ProductModel.findByIdAndDelete(id, updateOptions),
+    );
+    const deletedProducts = await Promise.all(promises).then(
+      (values) => values,
+    );
+    return deletedProducts;
   };
 
-  public findByIdAndUploadProducts = async (editProductDto: EditProductDTO) => {
-    const { updatedProducts } = editProductDto;
-
-    // TODO: 新增標籤邏輯
-
-    const promises = updatedProducts.map(({ id, content }) => {
+  public findByIdAndUploadProducts = async (
+    products: {
+      id: Types.ObjectId;
+      content?: IEditContent;
+    }[],
+  ) => {
+    const promises = products.map(({ id, content }) => {
       return ProductModel.findByIdAndUpdate(id, content, updateOptions);
     });
 
