@@ -4,6 +4,7 @@ import { CommentRepository } from '../repository/commentRepository';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
+import { Types } from 'mongoose';
 
 export class CommentService {
   private readonly commentRepository: CommentRepository =
@@ -25,17 +26,19 @@ export class CommentService {
     });
   };
 
-  public deleteComments = async (ids: string[], next: NextFunction) => {
-    return await this.commentRepository.deleteComments(ids).catch((err) => {
-      if (err.name === 'CastError') {
-        throwError(
-          CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentId',
-          CustomResponseType.INVALID_DELETE_COMMENT,
-        );
-        return;
-      }
-      return next(err);
-    });
+  public deleteComments = async (ids: Types.ObjectId[], next: NextFunction) => {
+    return await this.commentRepository
+      .deleteComments({ _id: { $in: ids } })
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          throwError(
+            CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentId',
+            CustomResponseType.INVALID_DELETE_COMMENT,
+          );
+          return;
+        }
+        return next(err);
+      });
   };
 
   public getComments = async (getCommentsDto: GetCommentsDTO) => {

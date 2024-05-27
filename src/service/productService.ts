@@ -1,19 +1,16 @@
 import { NextFunction } from 'express';
-import log4js from '../config/log4js';
-
-import { IProduct } from '../models/product';
 import { ProductRepository } from '../repository/productRepository';
 import { CustomResponseType } from '../types/customResponseType';
 import { AccountType } from '../types/user.type';
 import { checkDateOrder } from '../utils/common';
-import { AppError, createErrorMsg, throwError } from '../utils/errorHandler';
+import { AppError, throwError } from '../utils/errorHandler';
 import { HttpStatus } from '../types/responseType';
-
 import { CommentRepository } from '../repository/commentRepository';
 import { EditProductDTO } from '../dto/product/editProductsDto';
 import { ProductFilterDTO } from '../dto/product/productFilterDto';
-
-const logger = log4js.getLogger(`ProductRepository`);
+import { Types } from 'mongoose';
+import { CreateProductDTO } from '../dto/product/createProductDto';
+import { TagRepository } from '../repository/tagRepository';
 
 export class ProductService {
   private readonly productRepository: ProductRepository =
@@ -21,6 +18,8 @@ export class ProductService {
 
   private readonly commentRepository: CommentRepository =
     new CommentRepository();
+
+  private readonly tagRepository: TagRepository = new TagRepository();
 
   private readonly defaultProjection = {
     _id: 1,
@@ -32,26 +31,36 @@ export class ProductService {
     photoPath: 1,
   };
 
-  public async createProducts(
-    products: IProduct[],
-  ): Promise<IProduct[] | void> {
-    return this.productRepository.createProducts(products).catch((err) => {
-      const errMsg = createErrorMsg(err);
-      logger.error('create new products error', err);
-      throwError(
-        CustomResponseType.INSERT_ERROR_MESSAGE + (errMsg ? `:${errMsg}` : ''),
-        CustomResponseType.INSERT_ERROR,
-      );
-    });
-  }
+  public createProducts = async (createProductDto: CreateProductDTO) => {
+    const { products, tagNames } = createProductDto;
+    // TODO: 優化這個寫法
+    // 1. 把目前商品要新增卻其實不存在的標籤，先 create tag
+    const tagPromises = tagNames.map((name) =>
+      this.tagRepository.createTag(name),
+    );
+    const tags = await Promise.all(tagPromises).then((values) => values);
+    // 2. 新增商品與他們的標籤
+    const newProducts = products.map((product) => {
+      const productTags: { tagId: Types.ObjectId }[] = [];
 
-  public async findProducts(productFilterDto: ProductFilterDTO): Promise<
-    | {
-        products: IProduct[];
-        totalCount: number;
-      }
-    | undefined
-  > {
+      product.tagNames.forEach((tagName) => {
+        const existedTag = tags.find(({ name }) => name === tagName);
+
+        if (existedTag) {
+          productTags.push({ tagId: existedTag._id });
+        }
+      });
+
+      return {
+        ...product,
+        tagNames: undefined,
+        tags: productTags,
+      };
+    });
+    return await this.productRepository.createProducts(newProducts);
+  };
+
+  public findProducts = async (productFilterDto: ProductFilterDTO) => {
     const {
       priceMax,
       priceMin,
@@ -129,19 +138,11 @@ export class ProductService {
           }
         : { ...this.defaultProjection, recommendWeight: 0, isPublic: 0 };
 
-    const products = await this.productRepository.findProducts(
+    return await this.productRepository.findProducts(
       productFilterDto,
       projection,
     );
-
-    const totalCount =
-      await this.productRepository.countProducts(productFilterDto);
-
-    return {
-      products,
-      totalCount,
-    };
-  }
+  };
 
   public getProductDetail = async (id: string, next: NextFunction) => {
     // TODO: 根據是否為 admin 決定顯示欄位
@@ -182,22 +183,50 @@ export class ProductService {
         ),
       );
     }
-
     return product;
   };
 
-  public deleteProducts = async (ids: string[]) => {
-    const { deletedCount } = await this.productRepository.deleteProducts(ids);
+  public deleteProducts = async (ids: Types.ObjectId[]) => {
+    const products = await this.productRepository.deleteProducts(ids);
 
-    if (deletedCount > 0) {
+    if (products.length > 0) {
       // 真的有商品刪掉了，就要去把相應的 comment 刪掉
-      await this.commentRepository.deleteComments(ids);
+      await this.commentRepository.deleteComments({ productId: { $in: ids } });
     }
 
-    return { deletedCount };
+    return products;
   };
 
   public editProducts = async (editProductDto: EditProductDTO) => {
-    return this.productRepository.findByIdAndUploadProducts(editProductDto);
+    const { tagNames, products } = editProductDto;
+    // TODO: 優化這個寫法
+    // 1. 把目前商品要新增卻其實不存在的標籤，先 create tag
+    const tagPromises = tagNames.map((name) =>
+      this.tagRepository.createTag(name),
+    );
+    const tags = await Promise.all(tagPromises).then((values) => values);
+
+    // 2. 編輯商品與他們的標籤
+    const editProducts = products.map(({ id, content }) => {
+      const productTags: { tagId: Types.ObjectId }[] = [];
+
+      content?.tagNames?.forEach((tagName) => {
+        const existedTag = tags.find(({ name }) => name === tagName);
+        if (existedTag) {
+          productTags.push({ tagId: existedTag._id });
+        }
+      });
+
+      return {
+        id,
+        content: {
+          ...content,
+          tagNames: undefined,
+          tags: productTags,
+        },
+      };
+    });
+
+    return this.productRepository.findByIdAndUploadProducts(editProducts);
   };
 }
