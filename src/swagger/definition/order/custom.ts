@@ -1,3 +1,22 @@
+export const CustomGetOrderStatusQuery = {
+  example: 'paid',
+};
+export const CustomGetOrderIdQuery = {
+  example: 'aaabbb123',
+};
+export const CustomGetOrderThirdPartyPaymentIdQuery = {
+  example: '123123321',
+};
+export const CustomGetOrderAccountQuery = {
+  example: 'roger',
+};
+export const CustomGetOrderEmailQuery = {
+  example: 'email@email',
+};
+export const CustomGetOrderPhoneQuery = {
+  example: '0912345678',
+};
+
 const propName = {
   userId: '使用者id',
   products: {

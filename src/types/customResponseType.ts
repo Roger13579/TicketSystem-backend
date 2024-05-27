@@ -170,4 +170,7 @@ export const enum CustomResponseType {
 
   INVALID_TAG_FILTER = '6532',
   INVALID_TAG_FILTER_MESSAGE = '無效的標籤條件：',
+
+  INVALID_ORDER_FILTER = '6533',
+  INVALID_ORDER_FILTER_MESSAGE = '無效的訂單查詢條件：',
 }
