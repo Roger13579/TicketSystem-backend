@@ -32,7 +32,7 @@ export const propName = {
   sellStartAt: '販賣開始時間',
   endAt: '活動結束時間',
   startAt: '活動開始時間',
-  tags: '標籤列表',
+  tagNames: '標籤列表',
   tag: '標籤',
   photoPath: '商品圖片 Url',
   notifications: '通知列表',
@@ -101,18 +101,13 @@ export const CustomProductDetailProperties = {
       type: 'string',
     },
   },
-  tags: {
+  tagNames: {
     type: 'array',
-    description: propName.tags,
+    description: propName.tagNames,
     items: {
-      type: 'object',
-      properties: {
-        tagId: {
-          type: 'string',
-          example: 'AAA',
-          description: `${propName.tag}，先把這個拿掉`,
-        },
-      },
+      type: 'string',
+      example: '讚讚的標籤,很厲害的標籤',
+      description: `${propName.tag}`,
     },
   },
   plans: {

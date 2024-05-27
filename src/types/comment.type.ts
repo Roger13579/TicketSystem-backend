@@ -20,7 +20,7 @@ export interface ICommentProductReq extends IUserReq {
 
 export interface IDeleteCommentsReq extends IUserReq {
   body: {
-    commentIds: string[];
+    commentIds: Types.ObjectId[];
   };
 }
 

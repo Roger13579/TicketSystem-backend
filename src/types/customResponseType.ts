@@ -58,7 +58,7 @@ export const enum CustomResponseType {
   UPDATE_ERROR_MESSAGE = '更新錯誤',
 
   DELETE_ERROR = '6215',
-  DELETE_ERROR_MESSAGE = '刪除錯誤',
+  DELETE_ERROR_MESSAGE = '刪除錯誤：',
 
   EMAIL_REGISTERED = '6216',
   EMAIL_REGISTERED_MESSAGE = '信箱已被註冊：',

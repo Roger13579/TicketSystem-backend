@@ -2,17 +2,27 @@ import { Types } from 'mongoose';
 import { IEditContent, IEditProductsReq } from '../../types/product.type';
 
 export class EditProductDTO {
-  private _updatedProducts: {
+  private readonly _products: {
     id: Types.ObjectId;
     content?: IEditContent;
   }[] = [];
 
-  get updatedProducts() {
-    return this._updatedProducts;
+  get products() {
+    return this._products;
+  }
+
+  get tagNames() {
+    return [
+      ...new Set(
+        this._products.map(({ content }) => content?.tagNames || []).flat(),
+      ),
+    ];
   }
 
   constructor(req: IEditProductsReq) {
-    req.body.products.forEach(
+    const { products } = req.body;
+
+    this._products = products.map(
       ({
         id,
         title,
@@ -38,8 +48,10 @@ export class EditProductDTO {
         cancelPolicies,
         certificates,
         brief,
+        tagNames,
       }) => {
         const content = {
+          ...(tagNames && { tagNames }),
           ...(title && { title }),
           ...(type && { type }),
           ...(genre && { genre }),
@@ -65,15 +77,7 @@ export class EditProductDTO {
           ...(brief && { brief }),
         };
 
-        if (Object.keys(content).length > 0) {
-          this._updatedProducts = [
-            ...this._updatedProducts,
-            {
-              id,
-              content,
-            },
-          ];
-        }
+        return { id, content };
       },
     );
   }

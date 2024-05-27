@@ -1,7 +1,8 @@
+import { FilterQuery } from 'mongoose';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { NewCommentDTO } from '../dto/comment/newCommentDto';
 import { ModelName } from '../models/baseModel';
-import CommentModel from '../models/comment';
+import CommentModel, { IComment } from '../models/comment';
 import { collectionName } from '../utils/common';
 
 export class CommentRepository {
@@ -38,14 +39,15 @@ export class CommentRepository {
     return await CommentModel.create(comment);
   };
 
-  public deleteComments = async (ids: string[]) => {
-    return await CommentModel.deleteMany({ _id: { $in: ids } });
+  public deleteComments = async (filter: FilterQuery<IComment>) => {
+    return await CommentModel.deleteMany(filter);
   };
 
   public findComments = async (getCommentsDto: GetCommentsDTO) => {
     const { page, limit, sortBy } = getCommentsDto;
 
     const filter = this.createFilter(getCommentsDto);
+
     return await CommentModel.aggregate([
       { $match: filter },
       {
@@ -78,7 +80,11 @@ export class CommentRepository {
           rating: 1,
           content: 1,
           createdAt: 1,
-          user: { account: '$user.account', avatarPath: '$user.avatarPath' },
+          user: {
+            account: '$user.account',
+            avatarPath: '$user.avatarPath',
+            name: '$user.name',
+          },
           // product: 1, // 未來有需要商品資訊的時候再加
         },
       },
