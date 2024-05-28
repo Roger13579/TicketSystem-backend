@@ -38,7 +38,7 @@ export class OrderRoute extends BaseRoute {
        #swagger.responses[200] = {
        description: 'OK',
        schema: {
-       $ref: '#/definitions/Success' }
+       $ref: '#/definitions/CreateOrdersSuccess' }
        }
        */
       UserVerify,

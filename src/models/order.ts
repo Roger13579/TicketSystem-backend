@@ -31,7 +31,6 @@ const schema = new Schema<IOrder>(
   {
     thirdPartyPaymentId: {
       type: String,
-      required: true,
     },
     userId,
     products: {

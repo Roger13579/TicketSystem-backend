@@ -7,6 +7,7 @@ import {
   Types,
 } from 'mongoose';
 import { OrderFilterDto } from '../dto/order/orderFilterDto';
+import { PaymentStatus } from '../types/order.type';
 
 export class OrderRepository {
   public async createOrder(createOrderDto: CreateOrderDto): Promise<IOrder> {
@@ -23,6 +24,7 @@ export class OrderRepository {
       { _id: orderId },
       {
         thirdPartyPaymentId: thirdPartyPaymentId,
+        paymentStatus: PaymentStatus.paid,
       },
     );
   }

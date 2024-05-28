@@ -36,6 +36,7 @@ export interface ICreateOrderReq extends IUserReq {
     products: [IProductSnapshot];
     price: string;
     paymentMethod: string;
+    paymentStatus: string;
     paidAt: Date;
     deliveryInfo: {
       name: string;
