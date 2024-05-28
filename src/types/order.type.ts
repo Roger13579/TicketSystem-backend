@@ -16,6 +16,13 @@ export enum PaymentStatus {
   failed = 'failed', // 付款失敗
 }
 
+export enum OrderSortBy {
+  createdAt = 'createdAt',
+  paidAt = 'paidAt',
+  status = 'status',
+  thirdPartyPaymentId = 'thirdPartyPaymentId',
+}
+
 export interface IDeliveryInfo {
   name: string;
   address: string;
@@ -53,3 +60,20 @@ export type NewebpayResponse = {
     EscrowBank: string;
   };
 };
+export interface IGetOrdersReq extends IUserReq {
+  query: {
+    status?: string;
+    ids?: string;
+    thirdPartyPaymentIds?: string;
+    accounts?: string;
+    emails?: string;
+    createdAtFrom?: string;
+    createdAtTo?: string;
+    phones?: string;
+    paidAtFrom?: string;
+    paidAtTo?: string;
+    page?: string;
+    limit?: string;
+    sortBy?: string;
+  };
+}

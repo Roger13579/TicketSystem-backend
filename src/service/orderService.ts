@@ -10,7 +10,14 @@ import { CustomResponseType } from '../types/customResponseType';
 import { NewebpayOrderDto } from '../dto/order/newebpayOrderDto';
 import { NewebpayOrderVo } from '../vo/order/newebpayOrderVo';
 import { NewebpayResponse } from '../types/order.type';
-import { Types } from 'mongoose';
+import {
+  PaginateDocument,
+  PaginateOptions,
+  PaginateResult,
+  Types,
+} from 'mongoose';
+import { checkDateOrder } from '../utils/common';
+import { OrderFilterDto } from '../dto/order/orderFilterDto';
 
 const logger = log4js.getLogger(`OrderService`);
 
@@ -18,6 +25,26 @@ export class OrderService {
   private readonly orderRepository: OrderRepository = new OrderRepository();
   private readonly productRepository: ProductRepository =
     new ProductRepository();
+
+  public findOrders = async (
+    orderFilterDTO: OrderFilterDto,
+  ): Promise<
+    PaginateResult<
+      PaginateDocument<IOrder, NonNullable<unknown>, PaginateOptions>
+    >
+  > => {
+    const { createdAtFrom, createdAtTo, paidAtFrom, paidAtTo } = orderFilterDTO;
+
+    // 確認時間順序
+    checkDateOrder(
+      { prop: 'createdAtFrom', value: createdAtFrom },
+      { prop: 'createdAtTo', value: createdAtTo },
+      { prop: 'paidAtFrom', value: paidAtFrom },
+      { prop: 'paidAtTo', value: paidAtTo },
+    );
+
+    return await this.orderRepository.findOrders(orderFilterDTO);
+  };
 
   public async createOrder(createOrderDto: CreateOrderDto): Promise<IOrder> {
     const productIds = createOrderDto.products.map(
