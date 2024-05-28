@@ -5,11 +5,11 @@ import {
   CustomJoinGroupObj,
   CustomUpdateGroupObj,
 } from './group/group';
-import { CustomCreateOrderObj } from './order/custom';
 import { productDefinition, productCustomDefinition } from './product';
 import { groupDefinition, groupCustomDefinition } from './group';
 import { UploadFileSuccess } from './upload';
 import { commentDefinitions, commentCustomDefinitions } from './comment';
+import { orderDefinition, orderCustomDefinition } from './order';
 import { cartDefinitions, cartCustomDefinitions } from './cart';
 import { tagCustomDefinitions, tagDefinitions } from './tag';
 
@@ -22,16 +22,17 @@ export const definitions = {
   ...commentDefinitions,
   ...cartDefinitions,
   ...tagDefinitions,
+  ...orderDefinition,
 };
 
 export const customDefinitions = {
   ...productCustomDefinition,
   CustomCreateGroupObj,
-  CustomCreateOrderObj,
   CustomUpdateGroupObj,
   CustomJoinGroupObj,
   ...commentCustomDefinitions,
   ...groupCustomDefinition,
   ...cartCustomDefinitions,
   ...tagCustomDefinitions,
+  ...orderCustomDefinition,
 };

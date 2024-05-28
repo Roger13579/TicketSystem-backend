@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, PaginateModel } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import {
   IDeliveryInfo,
@@ -13,6 +13,7 @@ import {
   schemaDef,
 } from './baseModel';
 import { IProductSnapshot } from '../types/product.type';
+import paginate from 'mongoose-paginate-v2';
 
 export interface IOrder extends BaseModel, IUserId {
   thirdPartyPaymentId: string;
@@ -64,8 +65,9 @@ const schema = new Schema<IOrder>(
     },
   },
   schemaOption,
+).plugin(paginate);
+
+export const OrderModel = model<IOrder, PaginateModel<IOrder>>(
+  ModelName.order,
+  schema,
 );
-
-const OrderModel = model<IOrder>(ModelName.order, schema);
-
-export default OrderModel;
