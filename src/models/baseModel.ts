@@ -119,4 +119,9 @@ export const productSnapshotSchemaDef = {
     required: true,
     min: 100,
   },
+  amount: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
 };

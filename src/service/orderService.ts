@@ -18,6 +18,7 @@ import {
 } from 'mongoose';
 import { checkDateOrder } from '../utils/common';
 import { OrderFilterDto } from '../dto/order/orderFilterDto';
+import { MovieGenre, ProductType } from '../types/product.type';
 
 const logger = log4js.getLogger(`OrderService`);
 
@@ -47,11 +48,8 @@ export class OrderService {
   };
 
   public async createOrder(createOrderDto: CreateOrderDto): Promise<IOrder> {
-    const productIds = createOrderDto.products.map(
-      (product) => product.productId,
-    );
-    for (const id of productIds) {
-      const product = await this.productRepository.findById(id);
+    for (const p of createOrderDto.getProducts) {
+      const product = await this.productRepository.findById(p.productId);
       if (product) {
         if (product.amount < 1) {
           throwError(
@@ -65,6 +63,11 @@ export class OrderService {
           CustomResponseType.PRODUCT_NOT_FOUND,
         );
       }
+      p.brief = product?.brief as string;
+      p.type = product?.type as ProductType;
+      p.genre = product?.genre as MovieGenre;
+      p.vendor = product?.vendor as string;
+      p.theater = product?.theater as string;
     }
     return await this.orderRepository.createOrder(createOrderDto);
   }
@@ -130,7 +133,7 @@ export class OrderService {
   }
   private createSesEncrypt(newebpayOrderDto: NewebpayOrderDto): string {
     const encrypt = crypto.createCipheriv(
-      'aes-256-gcm',
+      'aes-256-cbc',
       process.env.HASHKEY as string,
       process.env.HASHIV as string,
     );
@@ -151,7 +154,7 @@ export class OrderService {
 
   private createSesDecrypt(tradeInfo: string): NewebpayResponse {
     const decrypt = crypto.createDecipheriv(
-      'aes-256-gcm',
+      'aes-256-cbc',
       process.env.HASHKEY as string,
       process.env.HASHIV as string,
     );
