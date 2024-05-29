@@ -31,7 +31,7 @@ export const OrderItem = {
 };
 
 /**
- * @description swagger autogen fit，取得揪團列表的 response
+ * @description swagger autogen fit，取得訂單列表的 response
  */
 export const GetOrdersSuccess = {
   $status: CustomResponseType.OK,
@@ -41,5 +41,17 @@ export const GetOrdersSuccess = {
     $page: 1,
     $limit: 10,
     $totalCount: 5,
+  },
+};
+
+export const CreateOrdersSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $merchantId: 'ABCD1234',
+    $tradeSha: '1231u2h3uli1hi2h3h1uh2uli3h',
+    $tradeInfo: 'jiijwfsijofpdqwpokdqwkopdwqodpkqwdqwop',
+    $version: '2.0',
+    $paymentGateway: 'https://ccc.ccc.ccc',
   },
 };

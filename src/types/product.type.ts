@@ -134,7 +134,9 @@ export interface IEditProductsReq extends Request {
  */
 export interface IProductSnapshot {
   productId: Types.ObjectId;
+  amount: number;
   title: string;
+  brief: string;
   type: ProductType;
   genre: MovieGenre;
   vendor: string;
