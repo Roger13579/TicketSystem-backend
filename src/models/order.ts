@@ -1,5 +1,5 @@
 import { Schema, model, PaginateModel } from 'mongoose';
-import { schemaOption } from '../utils/constants';
+import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import {
   IDeliveryInfo,
   PaymentMethod,
@@ -63,8 +63,15 @@ const schema = new Schema<IOrder>(
       },
     },
   },
-  schemaOption,
+  { ...schemaOption, ...virtualSchemaOption },
 ).plugin(paginate);
+
+schema.virtual('user', {
+  ref: 'User',
+  localField: 'userId',
+  foreignField: '_id',
+  justOne: true,
+});
 
 export const OrderModel = model<IOrder, PaginateModel<IOrder>>(
   ModelName.order,
