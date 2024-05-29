@@ -44,7 +44,6 @@ const schema = new Schema<IUser>(
     },
     pwd: {
       type: String,
-      select: true,
       required: true,
     },
     email: {

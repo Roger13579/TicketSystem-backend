@@ -38,8 +38,10 @@ export class OrderRepository {
     const { page, limit, sortBy } = orderFilterDto;
     const filter = this.createOrderFilter(orderFilterDto);
     const options = {
-      //TODO 確認populate是否生效
-      populate: { path: 'user', select: 'account name phone email' },
+      populate: {
+        path: 'user',
+        select: 'account name phone email',
+      },
       ...(page && limit && { skip: (page - 1) * limit }),
       ...(limit && { limit }),
       sort: sortBy || '-createdAt',
