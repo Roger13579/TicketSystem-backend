@@ -1,3 +1,5 @@
+import { PaymentMethod } from '../../../types/order.type';
+
 export const CustomGetOrderStatusQuery = {
   example: 'paid',
 };
@@ -19,7 +21,7 @@ export const CustomGetOrderPhoneQuery = {
 
 const propName = {
   userId: '使用者id',
-  products: {
+  items: {
     productId: '商品ID',
     title: '商品名稱',
     amount: '數量',
@@ -27,7 +29,11 @@ const propName = {
   },
   price: '訂單總價',
   paymentMethod: '付款方式',
-  paidAt: '結帳時間',
+  plan: {
+    name: '方案名稱',
+    headCount: '方案人數',
+    discount: '方案折扣',
+  },
   deliveryInfo: {
     name: '姓名',
     phone: '電話',
@@ -38,15 +44,13 @@ const propName = {
 
 const customItem = {
   userId: 'aaabbbccc',
-  products: {
+  items: {
     productId: 'bbbnnmmmm',
-    title: '好看的電影',
-    amount: '5',
-    price: '200',
+    amount: 5,
   },
-  price: '商品數量',
-  paymentMethod: '商品數量',
-  paidAt: '商品數量',
+  price: 200,
+  plan: { name: '雙人行GoGo', headCount: 2, discount: 0.5 },
+  paymentMethod: PaymentMethod.linePay,
   deliveryInfo: {
     name: 'Roger',
     phone: '0912345678',
@@ -57,45 +61,51 @@ const customItem = {
 
 export const CustomCreateOrderObj = {
   type: 'object',
-  required: [
-    'userId',
-    'products',
-    'price',
-    'paymentMethod',
-    'paidAt',
-    'deliveryInfo',
-  ],
+  required: ['userId', 'items', 'price', 'paymentMethod'],
   properties: {
     userId: {
       type: 'string',
       description: propName.userId,
       example: customItem.userId,
     },
-    products: {
+    items: {
       type: 'array',
-      description: propName.products,
+      description: propName.items,
       items: {
         type: 'object',
+        required: ['productId', 'amount'],
         properties: {
           productId: {
             type: 'string',
-            description: propName.products.productId,
-            example: customItem.products.productId,
+            description: propName.items.productId,
+            example: customItem.items.productId,
           },
-          title: {
-            type: 'string',
-            description: propName.products.title,
-            example: customItem.products.title,
+          plan: {
+            type: 'object',
+            required: ['name', 'discount', 'headCount'],
+            description: '購買方案，若沒給的話代表購買單人票',
+            properties: {
+              name: {
+                type: 'string',
+                description: propName.plan.name,
+                example: customItem.plan.name,
+              },
+              discount: {
+                type: 'number',
+                description: propName.plan.discount,
+                example: customItem.plan.discount,
+              },
+              headCount: {
+                type: 'number',
+                description: propName.plan.headCount,
+                example: customItem.plan.headCount,
+              },
+            },
           },
           amount: {
             type: 'number',
-            description: propName.products.amount,
-            example: customItem.products.amount,
-          },
-          price: {
-            type: 'number',
-            description: propName.products.price,
-            example: customItem.products.price,
+            description: propName.items.amount,
+            example: customItem.items.amount,
           },
         },
       },
@@ -106,17 +116,14 @@ export const CustomCreateOrderObj = {
       example: customItem.price,
     },
     paymentMethod: {
-      type: 'number',
+      type: 'string',
+      enum: Object.values(PaymentMethod),
       description: propName.paymentMethod,
       example: customItem.paymentMethod,
     },
-    paidAt: {
-      type: 'number',
-      description: propName.price,
-      example: customItem.paidAt,
-    },
     deliveryInfo: {
       type: 'object',
+      description: '寄貨資訊 (當商品需要寄送實體物體時才需要填寫)',
       properties: {
         name: {
           type: 'string',

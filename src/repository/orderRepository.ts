@@ -9,6 +9,13 @@ import {
 import { OrderFilterDto } from '../dto/order/orderFilterDto';
 import { PaymentStatus } from '../types/order.type';
 
+interface IUpdateOrderParam {
+  orderId: Types.ObjectId;
+  thirdPartyPaymentId: string;
+  paymentStatus: PaymentStatus;
+  paidAt?: Date;
+}
+
 export class OrderRepository {
   public async createOrder(createOrderDto: CreateOrderDto): Promise<IOrder> {
     return OrderModel.create(new OrderModel(createOrderDto));
@@ -16,15 +23,18 @@ export class OrderRepository {
   public async findById(orderId: Types.ObjectId): Promise<IOrder | null> {
     return OrderModel.findOne({ _id: orderId });
   }
-  public async updateOrder(
-    orderId: Types.ObjectId,
-    thirdPartyPaymentId: string,
-  ): Promise<IOrder | null> {
+  public async updateOrder({
+    orderId,
+    thirdPartyPaymentId,
+    paymentStatus,
+    paidAt,
+  }: IUpdateOrderParam): Promise<IOrder | null> {
     return OrderModel.findOneAndUpdate(
       { _id: orderId },
       {
-        thirdPartyPaymentId: thirdPartyPaymentId,
-        paymentStatus: PaymentStatus.paid,
+        thirdPartyPaymentId,
+        paymentStatus,
+        ...(paidAt && { paidAt }),
       },
     );
   }

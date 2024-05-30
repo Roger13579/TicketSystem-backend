@@ -2,6 +2,7 @@ import { IProduct } from '../models/product';
 import { Request } from 'express';
 import { IUserReq } from './common.type';
 import { Types } from 'mongoose';
+import { IProductId } from '../models/baseModel';
 
 export enum ProductType {
   premier = 'premier',
@@ -41,7 +42,7 @@ export const RecommendWeightRange = {
   5: 5,
 };
 
-export type TPlan = {
+export type IPlan = {
   name: string; // 方案名稱
   discount: number; // 方案折扣數
   headCount: number; // 該方案包含幾張票
@@ -103,7 +104,7 @@ export interface IEditContent {
   theater?: string;
   price?: number;
   amount?: number; // 票券總量
-  plans?: TPlan[];
+  plans?: IPlan[];
   startAt?: Date;
   endAt?: Date;
   sellStartAt?: Date;
@@ -132,9 +133,7 @@ export interface IEditProductsReq extends Request {
 /**
  * @description 商品在訂單中需要被 snapshot 的部分
  */
-export interface IProductSnapshot {
-  productId: Types.ObjectId;
-  amount: number;
+export interface IProductSnapshot extends IProductId {
   title: string;
   brief: string;
   type: ProductType;
