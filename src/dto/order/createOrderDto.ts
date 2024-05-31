@@ -9,6 +9,7 @@ import {
   PaymentStatus,
 } from '../../types/order.type';
 import { IOrderProduct } from '../../models/order';
+import { groupBy, sumBy, find, isMatch } from 'lodash';
 
 export class CreateOrderDto {
   private readonly userId: Types.ObjectId;
@@ -24,12 +25,13 @@ export class CreateOrderDto {
     const { price, title, brief, type, genre, vendor, theater, plans } =
       product;
 
-    const existedPlan = !!plan
-      ? (plans || []).find(
-          ({ discount, name, headCount }) =>
-            plan.discount === discount &&
-            plan.headCount === headCount &&
-            plan.name === name,
+    const existedPlan = plan
+      ? find(plans || [], (p) =>
+          isMatch(p, {
+            discount: plan.discount,
+            name: plan.name,
+            headCount: plan.headCount,
+          }),
         )
       : undefined;
     return {
@@ -62,7 +64,10 @@ export class CreateOrderDto {
     const { price, items, paymentMethod, deliveryInfo } = body;
     this.userId = new Types.ObjectId((user as IUser).id);
     this.price = price;
-    this._items = items;
+    this._items = Object.values(groupBy(items, 'productId')).map((group) => ({
+      productId: group[0].productId,
+      amount: sumBy(group, 'amount'),
+    }));
     this.paymentMethod = paymentMethod;
     this.paymentStatus = PaymentStatus.pending;
     this.deliveryInfo = deliveryInfo;

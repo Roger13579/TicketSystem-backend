@@ -2,6 +2,7 @@ import { NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { CustomResponseType } from '../types/customResponseType';
 import { throwError } from '../utils/errorHandler';
+import { includes, keys } from 'lodash';
 
 export abstract class PipeBase {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,18 +13,21 @@ export abstract class PipeBase {
     type: 'array' | 'item',
     reference: object,
   ) => {
-    if (!!value) {
-      if (type === 'item') {
-        return Object.keys(reference).includes(value.replace('-', ''));
-      }
-      if (type === 'array') {
-        return value
-          .split(',')
-          .forEach((item) => Object.keys(reference).includes(item));
-      }
-    } else {
+    if (!value) {
       return true;
     }
+
+    const referenceKeys = keys(reference);
+
+    if (type === 'item') {
+      return includes(referenceKeys, value.replace('-', ''));
+    }
+
+    if (type === 'array') {
+      return value.split(',').every((item) => includes(referenceKeys, item));
+    }
+
+    return false;
   };
 
   protected isValidDate = (value: string) => {

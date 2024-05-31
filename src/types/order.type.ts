@@ -1,5 +1,4 @@
 import { IUserReq } from './common.type';
-import { Types } from 'mongoose';
 import { IPlan } from './product.type';
 import { IProductId } from '../models/baseModel';
 import { IOrderProduct } from '../models/order';
@@ -41,7 +40,6 @@ export interface IOrderItem extends IProductId {
 
 export interface ICreateOrderReq extends IUserReq {
   body: {
-    userId: Types.ObjectId;
     items: [IOrderItem];
     price: number;
     paymentMethod: PaymentMethod;

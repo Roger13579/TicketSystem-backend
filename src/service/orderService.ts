@@ -33,6 +33,7 @@ import {
 } from '../types/line.type';
 import { LinePayOrderDTO } from '../dto/order/linePayOrderDto';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
+import { get, some, sumBy } from 'lodash';
 
 const logger = log4js.getLogger(`OrderService`);
 
@@ -126,24 +127,19 @@ export class OrderService {
     const order = await this.orderRepository.findById(
       new Types.ObjectId(orderId),
     );
-
     if (!order) {
       return;
     }
-
     const body = {
       amount: order.price,
       currency: LinePayCurrency.TWD,
     };
-
     const uri = `/${process.env.LINEPAY_VERSION}/payments/${transactionId}/confirm`;
-
     const { headers, url } = this.createLinePayReq({
       uri,
       body,
       orderId: order._id.toString(),
     });
-
     try {
       const res: { data: ILinePayConfirmData } = await axios.post(url, body, {
         headers,
@@ -159,6 +155,9 @@ export class OrderService {
           paymentStatus: PaymentStatus.paid,
           paidAt: new Date(),
         });
+        const { products } = updatedOrder as IOrder;
+        // 更改 product soldAmount
+        await this.productRepository.editProductsSoldAmount(products);
         return updatedOrder;
       } else {
         // TODO: 確認是否要給予付款失敗的狀態
@@ -263,9 +262,12 @@ export class OrderService {
       paymentStatus: PaymentStatus.paid,
       paidAt: new Date(),
     };
-
     // 交易完成，將成功資訊儲存於資料庫
-    return await this.orderRepository.updateOrder(params);
+    const updatedOrder = await this.orderRepository.updateOrder(params);
+    const { products } = updatedOrder as IOrder;
+    // 更改 product soldAmount
+    await this.productRepository.editProductsSoldAmount(products);
+    return updatedOrder;
     //TODO 派發票券Ticket
   }
 
@@ -317,31 +319,26 @@ export class OrderService {
   }
 
   private validateAmount = ({ item, product }: IValidateAmount) => {
-    const required = item.amount * (item.plan ? item.plan.headCount : 1);
+    const required = item.amount * get(item, 'plan.headCount', 1);
     const remain = product.amount - product.soldAmount;
     return remain > required;
   };
 
   private validatePlan = ({ item, product }: IValidateAmount) => {
-    const { plans } = product;
-    const { plan } = item;
-    if (!!plan) {
-      const existedPlan = (plans || []).find(
-        ({ discount, headCount }) =>
-          plan.discount === discount && plan.headCount === headCount,
-      );
-      return !!existedPlan;
-    } else {
-      return true;
+    if (item.plan) {
+      return some(product.plans, {
+        discount: item.plan.discount,
+        headCount: item.plan.headCount,
+      });
     }
+    return true;
   };
 
-  private validatePrice = (params: IValidatePrice) => {
-    const { products, totalPrice } = params;
-    const subTotal = products.reduce(
-      (acc, { price, amount, plan }) =>
-        price * amount * (plan ? plan.headCount * plan.discount : 1) + acc,
-      0,
+  private validatePrice = ({ products, totalPrice }: IValidatePrice) => {
+    const subTotal = sumBy(
+      products,
+      ({ price, amount, plan }) =>
+        price * amount * (plan ? plan.headCount * plan.discount : 1),
     );
     return totalPrice === subTotal;
   };

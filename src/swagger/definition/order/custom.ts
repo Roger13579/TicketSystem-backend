@@ -61,13 +61,8 @@ const customItem = {
 
 export const CustomCreateOrderObj = {
   type: 'object',
-  required: ['userId', 'items', 'price', 'paymentMethod'],
+  required: ['items', 'price', 'paymentMethod'],
   properties: {
-    userId: {
-      type: 'string',
-      description: propName.userId,
-      example: customItem.userId,
-    },
     items: {
       type: 'array',
       description: propName.items,
