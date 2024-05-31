@@ -173,4 +173,13 @@ export const enum CustomResponseType {
 
   INVALID_ORDER_FILTER = '6533',
   INVALID_ORDER_FILTER_MESSAGE = '無效的訂單查詢條件：',
+
+  INVALID_ORDER_PRICE = '6534',
+  INVALID_ORDER_PRICE_MESSAGE = '訂單金額錯誤',
+
+  LINEPAY_ERROR = '6535',
+  LINEPAY_ERROR_MESSAGE = 'LinePay 發生錯誤',
+
+  ORDER_PLAN_ERROR = '6536',
+  ORDER_PLAN_ERROR_MESSAGE = '訂單中的方案錯誤',
 }

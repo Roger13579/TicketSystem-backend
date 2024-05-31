@@ -28,7 +28,7 @@ export class OrderRoute extends BaseRoute {
       /*
           #swagger.parameters['obj'] ={
             in:'body',
-            description:'從購物車取得的訂單資訊',
+            description:'訂單資訊',
             schema:{
               $ref:"#/definitions/CustomCreateOrderObj"
             }
@@ -36,24 +36,37 @@ export class OrderRoute extends BaseRoute {
        */
       /**
        #swagger.responses[200] = {
-       description: 'OK',
-       schema: {
-       $ref: '#/definitions/CreateOrdersSuccess' }
-       }
+        description: 'OK (根據 paymentMethod 回傳不同 redirect 資訊)',
+        schema: {
+          $ref: '#/definitions/CreateOrderSuccess' }
+        }
        */
       UserVerify,
       this.usePipe(CreateOrderPipe),
       this.responseHandler(this.controller.createOrder),
     );
+
     this.router.post(
       '/v1/order/newebpay_notify',
       /**
        * #swagger.tags = ['Order']
        * #swagger.summary = '藍新金流回傳交易結果'
-       * #swagger.security=[{"Bearer": []}],
        */
       this.responseHandler(this.controller.newebpayNotify),
     );
+
+    this.router.get(
+      '/v1/order/linePay/confirm',
+      /**
+       * #swagger.tags = ['Order']
+       * #swagger.summary = 'LinePay 回傳交易結果'
+       */
+      this.responseHandler(this.controller.linePayConfirmNotify),
+    );
+
+    // 使用者取消付款
+
+    // 使用者退款
 
     this.router.get(
       '/v1/order',

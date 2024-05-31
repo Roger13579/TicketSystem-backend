@@ -1,5 +1,5 @@
 import { PaginateModel, PopulateOptions, Schema, Types, model } from 'mongoose';
-import { IProductSnapshot, TPlan } from '../types/product.type';
+import { IProductSnapshot, IPlan } from '../types/product.type';
 import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import moment from 'moment';
 import {
@@ -11,7 +11,7 @@ import {
 import paginate from 'mongoose-paginate-v2';
 
 export interface IProduct extends BaseModel, IProductSnapshot {
-  plans?: TPlan[];
+  plans?: IPlan[];
   startAt: Date;
   endAt: Date;
   sellStartAt: Date;
@@ -34,7 +34,7 @@ export interface IProduct extends BaseModel, IProductSnapshot {
   brief: string;
 }
 
-const { commentId, tagId, photoPath } = schemaDef;
+const { commentId, tagId, photoPath, plan } = schemaDef;
 
 const schema = new Schema<IProduct>(
   {
@@ -59,20 +59,7 @@ const schema = new Schema<IProduct>(
       default: 0,
     },
     plans: {
-      type: [
-        {
-          name: String,
-          discount: {
-            type: Number,
-            max: 1,
-            min: 0.1,
-          },
-          headCount: {
-            type: Number,
-            min: 2,
-          },
-        },
-      ],
+      type: [plan],
     },
     startAt: {
       type: Date,
