@@ -1,6 +1,9 @@
 import { IUserReq } from './common.type';
-import { Types } from 'mongoose';
-import { IProductSnapshot } from './product.type';
+import { IPlan } from './product.type';
+import { IProductId } from '../models/baseModel';
+import { IOrderProduct } from '../models/order';
+import { IProduct } from '../models/product';
+import { Request } from 'express';
 
 export enum PaymentMethod {
   linePay = 'linePay',
@@ -30,20 +33,18 @@ export interface IDeliveryInfo {
   email: string;
 }
 
+export interface IOrderItem extends IProductId {
+  amount: number;
+  plan?: IPlan;
+}
+
 export interface ICreateOrderReq extends IUserReq {
   body: {
-    userId: Types.ObjectId;
-    products: [IProductSnapshot];
-    price: string;
-    paymentMethod: string;
-    paymentStatus: string;
-    paidAt: Date;
-    deliveryInfo: {
-      name: string;
-      address: string;
-      phone: string;
-      email: string;
-    };
+    items: [IOrderItem];
+    price: number;
+    paymentMethod: PaymentMethod;
+    paymentStatus: PaymentStatus;
+    deliveryInfo: IDeliveryInfo;
   };
 }
 export type NewebpayResponse = {
@@ -76,5 +77,22 @@ export interface IGetOrdersReq extends IUserReq {
     page?: string;
     limit?: string;
     sortBy?: string;
+  };
+}
+
+export interface IValidateAmount {
+  item: IOrderItem;
+  product: IProduct;
+}
+
+export interface IValidatePrice {
+  products: IOrderProduct[];
+  totalPrice: number;
+}
+
+export interface ILinePayConfirmReq extends Request {
+  query: {
+    transactionId?: string;
+    orderId?: string;
   };
 }

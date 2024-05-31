@@ -6,10 +6,10 @@ export class NewebpayOrderVo {
   private readonly paymentGateway: string;
 
   constructor(tradeSha: string, tradeInfo: string) {
-    this.merchantID = process.env.MERCHANT_ID as string;
+    this.merchantID = process.env.NEWEBPAY_MERCHANT_ID;
     this.tradeSha = tradeSha;
     this.tradeInfo = tradeInfo;
-    this.version = process.env.VERSION as string;
-    this.paymentGateway = process.env.PAY_GATEWAY as string;
+    this.version = process.env.NEWEBPAY_VERSION;
+    this.paymentGateway = process.env.NEWEBPAY_PAY_GATEWAY;
   }
 }

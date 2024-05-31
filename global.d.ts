@@ -22,6 +22,20 @@ declare global {
       FIREBASE_AUTH_PROVIDER_X509_CERT_URL: string;
       FIREBASE_CLIENT_X509_CERT_URL: string;
       JWT_REFRESH_EXPIRES: string;
+      NEWEBPAY_PAY_GATEWAY: string;
+      NEWEBPAY_VERSION: string;
+      NEWEBPAY_MERCHANT_ID: string;
+      NEWEBPAY_NOTIFY_URL: string;
+      HASHKEY: string;
+      HASHIV: string;
+      RETURN_URL: string;
+      LINEPAY_CHANNEL_ID: string;
+      LINEPAY_VERSION: string;
+      LINEPAY_RETURN_HOST: string;
+      LINEPAY_RETURN_CONFIRM_URL: string;
+      LINEPAY_RETURN_CANCEL_URL: string;
+      LINEPAY_CHANNEL_SECRET_KEY: string;
+      LINEPAY_SITE: string;
     }
   }
 }

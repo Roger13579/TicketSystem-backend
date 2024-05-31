@@ -1,4 +1,6 @@
 import { CustomResponseType } from '../../../types/customResponseType';
+import { PaymentMethod, PaymentStatus } from '../../../types/order.type';
+import { MovieGenre, ProductType } from '../../../types/product.type';
 
 /**
  * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
@@ -16,18 +18,18 @@ export const OrderItem = {
     {
       title: '我是商品名稱',
       brief: '我是商品簡稱',
-      type: 'premier',
-      genre: 'Action',
+      type: ProductType.postScreeningMeeting,
+      genre: MovieGenre.action,
       vendor: 'ABC',
       theater: '威秀',
       price: 300,
     },
   ],
-  paymentMethod: 'linepay',
-  price: 300,
-  status: 'paid',
-  createdAt: '2024-05-19 12:00:00',
-  paidAt: '2024-05-19 12:00:02',
+  paymentMethod: PaymentMethod.linePay,
+  $price: 300,
+  status: PaymentStatus.pending,
+  $createdAt: new Date(),
+  paidAt: new Date(),
 };
 
 /**
@@ -44,14 +46,19 @@ export const GetOrdersSuccess = {
   },
 };
 
-export const CreateOrdersSuccess = {
+export const CreateOrderSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
-    $merchantId: 'ABCD1234',
-    $tradeSha: '1231u2h3uli1hi2h3h1uh2uli3h',
-    $tradeInfo: 'jiijwfsijofpdqwpokdqwkopdwqodpkqwdqwop',
-    $version: '2.0',
-    $paymentGateway: 'https://ccc.ccc.ccc',
+    [PaymentMethod.newebPay]: {
+      $merchantId: 'ABCD1234',
+      $tradeSha: '1231u2h3uli1hi2h3h1uh2uli3h',
+      $tradeInfo: 'jiijwfsijofpdqwpokdqwkopdwqodpkqwdqwop',
+      $version: '2.0',
+      $paymentGateway: 'https://ccc.ccc.ccc',
+    },
+    [PaymentMethod.linePay]: {
+      $paymentUrl: 'https://ccccccccccc.cccc',
+    },
   },
 };

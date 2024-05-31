@@ -81,6 +81,18 @@ export const schemaDef = {
     ref: ModelName.order,
     required: true,
   },
+  plan: {
+    name: String,
+    discount: {
+      type: Number,
+      max: 1,
+      min: 0.1,
+    },
+    headCount: {
+      type: Number,
+      min: 2,
+    },
+  },
 };
 
 export const productSnapshotSchemaDef = {

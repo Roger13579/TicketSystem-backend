@@ -3,6 +3,8 @@ import ProductModel, { IProduct } from '../models/product';
 import { ProductFilterDTO } from '../dto/product/productFilterDto';
 import { updateOptions } from '../utils/constants';
 import { IEditContent } from '../types/product.type';
+import { IOrderProduct } from '../models/order';
+import { omitBy, isNil } from 'lodash';
 
 export class ProductRepository {
   private createProductFilter(productFilterDto: ProductFilterDTO) {
@@ -23,8 +25,10 @@ export class ProductRepository {
       priceMin,
       tags,
     } = productFilterDto;
+
     const titleRegex = title ? new RegExp(title) : undefined;
-    return {
+
+    const filter = {
       ...(titleRegex && { title: { $regex: titleRegex } }),
       ...(types && { type: { $in: types } }),
       ...(genres && { genre: { $in: genres } }),
@@ -34,25 +38,36 @@ export class ProductRepository {
       ...(isLaunched !== undefined && { isLaunched }),
       ...(isPublic !== undefined && { isPublic }),
       ...((startAtFrom || startAtTo) && {
-        startAt: {
-          ...(startAtFrom && { $lte: startAtFrom }),
-          ...(startAtTo && { $gte: startAtTo }),
-        },
+        startAt: omitBy(
+          {
+            ...(startAtFrom && { $lte: startAtFrom }),
+            ...(startAtTo && { $gte: startAtTo }),
+          },
+          isNil,
+        ),
       }),
       ...((sellStartAtFrom || sellStartAtTo) && {
-        sellStartAt: {
-          ...(sellStartAtFrom && { $lte: sellStartAtFrom }),
-          ...(sellStartAtTo && { $gte: sellStartAtTo }),
-        },
+        sellStartAt: omitBy(
+          {
+            ...(sellStartAtFrom && { $lte: sellStartAtFrom }),
+            ...(sellStartAtTo && { $gte: sellStartAtTo }),
+          },
+          isNil,
+        ),
       }),
       ...((priceMax || priceMin) && {
-        price: {
-          ...(priceMin && { $lte: priceMin }),
-          ...(priceMax && { $gte: priceMax }),
-        },
+        price: omitBy(
+          {
+            ...(priceMin && { $lte: priceMin }),
+            ...(priceMax && { $gte: priceMax }),
+          },
+          isNil,
+        ),
       }),
       ...(tags && { tags: { $in: tags } }),
     };
+
+    return omitBy(filter, isNil);
   }
 
   public createProducts = async (products: IProduct[]) => {
@@ -115,6 +130,22 @@ export class ProductRepository {
     const newProducts = await Promise.all(promises).then((values) => {
       return values;
     });
+    return newProducts;
+  };
+
+  public editProductsSoldAmount = async (products: IOrderProduct[]) => {
+    const promises = products.map(({ productId, amount }) => {
+      ProductModel.findByIdAndUpdate(
+        productId,
+        { $inc: { soldAmount: amount } },
+        updateOptions,
+      );
+    });
+
+    const newProducts = await Promise.all(promises).then((values) => {
+      return values;
+    });
+
     return newProducts;
   };
 }

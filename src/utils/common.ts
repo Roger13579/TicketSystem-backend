@@ -1,5 +1,6 @@
 import { throwError } from './errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
+import { forEach } from 'lodash';
 
 export const collectionName = (model: string) => model.toLowerCase() + 's';
 
@@ -17,13 +18,15 @@ const compareDates = (date1: Date | undefined, date2: Date | undefined) => {
  * @description 時間順序判斷
  */
 export const checkDateOrder = (...dates: { prop: string; value?: Date }[]) => {
-  for (let i = 0; i < dates.length - 1; i++) {
-    if (compareDates(dates[i].value, dates[i + 1].value) > 0) {
+  forEach(dates, ({ value, prop }, index) => {
+    if (
+      index < dates.length - 1 &&
+      compareDates(value, dates[index + 1].value) > 0
+    ) {
       throwError(
-        CustomResponseType.INVALID_TIME_ORDER_MESSAGE +
-          `: ${dates[i].prop} => ${dates[i].value} / ${dates[i + 1].prop} => ${dates[i].value}`,
+        `${CustomResponseType.INVALID_TIME_ORDER_MESSAGE}: ${prop} => ${value} / ${dates[index + 1].prop} => ${dates[index + 1].value}`,
         CustomResponseType.INVALID_TIME_ORDER,
       );
     }
-  }
+  });
 };
