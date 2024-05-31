@@ -60,7 +60,7 @@ class OrderController extends BaseController {
     if (!order) {
       throwError(
         CustomResponseType.LINEPAY_ERROR_MESSAGE,
-        CustomResponseType.LINEPAY_ERROR + 'B',
+        CustomResponseType.LINEPAY_ERROR,
       );
     }
 

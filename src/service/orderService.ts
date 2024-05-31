@@ -145,19 +145,11 @@ export class OrderService {
     });
 
     try {
-      const res: { data: ILinePayConfirmData } | undefined = await axios.post(
-        url,
-        body,
-        {
-          headers,
-        },
-      );
+      const res: { data: ILinePayConfirmData } = await axios.post(url, body, {
+        headers,
+      });
 
-      if (!res) {
-        return;
-      }
-
-      const { returnCode, info } = res.data;
+      const { returnCode, info, returnMessage } = res.data;
 
       if (returnCode === LinePayReturnCode.success && info) {
         // 更改狀態為付款成功
@@ -167,11 +159,15 @@ export class OrderService {
           paymentStatus: PaymentStatus.paid,
           paidAt: new Date(),
         });
-        return updatedOrder; // 更新的 order
+        return updatedOrder;
+      } else {
+        // TODO: 確認是否要給予付款失敗的狀態
+        const error = new Error(returnMessage);
+        error.name = returnCode;
+        throw error;
       }
-
-      // TODO: 確認是否要給予付款失敗的狀態
     } catch (err) {
+      logger.error('linepay confirm error', err);
       throwError(
         CustomResponseType.INVALID_ORDER_PRICE_MESSAGE,
         CustomResponseType.INVALID_ORDER_PRICE,
@@ -203,35 +199,32 @@ export class OrderService {
       orderId,
     });
 
-    // 新增 LinePay 訂單
-    const res: { data: ILinePayData } | undefined = await axios.post(
-      url,
-      body,
-      {
+    try {
+      // 新增 LinePay 訂單
+      const res: { data: ILinePayData } = await axios.post(url, body, {
         headers,
-      },
-    );
+      });
 
-    if (!res) {
-      return;
-    }
+      const { returnCode, info, returnMessage } = res.data;
 
-    console.log(res.data);
-
-    const { returnCode, info } = res.data;
-
-    if (returnCode === LinePayReturnCode.success && !!info) {
-      const { paymentUrl, transactionId } = info;
-      const params = {
-        orderId: new Types.ObjectId(orderId),
-        thirdPartyPaymentId: transactionId.toString(),
-        paymentStatus: PaymentStatus.pending,
-      };
-      await this.orderRepository.updateOrder(params);
-      return { paymentUrl: paymentUrl.web };
-    } else {
+      if (returnCode === LinePayReturnCode.success && !!info) {
+        const { paymentUrl, transactionId } = info;
+        const params = {
+          orderId: new Types.ObjectId(orderId),
+          thirdPartyPaymentId: transactionId.toString(),
+          paymentStatus: PaymentStatus.pending,
+        };
+        await this.orderRepository.updateOrder(params);
+        return { paymentUrl: paymentUrl.web };
+      } else {
+        const error = new Error(returnMessage);
+        error.name = returnCode;
+        throw error;
+      }
+    } catch (err) {
+      logger.error('linepay create payment Url error', err);
       throwError(
-        CustomResponseType.LINEPAY_ERROR_MESSAGE + 'A',
+        CustomResponseType.LINEPAY_ERROR_MESSAGE,
         CustomResponseType.LINEPAY_ERROR,
       );
     }
@@ -370,8 +363,6 @@ export class OrderService {
       'X-LINE-Authorization-Nonce': nonce,
       'X-LINE-Authorization': signature,
     };
-
-    console.log(headers);
 
     const url = `${process.env.LINEPAY_SITE}${uri}`;
     return { headers, url };
