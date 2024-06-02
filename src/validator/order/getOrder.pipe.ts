@@ -3,10 +3,11 @@ import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
 import {
   IGetOrdersReq,
-  OrderSortBy,
+  OrderSortField,
   PaymentStatus,
 } from '../../types/order.type';
 import { OptionType, TCustomValidator } from '../index.type';
+import { SortOrder } from '../../types/common.type';
 
 // 管理者和使用者都可以使用的
 
@@ -41,20 +42,18 @@ export class GetOrderPipe extends PipeBase {
       CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'page',
     ),
     query('ids')
-      .custom(this.isAdminOnly)
-      .withMessage(
-        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
-          CustomResponseType.PERMISSION_DENIED_MESSAGE +
-          'ids',
-      ),
+      .optional()
+      .isString()
+      .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'ids'),
     query('thirdPartyPaymentIds')
-      .custom(this.isAdminOnly)
+      .optional()
+      .isString()
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
-          CustomResponseType.PERMISSION_DENIED_MESSAGE +
           'thirdPartyPaymentIds',
       ),
     query('accounts')
+      .optional()
       .custom(this.isAdminOnly)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
@@ -62,6 +61,7 @@ export class GetOrderPipe extends PipeBase {
           'accounts',
       ),
     query('emails')
+      .optional()
       .custom(this.isAdminOnly)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
@@ -69,16 +69,13 @@ export class GetOrderPipe extends PipeBase {
           'emails',
       ),
     query('phones')
+      .optional()
       .custom(this.isAdminOnly)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
           CustomResponseType.PERMISSION_DENIED_MESSAGE +
           'phones',
       ),
-    query('sortBy')
-      .optional()
-      .custom(this.validateOption(OptionType.item, OrderSortBy))
-      .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'sortBy'),
     query('status')
       .optional()
       .isIn(Object.keys(PaymentStatus))
@@ -117,6 +114,18 @@ export class GetOrderPipe extends PipeBase {
       .custom(this.validatePaidAtTo)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'paidAtTo',
+      ),
+    query('sortField')
+      .optional()
+      .custom(this.validateOption(OptionType.item, OrderSortField))
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'sortField',
+      ),
+    query('sortOrder')
+      .optional()
+      .custom(this.validateOption(OptionType.item, SortOrder))
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'sortOrder',
       ),
     this.validationHandler,
   ];

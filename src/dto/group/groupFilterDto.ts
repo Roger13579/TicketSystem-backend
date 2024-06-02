@@ -1,65 +1,54 @@
 import moment from 'moment/moment';
-import { GroupStatus, IGetGroupsReq } from '../../types/group.type';
+import {
+  GroupSortField,
+  GroupStatus,
+  IGetGroupsReq,
+} from '../../types/group.type';
 import { IUser } from '../../models/user';
 import { Types } from 'mongoose';
+import { SortOrder } from '../../types/common.type';
 
 export class GroupFilterDto {
   private readonly _title?: string;
   private readonly _movieTitle?: string[];
   private readonly _theater?: string[];
   private readonly _participantCount?: number;
-  private readonly _status: string;
+  private readonly _status: GroupStatus;
   private readonly _haveTicket?: boolean;
   private readonly _startAt?: Date;
   private readonly _endAt?: Date;
   private readonly _page: number;
   private readonly _limit: number;
-  private readonly _sortBy?: string;
+  private readonly _sort: Record<string, 1 | -1>;
   private readonly _userId: Types.ObjectId | undefined;
 
-  get title() {
-    return this._title;
+  get filter() {
+    const titleRegex = this._title ? new RegExp(this._title) : undefined;
+    return {
+      ...(this._userId && { userId: { $eq: this._userId } }),
+      ...(titleRegex && { title: { $regex: titleRegex } }),
+      ...(this._movieTitle && { movieTitle: { $in: this._movieTitle } }),
+      ...(this._status && { status: { $eq: this._status } }),
+      ...(this._theater && { theater: { $in: this._theater } }),
+      ...(this._participantCount && {
+        amount: { $eq: this._participantCount },
+      }),
+      ...(this._haveTicket !== undefined && { haveTicket: this._haveTicket }),
+      ...((this._startAt || this._endAt) && {
+        time: {
+          ...(this._endAt && { $lte: this._endAt }),
+          ...(this._startAt && { $gte: this._startAt }),
+        },
+      }),
+    };
   }
 
-  get movieTitle() {
-    return this._movieTitle;
-  }
-
-  get theater() {
-    return this._theater;
-  }
-
-  get participantCount() {
-    return this._participantCount;
-  }
-  get status() {
-    return this._status;
-  }
-
-  get haveTicket() {
-    return this._haveTicket;
-  }
-  get startAt() {
-    return this._startAt;
-  }
-  get endAt() {
-    return this._endAt;
-  }
-
-  get page() {
-    return this._page;
-  }
-
-  get limit() {
-    return this._limit;
-  }
-
-  get sortBy() {
-    return this._sortBy;
-  }
-
-  get userId() {
-    return this._userId;
+  get options() {
+    return {
+      skip: (this._page - 1) * this._limit,
+      limit: this._limit,
+      sort: this._sort,
+    };
   }
 
   constructor(req: IGetGroupsReq) {
@@ -74,10 +63,14 @@ export class GroupFilterDto {
       endAt,
       page,
       limit,
-      sortBy,
+      sortField,
+      sortOrder,
     } = req.query;
 
-    this._sortBy = sortBy;
+    this._sort = {
+      [`${sortField || GroupSortField.createdAt}`]:
+        sortOrder === SortOrder.asc ? 1 : -1,
+    };
     this._title = title;
     this._status = status === undefined ? GroupStatus.ongoing : status;
     this._limit = Number(limit);

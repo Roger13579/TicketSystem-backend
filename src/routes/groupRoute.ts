@@ -170,13 +170,42 @@ export class GroupRoute extends BaseRoute {
        * #swagger.summary = '取得揪團列表'
        * #swagger.security=[{"Bearer": []}],
        */
-      /*  #swagger.parameters['title'] = {
+      /*  
+          #swagger.parameters['limit'] = {
+            in: 'query',
+            required: true,
+            description: '每頁資料數 (1~100)',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomLimitQuery"
+            }
+          }
+          #swagger.parameters['page'] = {
+            in: 'query',
+            required: true,
+            description: '頁數',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomPageQuery"
+            }
+          }
+          #swagger.parameters['title'] = {
             in: 'query',
             required: false,
             description: '模糊搜尋：揪團名稱',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomGetGroupTitleQuery"
+            }
+          }
+          #swagger.parameters['hasTicket'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：是否持有票券',
+            type: 'boolean',
+            enum:['true','false'],
+            schema:{
+              $ref: "#/definitions/CustomBooleanQuery"
             }
           }
           #swagger.parameters['movieTitle'] = {
@@ -207,16 +236,6 @@ export class GroupRoute extends BaseRoute {
               $ref: "#/definitions/CustomGetGroupCountQuery"
             }
           }
-          #swagger.parameters['hasTicket'] = {
-            in: 'query',
-            required: false,
-            description: '精準搜尋：是否持有票券',
-            type: 'boolean',
-            enum:['true','false'],
-            schema:{
-              $ref: "#/definitions/CustomGetGroupHasTicketQuery"
-            }
-          }
           #swagger.parameters['startAt'] = {
             in: 'query',
             required: false,
@@ -235,32 +254,24 @@ export class GroupRoute extends BaseRoute {
               $ref: "#/definitions/CustomTimeAtToQuery"
             }
           }
-          #swagger.parameters['page'] = {
+          #swagger.parameters['sortField'] = {
             in: 'query',
-            required: true,
-            description: '頁數',
-            type: 'number',
-            schema:{
-              $ref: "#/definitions/CustomPageQuery"
-            }
-          }
-          #swagger.parameters['limit'] = {
-            in: 'query',
-            required: true,
-            description: '每頁資料數',
-            type: 'number',
-            schema:{
-              $ref: "#/definitions/CustomLimitQuery"
-            }
-          }
-          #swagger.parameters['sortBy'] = {
-            in: 'query',
-            required: true,
-            description: '排序根據，降冪則在前面加上 - ',
+            required: false,
+            description: '排序根據',
             type: 'string',
-            enum:['startAt', 'title'],
+            enum:['startAt', 'title','createdAt','movieTitle','theater','id'],
             schema:{
-              $ref: "#/definitions/CustomSortByQuery"
+              $ref: "#/definitions/CustomSortFieldQuery"
+            }
+          }
+          #swagger.parameters['sortOrder'] = {
+            in: 'query',
+            required: false,
+            description: '排序順序',
+            type: 'string',
+            enum: ["asc", "desc"],
+            schema:{
+              $ref: "#/definitions/CustomSortOrderQuery"
             }
           }
       */

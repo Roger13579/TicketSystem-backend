@@ -1,6 +1,6 @@
 import { IProduct } from '../models/product';
 import { Request } from 'express';
-import { IUserReq } from './common.type';
+import { IUserReq, SortOrder } from './common.type';
 import { Types } from 'mongoose';
 import { IProductId } from '../models/baseModel';
 
@@ -73,11 +73,12 @@ export interface IGetProductsReq extends IUserReq {
     tags?: string;
     page?: string;
     limit?: string;
-    sortBy?: string;
+    sortField?: ProductSortField;
+    sortOrder?: SortOrder;
   };
 }
 
-export enum ProductSortBy {
+export enum ProductSortField {
   startAt = 'startAt',
   price = 'price',
   sellStartAt = 'sellStartAt',

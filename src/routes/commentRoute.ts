@@ -5,6 +5,7 @@ import { DeleteCommentsPipe } from '../validator/comment/deleteComments.pipe';
 import { UserCheck, UserVerify } from '../middleware/userVerify';
 import { GetCommentsPipe } from '../validator/comment/getComments.pipe';
 import { BaseRoute } from './baseRoute';
+import { EditCommentsPipe } from '../validator/comment/editComments.pipe';
 
 export class CommentRoute extends BaseRoute {
   protected controller!: CommentController;
@@ -30,7 +31,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['limit'] = {
             in: 'query',
             required: true,
-            description: '每頁資料數',
+            description: '每頁資料數 (1~100)',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomLimitQuery"
@@ -47,8 +48,8 @@ export class CommentRoute extends BaseRoute {
           } 
           #swagger.parameters['status'] = {
             in: 'query',
-            required: false,
-            description: '評論狀態，member 只能使用 active',
+            required: true,
+            description: '評論狀態，非管理者只能使用 active',
             type: 'string',
             enum:['active','disabled'],
             schema:{
@@ -58,7 +59,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['ratings'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：評分列表',
+            description: '精準搜尋：評分列表 (多個評分以 , 分隔)',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomGetCommentsRatingsQuery"
@@ -94,7 +95,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['productIds'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：商品 id 列表，不能和 ProductName 同時使用，非使用者一定要使用該 query',
+            description: '精準搜尋：商品 id 列表，不能和 ProductName 同時使用，非登入者一定要使用該 query，已登入者若不給該項則回覆所有該使用者的評論',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomGetCommentsProductIdsQuery"
@@ -108,16 +109,6 @@ export class CommentRoute extends BaseRoute {
             schema:{
               $ref:"#/definitions/CustomGetCommentsProductIdsQuery"
             }
-          } 
-          #swagger.parameters['sortBy'] = {
-            in: 'query',
-            required: true,
-            description: '排序根據，降冪則在前面加上 -',
-            type: 'string',
-            enum: ["rating", "createdAt", "account", "productName", "productId"],
-            schema:{
-              $ref: "#/definitions/CustomSortByQuery"
-            }
           }
           #swagger.parameters['content'] = {
             in: 'query',
@@ -126,6 +117,26 @@ export class CommentRoute extends BaseRoute {
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetCommentsContentQuery"
+            }
+          }
+          #swagger.parameters['sortField'] = {
+            in: 'query',
+            required: false,
+            description: '排序根據',
+            type: 'string',
+            enum: ["rating", "createdAt", "account", "productName", "productId"],
+            schema:{
+              $ref: "#/definitions/CustomSortFieldQuery"
+            }
+          }
+          #swagger.parameters['sortOrder'] = {
+            in: 'query',
+            required: false,
+            description: '排序順序',
+            type: 'string',
+            enum: ["asc", "desc"],
+            schema:{
+              $ref: "#/definitions/CustomSortOrderQuery"
             }
           }
        */
@@ -198,6 +209,36 @@ export class CommentRoute extends BaseRoute {
       IsAdmin,
       this.usePipe(DeleteCommentsPipe),
       this.responseHandler(this.controller.deleteComments),
+    );
+
+    this.router.patch(
+      '/v1/comment',
+      /**
+       * #swagger.tags = ['Admin']
+       * #swagger.summary = '批次編輯評論'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+          #swagger.parameters['obj'] = {
+            in: 'body',
+            description: '欲編輯的評論列表',
+            schema: {
+              $ref:"#/definitions/CustomEditCommentsObj"
+            }
+          }
+       */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/EditCommentsObj"
+            }
+          }
+       */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(EditCommentsPipe),
+      this.responseHandler(this.controller.editComments),
     );
   }
 }

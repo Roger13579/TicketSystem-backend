@@ -1,7 +1,7 @@
 import { NextFunction } from 'express';
 import { ProductRepository } from '../repository/productRepository';
 import { CustomResponseType } from '../types/customResponseType';
-import { checkDateOrder } from '../utils/common';
+import { areTimesInOrder } from '../utils/common';
 import { AppError, throwError } from '../utils/errorHandler';
 import { HttpStatus } from '../types/responseType';
 import { CommentRepository } from '../repository/commentRepository';
@@ -11,6 +11,7 @@ import { Types } from 'mongoose';
 import { CreateProductDTO } from '../dto/product/createProductDto';
 import { TagRepository } from '../repository/tagRepository';
 import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
+import { SortOrder } from '../types/common.type';
 
 export class ProductService {
   private readonly productRepository: ProductRepository =
@@ -57,11 +58,15 @@ export class ProductService {
       getProductDto;
 
     // 確認時間順序
-    checkDateOrder(
-      { prop: 'sellStartAtFrom', value: sellStartAtFrom },
-      { prop: 'sellStartAtTo', value: sellStartAtTo },
-      { prop: 'startAtFrom', value: startAtFrom },
-      { prop: 'startAtTo', value: startAtTo },
+
+    areTimesInOrder(
+      [
+        { name: 'sellStartAtFrom', value: sellStartAtFrom },
+        { name: 'sellStartAtTo', value: sellStartAtTo },
+        { name: 'startAtFrom', value: startAtFrom },
+        { name: 'startAtTo', value: startAtTo },
+      ],
+      SortOrder.asc,
     );
 
     return await this.productRepository.findProducts(getProductDto);

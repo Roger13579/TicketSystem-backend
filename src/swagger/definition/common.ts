@@ -1,8 +1,8 @@
 import moment from 'moment';
 import { CustomResponseType } from '../../types/customResponseType';
 import { HttpStatus } from '../../types/responseType';
-import { Status } from '../../types/common.type';
-import { ProductSortBy } from '../../types/product.type';
+import { SortOrder, Status } from '../../types/common.type';
+import { ProductSortField } from '../../types/product.type';
 
 export const Success = {
   $status: CustomResponseType.OK,
@@ -121,8 +121,12 @@ export const CustomPageQuery = {
 export const CustomLimitQuery = {
   example: '10',
 };
-export const CustomSortByQuery = {
-  example: ProductSortBy.createdAt,
+export const CustomSortFieldQuery = {
+  example: ProductSortField.createdAt,
+};
+
+export const CustomSortOrderQuery = {
+  example: SortOrder.desc,
 };
 
 export const CustomTimeAtFromQuery = {

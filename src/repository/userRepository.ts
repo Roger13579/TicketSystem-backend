@@ -2,6 +2,7 @@ import { UserModel, IUser } from '../models/user';
 import { UserDetailDto } from '../dto/user/userDetailDto';
 import { Types } from 'mongoose';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
+import { updateOptions } from '../utils/constants';
 
 export class UserRepository {
   public async createUser(
@@ -59,6 +60,7 @@ export class UserRepository {
         phone: userDetailDto.getPhone,
         address: userDetailDto.getAddress,
       },
+      updateOptions,
     );
   }
 
@@ -66,6 +68,7 @@ export class UserRepository {
     return UserModel.findByIdAndUpdate(
       { _id: new Types.ObjectId(id) },
       { pwd },
+      updateOptions,
     );
   }
 
@@ -80,6 +83,7 @@ export class UserRepository {
           groups: { groupId: groupId },
         },
       },
+      updateOptions,
     );
   }
   public async removeGroupFromUser(
@@ -93,6 +97,7 @@ export class UserRepository {
           groups: { groupId: groupId },
         },
       },
+      updateOptions,
     );
   }
 

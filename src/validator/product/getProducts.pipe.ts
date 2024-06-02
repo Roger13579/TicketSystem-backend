@@ -4,11 +4,12 @@ import { CustomResponseType } from '../../types/customResponseType';
 import {
   IGetProductsReq,
   MovieGenre,
-  ProductSortBy,
+  ProductSortField,
   ProductType,
   RecommendWeightRange,
 } from '../../types/product.type';
 import { OptionType, TCustomValidator } from '../index.type';
+import { SortOrder } from '../../types/common.type';
 
 // 管理者和使用者都可以使用的
 
@@ -33,11 +34,14 @@ export class GetProductsPipe extends PipeBase {
     return this.validatePeriod(value, sellStartAtFrom, (a, b) => a.isAfter(b));
   };
 
-  private validatePriceRange: TCustomValidator = (value, { req }) => {
-    if (!value) return true;
-    const priceMax = Number(value);
-    const { priceMin } = (req as IGetProductsReq).body;
-    return priceMax > priceMin;
+  private validatePriceRange: TCustomValidator = (_value, { req }) => {
+    const { priceMin, priceMax } = (req as IGetProductsReq).query;
+
+    if (priceMax && priceMin) {
+      return Number(priceMax) > Number(priceMin);
+    }
+
+    return true;
   };
 
   public transform = () => [
@@ -76,33 +80,24 @@ export class GetProductsPipe extends PipeBase {
     query('genres')
       .optional()
       .custom(this.validateOption(OptionType.array, MovieGenre))
-      .withMessage(CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'genre'),
-    query('priceMin')
-      .optional()
-      .toInt()
-      .isInt({ min: 0 })
       .withMessage(
-        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'priceMin',
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'genres',
       ),
-    query('priceMax')
+    query('vendors')
       .optional()
-      .toInt()
-      .isInt({ min: 0 })
-      .custom(this.validatePriceRange)
+      .isString()
       .withMessage(
-        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'priceMax',
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'vendors',
       ),
-    query('recommendWeights')
+    query('title')
       .optional()
-      .custom(this.validateOption(OptionType.array, RecommendWeightRange))
-      .withMessage(
-        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'recommendWeights',
-      ),
-    query('sortBy')
+      .isString()
+      .withMessage(CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'title'),
+    query('theaters')
       .optional()
-      .custom(this.validateOption(OptionType.item, ProductSortBy))
+      .isString()
       .withMessage(
-        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'sortBy',
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'theaters',
       ),
     query('startAtFrom')
       .optional()
@@ -143,6 +138,48 @@ export class GetProductsPipe extends PipeBase {
       .custom(this.validateSellStartAtTo)
       .withMessage(
         CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'startAtTo',
+      ),
+    query('recommendWeights')
+      .optional()
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'recommendWeights',
+      )
+      .custom(this.validateOption(OptionType.array, RecommendWeightRange))
+      .withMessage(
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'recommendWeights',
+      ),
+    query('priceMax')
+      .optional()
+      .toInt()
+      .isInt({ min: 0 })
+      .custom(this.validatePriceRange)
+      .withMessage(
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'priceMax',
+      ),
+    query('priceMin')
+      .optional()
+      .toInt()
+      .isInt({ min: 0 })
+      .custom(this.validatePriceRange)
+      .withMessage(
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'priceMin',
+      ),
+    query('tags')
+      .optional()
+      .isString()
+      .withMessage(CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'tags'),
+    query('sortField')
+      .optional()
+      .custom(this.validateOption(OptionType.item, ProductSortField))
+      .withMessage(
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'sortField',
+      ),
+    query('sortOrder')
+      .optional()
+      .custom(this.validateOption(OptionType.item, SortOrder))
+      .withMessage(
+        CustomResponseType.INVALID_PRODUCT_FILTER_MESSAGE + 'sortOrder',
       ),
     this.validationHandler,
   ];
