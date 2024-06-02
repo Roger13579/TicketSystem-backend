@@ -1,30 +1,35 @@
 import { throwError } from './errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
-import { forEach } from 'lodash';
+import moment from 'moment';
+import { SortOrder } from '../types/common.type';
 
-/**
- * @description 比較日期，如果其中一个日期是 undefined，則認為它比另一个日期大
- */
-const compareDates = (date1: Date | undefined, date2: Date | undefined) => {
-  if (!date1 || !date2) {
-    return 0;
-  }
-  return date1.getTime() - date2.getTime();
-};
+export const areTimesInOrder = (
+  times: {
+    value?: Date;
+    name: string;
+  }[],
+  order: SortOrder,
+): boolean => {
+  const isOrdered = (
+    currentTime: moment.Moment,
+    previousTime: moment.Moment,
+  ) =>
+    order === SortOrder.asc
+      ? currentTime.isAfter(previousTime)
+      : currentTime.isBefore(previousTime);
 
-/**
- * @description 時間順序判斷
- */
-export const checkDateOrder = (...dates: { prop: string; value?: Date }[]) => {
-  forEach(dates, ({ value, prop }, index) => {
-    if (
-      index < dates.length - 1 &&
-      compareDates(value, dates[index + 1].value) > 0
-    ) {
+  for (let i = 1; i < times.length; i++) {
+    const currentTime = times[i].value ? moment(times[i].value) : null;
+    const previousTime = times[i - 1].value ? moment(times[i - 1].value) : null;
+
+    if (!currentTime || !previousTime) continue;
+
+    if (!isOrdered(currentTime, previousTime)) {
       throwError(
-        `${CustomResponseType.INVALID_TIME_ORDER_MESSAGE}: ${prop} => ${value} / ${dates[index + 1].prop} => ${dates[index + 1].value}`,
+        `${CustomResponseType.INVALID_TIME_ORDER_MESSAGE} (${order}): ${times[i - 1].name} => ${times[i - 1].value} / ${times[i].name} => ${times[i].value}`,
         CustomResponseType.INVALID_TIME_ORDER,
       );
     }
-  });
+  }
+  return true;
 };

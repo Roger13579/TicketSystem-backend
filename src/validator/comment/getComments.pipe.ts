@@ -2,15 +2,16 @@ import { query } from 'express-validator';
 import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
 import {
-  CommentSortBy,
+  CommentSortField,
   IGetCommentsReq,
   RatingRange,
 } from '../../types/comment.type';
 import { OptionType, TCustomValidator } from '../index.type';
-import { Status } from '../../types/common.type';
+import { SortOrder, Status } from '../../types/common.type';
 
-// 管理者和使用者都可以使用的
-
+/**
+ * @description 未登入者、使用者、管理者都可能使用
+ */
 export class GetCommentsPipe extends PipeBase {
   private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
     const { createdAtTo } = (req as IGetCommentsReq).query;
@@ -38,7 +39,6 @@ export class GetCommentsPipe extends PipeBase {
           CustomResponseType.PERMISSION_DENIED_MESSAGE +
           'status',
       )
-      .optional()
       .isIn(Object.keys(Status))
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'status',
@@ -58,6 +58,37 @@ export class GetCommentsPipe extends PipeBase {
       .custom(this.validateCreatedAtFrom)
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'createdAtFrom',
+      ),
+    query('createdAtTo')
+      .optional()
+      .custom(this.validateDate)
+      .custom(this.validateCreatedAtTo)
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'createdAtTo',
+      ),
+    query('productName') // 只有管理者可以用這個搜
+      .optional()
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'productName',
+      )
+      .custom(this.validateExclusiveProps('productIds', 'productName'))
+      // productIds 和 productName 不可以同時使用
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          'productIds 和 productName 不可以同時使用',
+      ),
+    query('productIds') // 不給 productIds 的情況下，就使用 userId 來搜
+      .custom(this.isNoLoginMust)
+      .withMessage(
+        `${CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE}productIds (${CustomResponseType.NOT_LOGIN_MESSAGE})`,
+      )
+      .custom(this.validateExclusiveProps('productIds', 'productName')) // productIds 和 productName 不可以同時使用
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          'productIds 和 productName 不可以同時使用',
       ),
     query('accounts')
       .optional()
@@ -79,41 +110,17 @@ export class GetCommentsPipe extends PipeBase {
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'content',
       ),
-    query('createdAtTo')
+    query('sortField')
       .optional()
-      .custom(this.validateDate)
-      .custom(this.validateCreatedAtTo)
+      .custom(this.validateOption(OptionType.item, CommentSortField))
       .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'createdAtTo',
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'sortField',
       ),
-    query('productName') // 只有管理者可以用這個搜
+    query('sortOrder')
       .optional()
-      .custom(this.isAdminOnly)
+      .custom(this.validateOption(OptionType.item, SortOrder))
       .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
-          CustomResponseType.PERMISSION_DENIED_MESSAGE +
-          'productName',
-      )
-      .custom(this.validateExclusiveProps('productIds', 'productName'))
-      .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
-          'productIds 和 productName 不可以同時使用',
-      ),
-    query('productIds')
-      .custom(this.isMemberMust)
-      .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'productIds',
-      )
-      .custom(this.validateExclusiveProps('productIds', 'productName'))
-      .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
-          'productIds 和 productName 不可以同時使用',
-      ),
-    query('sortBy')
-      .optional()
-      .custom(this.validateOption(OptionType.item, CommentSortBy))
-      .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'sortBy',
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'sortOrder',
       ),
     this.validationHandler,
   ];

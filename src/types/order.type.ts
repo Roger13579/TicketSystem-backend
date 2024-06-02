@@ -1,4 +1,4 @@
-import { IUserReq } from './common.type';
+import { IUserReq, SortOrder } from './common.type';
 import { IPlan } from './product.type';
 import { IProductId } from '../models/baseModel';
 import { IOrderProduct } from '../models/order';
@@ -20,7 +20,7 @@ export enum PaymentStatus {
   failed = 'failed', // 付款失敗
 }
 
-export enum OrderSortBy {
+export enum OrderSortField {
   createdAt = 'createdAt',
   paidAt = 'paidAt',
   status = 'status',
@@ -65,7 +65,7 @@ export type NewebpayResponse = {
 };
 export interface IGetOrdersReq extends IUserReq {
   query: {
-    status?: string;
+    status?: PaymentStatus;
     ids?: string;
     thirdPartyPaymentIds?: string;
     accounts?: string;
@@ -77,7 +77,8 @@ export interface IGetOrdersReq extends IUserReq {
     paidAtTo?: string;
     page?: string;
     limit?: string;
-    sortBy?: string;
+    sortField?: OrderSortField;
+    sortOrder?: SortOrder;
   };
 }
 

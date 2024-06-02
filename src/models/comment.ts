@@ -8,7 +8,6 @@ import {
   ModelName,
   schemaDef,
 } from './baseModel';
-import paginate from 'mongoose-paginate-v2';
 
 export interface IComment extends BaseModel, IProductId, IUserId {
   rating: number;
@@ -37,7 +36,7 @@ const schema = new Schema<IComment>(
     },
   },
   schemaOption,
-).plugin(paginate);
+);
 
 schema.pre<Query<unknown, IComment>>(['find', 'findOne'], function (next) {
   const { user } = this.projection();

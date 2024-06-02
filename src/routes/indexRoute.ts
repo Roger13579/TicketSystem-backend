@@ -55,7 +55,6 @@ export class IndexRoute extends BaseRoute {
        * #swagger.summary = '登入'
        */
       /*
-
       /*	#swagger.parameters['obj'] = {
                   in: 'body',
                   description: 'User information.',
@@ -79,7 +78,6 @@ export class IndexRoute extends BaseRoute {
        * #swagger.summary = 'refresh token'
        */
       /*
-
       /*	#swagger.parameters['obj'] = {
                   in: 'body',
                   description: 'refresh token',
@@ -104,14 +102,14 @@ export class IndexRoute extends BaseRoute {
        * #swagger.summary = '忘記密碼'
        */
       /*
-
-        /*	#swagger.parameters['obj'] = {
-                  in: 'body',
-                  description: 'Forgot Password User Email.',
-                  required: true,
-                  schema: { $ref: "#/definitions/ForgotPwdForm" }
-          } */
-
+      /*	
+        #swagger.parameters['obj'] = {
+          in: 'body',
+          description: 'Forgot Password User Email.',
+          required: true,
+          schema: { $ref: "#/definitions/ForgotPwdForm" }
+        }
+      */
       /* #swagger.responses[200] = {
               description: 'OK',
               schema:{

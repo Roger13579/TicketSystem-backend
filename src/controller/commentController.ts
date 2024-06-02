@@ -4,12 +4,14 @@ import { CommentService } from '../service/commentService';
 import {
   ICommentProductReq,
   IDeleteCommentsReq,
+  IEditCommentsReq,
   IGetCommentsReq,
 } from '../types/comment.type';
 import { CustomResponseType } from '../types/customResponseType';
 import { BaseController } from './baseController';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { GetCommentsVo } from '../vo/comment/getCommentsVo';
+import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 
 export class CommentController extends BaseController {
   private readonly commentService = new CommentService();
@@ -31,29 +33,35 @@ export class CommentController extends BaseController {
     );
   };
 
-  public readonly deleteComments = async (
-    req: IDeleteCommentsReq,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    const info = await this.commentService.deleteComments(
+  public readonly deleteComments = async (req: IDeleteCommentsReq) => {
+    const comments = await this.commentService.deleteComments(
       req.body.commentIds,
-      next,
     );
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      info ? { deletedCount: info.deletedCount } : {},
+      { comments },
     );
   };
 
   public readonly getComments = async (req: IGetCommentsReq) => {
     const getCommentsDto = new GetCommentsDTO(req);
+    const { page, limit } = getCommentsDto;
     const info = await this.commentService.getComments(getCommentsDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new GetCommentsVo(info),
+      new GetCommentsVo(info[0], page, limit),
+    );
+  };
+
+  public readonly editComments = async (req: IEditCommentsReq) => {
+    const editCommentDto = new EditCommentsDTO(req);
+    const comments = await this.commentService.editComments(editCommentDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { comments },
     );
   };
 }

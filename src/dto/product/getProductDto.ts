@@ -4,11 +4,12 @@ import {
   ProductType,
   MovieGenre,
   IGetProductsReq,
-  ProductSortBy,
+  ProductSortField,
 } from '../../types/product.type';
 import { AccountType } from '../../types/user.type';
 import { omitBy, isNil } from 'lodash';
 import { defaultProjection } from '../../utils/product.constants';
+import { SortOrder } from '../../types/common.type';
 
 export class GetProductDTO {
   private readonly _title?: string;
@@ -28,7 +29,7 @@ export class GetProductDTO {
   private readonly _tags?: string[];
   private readonly _page: number;
   private readonly _limit: number;
-  private readonly _sortBy?: string;
+  private readonly _sort: Record<string, 1 | -1>;
   private readonly _isAdmin: boolean = false;
 
   get startAtFrom() {
@@ -48,48 +49,56 @@ export class GetProductDTO {
   get filter() {
     const titleRegex = this._title ? new RegExp(this._title) : undefined;
 
-    const target = {
-      ...(titleRegex && { title: { $regex: titleRegex } }),
-      ...(this._types && { type: { $in: this._types } }),
-      ...(this._genres && { genre: { $in: this._genres } }),
-      ...(this._vendors && { vendor: { $in: this._vendors } }),
-      ...(this._theaters && { theater: { $in: this._theaters } }),
-      ...(this._recommendWeights && {
-        recommendWeight: { $in: this._recommendWeights },
-      }),
-      ...(this._isLaunched !== undefined && { isLaunched: this._isLaunched }),
-      ...(this._isPublic !== undefined && { isPublic: this._isPublic }),
-      ...((this.startAtFrom || this.startAtTo) && {
-        startAt: omitBy(
-          {
-            ...(this.startAtFrom && { $lte: this.startAtFrom }),
-            ...(this.startAtTo && { $gte: this.startAtTo }),
-          },
-          isNil,
-        ),
-      }),
-      ...((this.sellStartAtFrom || this.sellStartAtTo) && {
-        sellStartAt: omitBy(
-          {
-            ...(this.sellStartAtFrom && { $lte: this.sellStartAtFrom }),
-            ...(this.sellStartAtTo && { $gte: this.sellStartAtTo }),
-          },
-          isNil,
-        ),
-      }),
-      ...((this._priceMax || this._priceMin) && {
-        price: omitBy(
-          {
-            ...(this._priceMin && { $lte: this._priceMin }),
-            ...(this._priceMax && { $gte: this._priceMax }),
-          },
-          isNil,
-        ),
-      }),
-      ...(this._tags && { tags: { $in: this._tags } }),
-    };
-
-    return omitBy(target, isNil);
+    return omitBy(
+      {
+        ...(this._recommendWeights && {
+          recommendWeight: { $in: this._recommendWeights },
+        }),
+        ...(this._isLaunched !== undefined && { isLaunched: this._isLaunched }),
+        ...(titleRegex && { title: { $regex: titleRegex } }),
+        ...(this._types && { type: { $in: this._types } }),
+        ...(this._genres && { genre: { $in: this._genres } }),
+        ...(this._vendors && { vendor: { $in: this._vendors } }),
+        ...(this._theaters && { theater: { $in: this._theaters } }),
+        ...(this._isPublic !== undefined && { isPublic: this._isPublic }),
+        ...((this.startAtFrom || this.startAtTo) && {
+          startAt: omitBy(
+            {
+              ...(this.startAtFrom && { $lte: this.startAtFrom }),
+              ...(this.startAtTo && { $gte: this.startAtTo }),
+            },
+            isNil,
+          ),
+        }),
+        ...((this.sellStartAtFrom || this.sellStartAtTo) && {
+          sellStartAt: omitBy(
+            {
+              ...(this.sellStartAtFrom && { $lte: this.sellStartAtFrom }),
+              ...(this.sellStartAtTo && { $gte: this.sellStartAtTo }),
+            },
+            isNil,
+          ),
+        }),
+        ...((this._priceMax || this._priceMin) && {
+          price: omitBy(
+            {
+              ...(this._priceMin && { $lte: this._priceMin }),
+              ...(this._priceMax && { $gte: this._priceMax }),
+            },
+            isNil,
+          ),
+        }),
+        ...(this._tags &&
+          this._tags.length > 0 && {
+            tags: {
+              $elemMatch: {
+                tagId: { $in: this._tags },
+              },
+            },
+          }),
+      },
+      isNil,
+    );
   }
 
   get options() {
@@ -111,7 +120,7 @@ export class GetProductDTO {
     return {
       skip: (this._page - 1) * this._limit,
       ...(this._limit && { limit: this._limit }),
-      sort: this._sortBy || `-${ProductSortBy.createdAt}`,
+      sort: this._sort,
       projection,
     };
   }
@@ -135,7 +144,8 @@ export class GetProductDTO {
       tags,
       page,
       limit,
-      sortBy,
+      sortField,
+      sortOrder,
     } = req.query;
 
     if ((req.user as IUser)?.accountType === AccountType.admin) {
@@ -149,7 +159,10 @@ export class GetProductDTO {
       ?.split(',')
       .map((weight) => Number(weight));
 
-    this._sortBy = sortBy as ProductSortBy;
+    this._sort = {
+      [`${sortField || ProductSortField.createdAt}`]:
+        sortOrder === SortOrder.asc ? 1 : -1,
+    };
     this._title = title;
     this._limit = Number(limit);
     this._priceMax = isNaN(Number(priceMax)) ? undefined : Number(priceMax);

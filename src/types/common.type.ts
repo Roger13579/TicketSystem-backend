@@ -10,6 +10,11 @@ export enum Status {
   disabled = 'disabled',
 }
 
+export enum SortOrder {
+  desc = 'desc',
+  asc = 'asc',
+}
+
 // TODO: 未定的假設 Type for Error
 export interface ICustomMongooseError extends Error {
   errors: string[];

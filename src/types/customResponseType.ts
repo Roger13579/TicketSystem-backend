@@ -185,4 +185,7 @@ export const enum CustomResponseType {
 
   INVALID_TICKET_FILTER = '6537',
   INVALID_TICKET_FILTER_MESSAGE = '無效的票券查詢條件：',
+
+  EDIT_COMMENT_ERROR = '6538',
+  EDIT_COMMENT_ERROR_MESSAGE = '無效的評論編輯：',
 }

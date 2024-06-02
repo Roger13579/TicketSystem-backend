@@ -1,9 +1,12 @@
+import { IUser } from '../../models/user';
+import { SortOrder } from '../../types/common.type';
 import {
   IGetOrdersReq,
-  OrderSortBy,
+  OrderSortField,
   PaymentStatus,
 } from '../../types/order.type';
 import moment from 'moment/moment';
+import { AccountType } from '../../types/user.type';
 
 export class OrderFilterDto {
   private readonly _status?: PaymentStatus;
@@ -18,7 +21,8 @@ export class OrderFilterDto {
   private readonly _paidAtTo?: Date;
   private readonly _page: number;
   private readonly _limit: number = 0;
-  private readonly _sortBy?: OrderSortBy;
+  private readonly _sort: Record<string, 1 | -1>;
+  private readonly _isAdmin: boolean;
 
   get createdAtFrom() {
     return this._createdAtFrom;
@@ -37,14 +41,19 @@ export class OrderFilterDto {
   }
 
   get filter() {
-    return {
-      ...(this._status && { status: { $eq: this._status } }),
+    const adminFilter = {
       ...(this._ids && { _id: { $in: this._ids } }),
       ...(this._thirdPartyPaymentIds && {
         thirdPartyPaymentId: { $in: this._thirdPartyPaymentIds },
       }),
       ...(this._accounts && { account: { $in: this._accounts } }),
+      ...(this._phones && { deliveryInfo: { phone: { $in: this._phones } } }),
       ...(this._emails && { deliveryInfo: { email: { $in: this._emails } } }),
+    };
+
+    return {
+      ...(this._isAdmin && { ...adminFilter }),
+      ...(this._status && { status: { $eq: this._status } }),
       ...((this._createdAtFrom || this._createdAtTo) && {
         startAt: {
           ...(this._createdAtFrom && { $lte: this._createdAtFrom }),
@@ -57,7 +66,6 @@ export class OrderFilterDto {
           ...(this._paidAtTo && { $gte: this._paidAtTo }),
         },
       }),
-      ...(this._phones && { deliveryInfo: { phone: { $in: this._phones } } }),
     };
   }
 
@@ -69,11 +77,12 @@ export class OrderFilterDto {
       },
       skip: (this._page - 1) * this._limit,
       ...(this._limit && { limit: this._limit }),
-      sort: this._sortBy || `-${OrderSortBy.createdAt}`,
+      sort: this._sort,
     };
   }
 
   constructor(req: IGetOrdersReq) {
+    const { query, user } = req;
     const {
       status,
       ids,
@@ -87,15 +96,23 @@ export class OrderFilterDto {
       paidAtTo,
       page,
       limit,
-      sortBy,
-    } = req.query;
+      sortField,
+      sortOrder,
+    } = query;
 
-    this._status = status as PaymentStatus;
+    this._isAdmin = !!(
+      user && (user as IUser).accountType === AccountType.admin
+    );
+
+    this._status = status;
     this._ids = ids?.split(',');
 
     this._thirdPartyPaymentIds = thirdPartyPaymentIds?.split(',');
 
-    this._sortBy = sortBy as OrderSortBy;
+    this._sort = {
+      [`${sortField || OrderSortField.createdAt}`]:
+        sortOrder === SortOrder.asc ? 1 : -1,
+    };
     this._limit = Number(limit);
     this._page = Number(page);
 

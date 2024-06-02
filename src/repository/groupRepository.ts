@@ -10,6 +10,7 @@ import {
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
+import { updateOptions } from '../utils/constants';
 
 export class GroupRepository {
   public async createGroup(createGroupDto: CreateGroupDto): Promise<IGroup> {
@@ -29,6 +30,7 @@ export class GroupRepository {
         title: updateGroupDto.title,
         content: updateGroupDto.content,
       },
+      updateOptions,
     );
   }
 
@@ -52,56 +54,20 @@ export class GroupRepository {
           },
         },
       },
-      { new: true },
+      updateOptions,
     );
   }
   public async deleteGroup(groupId: Types.ObjectId): Promise<IGroup | null> {
     return GroupModel.findByIdAndDelete({ _id: groupId });
   }
-  public async findGroups(
-    groupFilterDto: GroupFilterDto,
-  ): Promise<
+  public async findGroups({
+    filter,
+    options,
+  }: GroupFilterDto): Promise<
     PaginateResult<
       PaginateDocument<IGroup, NonNullable<unknown>, PaginateOptions>
     >
   > {
-    const { page, limit, sortBy } = groupFilterDto;
-    const filter = this.groupFilter(groupFilterDto);
-    const options = {
-      ...(page && limit && { page: page - 1 }),
-      ...(limit && { limit }),
-      sort: sortBy || '-createdAt',
-    };
     return GroupModel.paginate(filter, options);
-  }
-
-  private groupFilter(groupFilterDto: GroupFilterDto) {
-    const {
-      userId,
-      title,
-      movieTitle,
-      status,
-      theater,
-      haveTicket,
-      startAt,
-      endAt,
-      participantCount,
-    } = groupFilterDto;
-    const titleRegex = title ? new RegExp(title) : undefined;
-    return {
-      ...(userId && { userId: { $eq: userId } }),
-      ...(titleRegex && { title: { $regex: titleRegex } }),
-      ...(movieTitle && { movieTitle: { $in: movieTitle } }),
-      ...(status && { status: { $eq: status } }),
-      ...(theater && { theater: { $in: theater } }),
-      ...(participantCount && { amount: { $eq: participantCount } }),
-      ...(haveTicket !== undefined && { haveTicket }),
-      ...((startAt || endAt) && {
-        time: {
-          ...(endAt && { $lte: endAt }),
-          ...(startAt && { $gte: startAt }),
-        },
-      }),
-    };
   }
 }

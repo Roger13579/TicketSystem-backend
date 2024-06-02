@@ -5,6 +5,7 @@ export const propName = {
   rating: '星等',
   content: '評論內容',
   status: '評論狀態',
+  commentId: '評論 id',
 };
 
 export const CustomCreateCommentObj = {
@@ -35,6 +36,33 @@ export const CustomCreateCommentObj = {
   },
 };
 
+export const CustomEditCommentsObj = {
+  type: 'object',
+  required: ['comments'],
+  properties: {
+    comments: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['id', 'status'],
+        properties: {
+          id: {
+            type: 'string',
+            example: '123456a',
+            description: propName.commentId,
+          },
+          status: {
+            type: 'string',
+            enum: Object.keys(Status),
+            example: Status.active,
+            description: propName.status,
+          },
+        },
+      },
+    },
+  },
+};
+
 /**
  * @description 自己定義的 definition，適用於包含刪除評論 id 列表 request.body
  */
@@ -54,7 +82,7 @@ export const CustomDeleteCommentsObj = {
 };
 
 export const CustomGetCommentsRatingsQuery = {
-  example: '1,2',
+  example: '1,2,3,4,5',
 };
 
 export const CustomGetCommentsProductIdsQuery = {

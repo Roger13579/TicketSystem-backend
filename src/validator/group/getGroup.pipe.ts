@@ -2,13 +2,12 @@ import { PipeBase, booleanStrings } from '../pipe.base';
 import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
 import {
-  GroupSortBy,
+  GroupSortField,
   GroupStatus,
   IGetGroupsReq,
 } from '../../types/group.type';
 import { OptionType, TCustomValidator } from '../index.type';
-
-// 管理者和使用者都可以使用的
+import { SortOrder } from '../../types/common.type';
 
 export class GetGroupsPipe extends PipeBase {
   private validateStartAt: TCustomValidator = (value, { req }) => {
@@ -30,20 +29,32 @@ export class GetGroupsPipe extends PipeBase {
       query('page'),
       CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'page',
     ),
+    query('title')
+      .optional()
+      .isString()
+      .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'title'),
     query('hasTicket')
       .optional()
       .isIn(booleanStrings)
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'hasTicket',
       ),
+    query('movieTitle')
+      .optional()
+      .isString()
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'movieTitle',
+      ),
     query('status')
       .optional()
       .isIn(Object.keys(GroupStatus))
       .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'status'),
-    query('sortBy')
+    query('participantCount')
       .optional()
-      .custom(this.validateOption(OptionType.item, GroupSortBy))
-      .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'sortBy'),
+      .isInt({ min: 1 })
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'participantCount',
+      ),
     query('startAt')
       .optional()
       .custom(this.validateDate)
@@ -57,6 +68,18 @@ export class GetGroupsPipe extends PipeBase {
       .custom(this.validateEndAt)
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startAtTo',
+      ),
+    query('sortField')
+      .optional()
+      .custom(this.validateOption(OptionType.item, GroupSortField))
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'sortField',
+      ),
+    query('sortOrder')
+      .optional()
+      .custom(this.validateOption(OptionType.item, SortOrder))
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'sortOrder',
       ),
     this.validationHandler,
   ];

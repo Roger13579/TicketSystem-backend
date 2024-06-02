@@ -75,14 +75,23 @@ export class OrderRoute extends BaseRoute {
        * #swagger.summary = '取得訂單列表'
        * #swagger.security=[{"Bearer": []}],
        */
-      /*  #swagger.parameters['status'] = {
+      /*  
+          #swagger.parameters['limit'] = {
             in: 'query',
-            required: false,
-            description: '精準搜尋：訂單狀態',
-            type: 'string',
-            enum:['paid','pending','refunded','expired','failed'],
+            required: true,
+            description: '每頁資料數 (1~100)',
+            type: 'number',
             schema:{
-              $ref:"#/definitions/CustomGetOrderStatusQuery"
+              $ref: "#/definitions/CustomLimitQuery"
+            }
+          }
+          #swagger.parameters['page'] = {
+            in: 'query',
+            required: true,
+            description: '頁數',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomPageQuery"
             }
           }
           #swagger.parameters['ids'] = {
@@ -106,7 +115,7 @@ export class OrderRoute extends BaseRoute {
           #swagger.parameters['accounts'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：帳號列表',
+            description: '精準搜尋：帳號列表 (Admin 專用)',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetOrderAccountQuery"
@@ -115,7 +124,7 @@ export class OrderRoute extends BaseRoute {
           #swagger.parameters['emails'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：email列表',
+            description: '精準搜尋：email列表 (Admin 專用)',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetOrderEmailQuery"
@@ -124,13 +133,22 @@ export class OrderRoute extends BaseRoute {
           #swagger.parameters['phones'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：電話號碼列表',
+            description: '精準搜尋：電話號碼列表 (Admin 專用)',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetOrderPhoneQuery"
             }
           }
-
+          #swagger.parameters['status'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：訂單狀態',
+            type: 'string',
+            enum:['paid','pending','refunded','expired','failed'],
+            schema:{
+              $ref:"#/definitions/CustomGetOrderStatusQuery"
+            }
+          }
           #swagger.parameters['createdAtFrom'] = {
             in: 'query',
             required: false,
@@ -167,32 +185,24 @@ export class OrderRoute extends BaseRoute {
               $ref: "#/definitions/CustomTimeAtToQuery"
             }
           }
-          #swagger.parameters['page'] = {
+          #swagger.parameters['sortField'] = {
             in: 'query',
-            required: true,
-            description: '頁數',
-            type: 'number',
-            schema:{
-              $ref: "#/definitions/CustomPageQuery"
-            }
-          }
-          #swagger.parameters['limit'] = {
-            in: 'query',
-            required: true,
-            description: '每頁資料數',
-            type: 'number',
-            schema:{
-              $ref: "#/definitions/CustomLimitQuery"
-            }
-          }
-          #swagger.parameters['sortBy'] = {
-            in: 'query',
-            required: true,
-            description: '排序根據，降冪則在前面加上 - ',
+            required: false,
+            description: '排序根據',
             type: 'string',
-            enum:['createdAt', 'status']
+            enum:['createdAt', 'status','paidAt','thirdPartyPaymentId'],
             schema:{
-              $ref: "#/definitions/CustomSortByQuery"
+              $ref: "#/definitions/CustomSortFieldQuery"
+            }
+          }
+          #swagger.parameters['sortOrder'] = {
+            in: 'query',
+            required: false,
+            description: '排序順序',
+            type: 'string',
+            enum: ["asc", "desc"],
+            schema:{
+              $ref: "#/definitions/CustomSortOrderQuery"
             }
           }
       */
