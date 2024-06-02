@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, PaginateModel } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import { TicketStatus } from '../types/ticket.type';
 import {
@@ -9,8 +9,10 @@ import {
   ModelName,
   schemaDef,
 } from './baseModel';
+import paginate from 'mongoose-paginate-v2';
+import { IOrder } from './order';
 
-interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
+export interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
   amount: number;
   status: TicketStatus;
   isPublished: boolean;
@@ -42,7 +44,6 @@ const schema = new Schema<ITicket>(
     },
     chatRoomId: {
       type: String,
-      required: true,
     },
     writeOffAt: {
       type: Date,
@@ -55,8 +56,9 @@ const schema = new Schema<ITicket>(
     },
   },
   schemaOption,
+).plugin(paginate);
+
+export const TicketModel = model<ITicket, PaginateModel<IOrder>>(
+  ModelName.ticket,
+  schema,
 );
-
-const TicketModel = model<ITicket>(ModelName.ticket, schema);
-
-export default TicketModel;

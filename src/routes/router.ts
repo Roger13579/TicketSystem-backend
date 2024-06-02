@@ -8,6 +8,7 @@ import { CommentRoute } from './commentRoute';
 import { OrderRoute } from './orderRoute';
 import { CartRoute } from './cartRoute';
 import { TagRoute } from './tagRoute';
+import { TicketRoute } from './ticketRoute';
 
 export const router: Array<BaseRoute> = [
   new IndexRoute(),
@@ -17,6 +18,7 @@ export const router: Array<BaseRoute> = [
   new UploadRoute(),
   new CommentRoute(),
   new OrderRoute(),
+  new TicketRoute(),
   new CartRoute(),
   new TagRoute(),
 ];
