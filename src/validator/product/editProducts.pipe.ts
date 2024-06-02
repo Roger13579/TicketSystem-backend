@@ -7,17 +7,14 @@ export class EditProductsPipe extends PipeBase {
   public transform = () => [
     body('products')
       .exists()
-      .isArray()
-      .notEmpty()
-      .custom(this.isNotEmptyArray)
+      .isArray({ min: 1 })
       .withMessage(
         CustomResponseType.INVALID_EDIT_PRODUCT_MESSAGE + '沒有要編輯的商品',
       ),
-    body('products.*.id')
-      .exists()
-      .withMessage(CustomResponseType.INVALID_EDIT_PRODUCT_MESSAGE + 'id')
-      .isString()
-      .withMessage(CustomResponseType.INVALID_EDIT_PRODUCT_MESSAGE + 'id'),
+    this.nonEmptyStringValidation(
+      body('products.*.id'),
+      CustomResponseType.INVALID_EDIT_PRODUCT_MESSAGE + 'id',
+    ),
     this.validationHandler,
   ];
   constructor() {

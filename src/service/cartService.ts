@@ -3,23 +3,29 @@ import { EditCartProductDTO } from '../dto/cart/editCartProductDto';
 import { CartRepository } from '../repository/cartRepository';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
+import { EditCartType, ICartPagination } from '../types/cart.type';
+import { GetCartDTO } from '../dto/cart/getCartDto';
 
 export class CartService {
   private readonly cartRepository: CartRepository = new CartRepository();
 
-  public readonly getCart = async (userId: Types.ObjectId) => {
-    const existedCart = await this.cartRepository.findCartByUserId(userId);
+  public readonly getCart = async (getCartDto: GetCartDTO) => {
+    const existedCart: ICartPagination[] =
+      await this.cartRepository.getCart(getCartDto);
 
     if (existedCart) {
-      return existedCart;
+      return existedCart[0];
     }
-    return await this.cartRepository.createCart(userId);
+
+    const newCart = await this.cartRepository.createCart(getCartDto.userId);
+
+    return newCart;
   };
 
   public readonly editCartProduct = async (
     editCartProductDto: EditCartProductDTO,
   ) => {
-    const { productId, amount, userId } = editCartProductDto;
+    const { productId, amount, userId, type } = editCartProductDto;
 
     const existedCart = await this.cartRepository.findCartByUserId(userId);
 
@@ -45,7 +51,10 @@ export class CartService {
     }
 
     // 商品已存在於購物車中，數量不為 0，舊數量和新數量不同 => 編輯商品
-    if (!!existedItem && amount !== existedItem.amount) {
+    if (
+      !!existedItem &&
+      (amount !== existedItem.amount || type === EditCartType.inc)
+    ) {
       return await this.cartRepository.editCartProduct(editCartProductDto);
     }
 
@@ -69,6 +78,9 @@ export class CartService {
     }
 
     // 商品不存在於購物車中，數量不為 0 => 則新增商品
-    return await this.cartRepository.addCartProduct(editCartProductDto);
+
+    const cart = await this.cartRepository.addCartProduct(editCartProductDto);
+
+    return cart;
   };
 }

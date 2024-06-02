@@ -192,6 +192,7 @@ export class GroupRoute extends BaseRoute {
             in: 'query',
             required: false,
             description: '精準搜尋：揪團狀態',
+            enum:['ongoing', 'cancelled', 'completed'],
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetGroupStatusQuery"
@@ -211,6 +212,7 @@ export class GroupRoute extends BaseRoute {
             required: false,
             description: '精準搜尋：是否持有票券',
             type: 'boolean',
+            enum:['true','false'],
             schema:{
               $ref: "#/definitions/CustomGetGroupHasTicketQuery"
             }
@@ -244,7 +246,7 @@ export class GroupRoute extends BaseRoute {
           }
           #swagger.parameters['limit'] = {
             in: 'query',
-            required: false,
+            required: true,
             description: '每頁資料數',
             type: 'number',
             schema:{
@@ -253,9 +255,10 @@ export class GroupRoute extends BaseRoute {
           }
           #swagger.parameters['sortBy'] = {
             in: 'query',
-            required: false,
-            description: '排序根據, e.g. startAt, title,降冪則在前面加上 - ',
+            required: true,
+            description: '排序根據，降冪則在前面加上 - ',
             type: 'string',
+            enum:['startAt', 'title'],
             schema:{
               $ref: "#/definitions/CustomSortByQuery"
             }

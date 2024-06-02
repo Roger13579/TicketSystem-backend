@@ -1,6 +1,13 @@
-import { PaginateModel, PopulateOptions, Schema, Types, model } from 'mongoose';
+import {
+  PaginateModel,
+  PopulateOptions,
+  Query,
+  Schema,
+  Types,
+  model,
+} from 'mongoose';
 import { IProductSnapshot, IPlan } from '../types/product.type';
-import { schemaOption, virtualSchemaOption } from '../utils/constants';
+import { schemaOption } from '../utils/constants';
 import moment from 'moment';
 import {
   BaseModel,
@@ -158,7 +165,7 @@ const schema = new Schema<IProduct>(
       type: [commentId],
     },
   },
-  { ...schemaOption, ...virtualSchemaOption },
+  schemaOption,
 ).plugin(paginate);
 
 // 避免重複商品
@@ -173,16 +180,53 @@ schema.index(
   { unique: true },
 );
 
-schema.pre(/^find/, function (this, next) {
-  const options: PopulateOptions = {
-    path: 'tags.tagId',
-    select: 'name _id',
-  };
+schema.pre<Query<unknown, IProduct>>(['find', 'findOne'], function (next) {
+  const isTagsShown = this.projection().tags === 1;
+  // 沒有要取 tags 的資料，就不需要 populate
+  if (isTagsShown) {
+    const populateOptions: PopulateOptions = {
+      path: 'tags.tagId',
+      select: 'name -_id',
+    };
+    this.populate(populateOptions);
+  }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  this.populate(options);
   next();
+});
+
+// 針對 Document 的細部結構轉換流程都寫在這裡，Vo 僅提供哪些資料要顯示
+
+interface ITransformTag {
+  tagId: { name: string };
+  _id: Types.ObjectId;
+}
+
+const transform = (_doc: unknown, ret: Record<string, unknown>) => {
+  if (!!ret.tags) {
+    ret.tags = (ret.tags as ITransformTag[]).map((tag) => ({
+      name: tag.tagId.name,
+      _id: tag._id,
+    }));
+  }
+  if (!!ret.plans) {
+    ret.plans = (ret.plans as IPlan[]).map((plan) => ({
+      name: plan.name,
+      discount: plan.discount,
+      headCount: plan.headCount,
+    }));
+  }
+  delete ret.id;
+  return ret;
+};
+
+schema.set('toJSON', {
+  virtuals: true,
+  transform,
+});
+
+schema.set('toObject', {
+  virtuals: true,
+  transform,
 });
 
 const ProductModel = model<IProduct, PaginateModel<IProduct>>(

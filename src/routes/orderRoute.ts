@@ -36,7 +36,7 @@ export class OrderRoute extends BaseRoute {
        */
       /**
        #swagger.responses[200] = {
-        description: 'OK (根據 paymentMethod 回傳不同 redirect 資訊)',
+        description: '根據 paymentMethod 回傳不同 redirect 資訊',
         schema: {
           $ref: '#/definitions/CreateOrderSuccess' }
         }
@@ -80,6 +80,7 @@ export class OrderRoute extends BaseRoute {
             required: false,
             description: '精準搜尋：訂單狀態',
             type: 'string',
+            enum:['paid','pending','refunded','expired','failed'],
             schema:{
               $ref:"#/definitions/CustomGetOrderStatusQuery"
             }
@@ -177,7 +178,7 @@ export class OrderRoute extends BaseRoute {
           }
           #swagger.parameters['limit'] = {
             in: 'query',
-            required: false,
+            required: true,
             description: '每頁資料數',
             type: 'number',
             schema:{
@@ -186,9 +187,10 @@ export class OrderRoute extends BaseRoute {
           }
           #swagger.parameters['sortBy'] = {
             in: 'query',
-            required: false,
-            description: '排序根據, e.g. createdAt, status,降冪則在前面加上 - ',
+            required: true,
+            description: '排序根據，降冪則在前面加上 - ',
             type: 'string',
+            enum:['createdAt', 'status']
             schema:{
               $ref: "#/definitions/CustomSortByQuery"
             }

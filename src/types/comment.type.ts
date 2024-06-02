@@ -14,7 +14,6 @@ export interface ICommentProductReq extends IUserReq {
     productId: Types.ObjectId;
     rating: number;
     content: string;
-    status: Status;
   };
 }
 

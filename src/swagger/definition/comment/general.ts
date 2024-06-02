@@ -1,4 +1,6 @@
+import moment from 'moment';
 import { CustomResponseType } from '../../../types/customResponseType';
+import { PaginationSuccess } from '../common';
 
 export const CreateCommentSuccess = {
   $status: CustomResponseType.OK,
@@ -11,8 +13,8 @@ export const CreateCommentSuccess = {
       $content: '宇宙讚讚',
       $status: 'active',
       $_id: '66472f92c993e6a6a3c38ecc',
-      $createdAt: '2024-05-17T10:21:06.901Z',
-      $updatedAt: '2024-05-17T10:21:06.901Z',
+      $createdAt: moment().toDate(),
+      $updatedAt: moment().toDate(),
     },
   },
 };
@@ -34,15 +36,13 @@ export const GetCommentsSuccess = {
         $_id: '664760bfb43426ed855d1b2c',
         $rating: 5,
         $content: '宇宙讚讚 A',
-        $createdAt: '2024-05-17T13:50:55.720Z',
+        $createdAt: moment().toDate(),
         $user: {
           $account: 'yjadmin0001',
           $avatarPath: '',
         },
       },
     ],
-    $page: 1,
-    $limit: 10,
-    $totalCount: 1,
+    ...PaginationSuccess,
   },
 };

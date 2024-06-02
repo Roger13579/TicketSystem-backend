@@ -6,15 +6,14 @@ export class DeleteProductsPipe extends PipeBase {
   public transform = () => [
     body('productIds')
       .exists()
+      .isArray({ min: 1 })
       .withMessage(
         CustomResponseType.INVALID_DELETE_PRODUCT_MESSAGE + 'productIds',
-      )
-      .isArray()
-      .custom(this.isNotEmptyArray),
-    body('productIds.*')
-      .exists()
-      .isString()
-      .withMessage(CustomResponseType.INVALID_DELETE_PRODUCT_MESSAGE + 'id'),
+      ),
+    this.nonEmptyStringValidation(
+      body('productIds.*'),
+      CustomResponseType.INVALID_DELETE_PRODUCT_MESSAGE + 'id',
+    ),
     this.validationHandler,
   ];
   constructor() {

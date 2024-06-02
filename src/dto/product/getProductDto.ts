@@ -4,10 +4,13 @@ import {
   ProductType,
   MovieGenre,
   IGetProductsReq,
+  ProductSortBy,
 } from '../../types/product.type';
 import { AccountType } from '../../types/user.type';
+import { omitBy, isNil } from 'lodash';
+import { defaultProjection } from '../../utils/product.constants';
 
-export class ProductFilterDTO {
+export class GetProductDTO {
   private readonly _title?: string;
   private readonly _types?: ProductType[];
   private readonly _genres?: MovieGenre[];
@@ -26,35 +29,8 @@ export class ProductFilterDTO {
   private readonly _page: number;
   private readonly _limit: number;
   private readonly _sortBy?: string;
-  private readonly _accountType: AccountType = AccountType.member;
+  private readonly _isAdmin: boolean = false;
 
-  get title() {
-    return this._title;
-  }
-
-  get types() {
-    return this._types;
-  }
-
-  get genres() {
-    return this._genres;
-  }
-
-  get vendors() {
-    return this._vendors;
-  }
-
-  get theaters() {
-    return this._theaters;
-  }
-
-  get isLaunched() {
-    return this._isLaunched;
-  }
-
-  get isPublic() {
-    return this._isPublic;
-  }
   get startAtFrom() {
     return this._startAtFrom;
   }
@@ -64,38 +40,80 @@ export class ProductFilterDTO {
   get sellStartAtFrom() {
     return this._sellStartAtFrom;
   }
-  get recommendWeights() {
-    return this._recommendWeights;
-  }
+
   get sellStartAtTo() {
     return this._sellStartAtTo;
   }
-  get priceMax() {
-    return this._priceMax;
+
+  get filter() {
+    const titleRegex = this._title ? new RegExp(this._title) : undefined;
+
+    const target = {
+      ...(titleRegex && { title: { $regex: titleRegex } }),
+      ...(this._types && { type: { $in: this._types } }),
+      ...(this._genres && { genre: { $in: this._genres } }),
+      ...(this._vendors && { vendor: { $in: this._vendors } }),
+      ...(this._theaters && { theater: { $in: this._theaters } }),
+      ...(this._recommendWeights && {
+        recommendWeight: { $in: this._recommendWeights },
+      }),
+      ...(this._isLaunched !== undefined && { isLaunched: this._isLaunched }),
+      ...(this._isPublic !== undefined && { isPublic: this._isPublic }),
+      ...((this.startAtFrom || this.startAtTo) && {
+        startAt: omitBy(
+          {
+            ...(this.startAtFrom && { $lte: this.startAtFrom }),
+            ...(this.startAtTo && { $gte: this.startAtTo }),
+          },
+          isNil,
+        ),
+      }),
+      ...((this.sellStartAtFrom || this.sellStartAtTo) && {
+        sellStartAt: omitBy(
+          {
+            ...(this.sellStartAtFrom && { $lte: this.sellStartAtFrom }),
+            ...(this.sellStartAtTo && { $gte: this.sellStartAtTo }),
+          },
+          isNil,
+        ),
+      }),
+      ...((this._priceMax || this._priceMin) && {
+        price: omitBy(
+          {
+            ...(this._priceMin && { $lte: this._priceMin }),
+            ...(this._priceMax && { $gte: this._priceMax }),
+          },
+          isNil,
+        ),
+      }),
+      ...(this._tags && { tags: { $in: this._tags } }),
+    };
+
+    return omitBy(target, isNil);
   }
 
-  get page() {
-    return this._page;
-  }
-
-  get limit() {
-    return this._limit;
-  }
-
-  get priceMin() {
-    return this._priceMin;
-  }
-
-  get tags() {
-    return this._tags;
-  }
-
-  get sortBy() {
-    return this._sortBy;
-  }
-
-  get accountType() {
-    return this._accountType;
+  get options() {
+    const projection = this._isAdmin
+      ? {
+          ...defaultProjection,
+          isPublic: 1,
+          sellStartAt: 1,
+          sellEndAt: 1,
+          startAt: 1,
+          endAt: 1,
+          vendor: 1,
+          tags: 1,
+          price: 1,
+          soldAmount: 1,
+          amount: 1,
+        }
+      : { ...defaultProjection, recommendWeight: 0, isPublic: 0 };
+    return {
+      skip: (this._page - 1) * this._limit,
+      ...(this._limit && { limit: this._limit }),
+      sort: this._sortBy || `-${ProductSortBy.createdAt}`,
+      projection,
+    };
   }
 
   constructor(req: IGetProductsReq) {
@@ -121,7 +139,7 @@ export class ProductFilterDTO {
     } = req.query;
 
     if ((req.user as IUser)?.accountType === AccountType.admin) {
-      this._accountType = AccountType.admin;
+      this._isAdmin = true;
     }
 
     this._types = types?.split(',') as ProductType[];
@@ -131,7 +149,7 @@ export class ProductFilterDTO {
       ?.split(',')
       .map((weight) => Number(weight));
 
-    this._sortBy = sortBy;
+    this._sortBy = sortBy as ProductSortBy;
     this._title = title;
     this._limit = Number(limit);
     this._priceMax = isNaN(Number(priceMax)) ? undefined : Number(priceMax);

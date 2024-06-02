@@ -1,6 +1,7 @@
 import { CartController } from '../controller/cartController';
 import { UserVerify } from '../middleware/userVerify';
 import { EditCartProductPipe } from '../validator/cart/editCartProduct.pipe';
+import { GetCartPipe } from '../validator/cart/getCart.pipe';
 import { BaseRoute } from './baseRoute';
 
 export class CartRoute extends BaseRoute {
@@ -25,6 +26,26 @@ export class CartRoute extends BaseRoute {
        * #swagger.summary = '取得使用者購物車'
        * #swagger.security=[{"Bearer": []}]
        */
+      /*
+        #swagger.parameters['limit'] = {
+          in: 'query',
+          required: true,
+          description: '每頁資料數',
+          type: 'string',
+          schema:{
+            $ref:"#/definitions/CustomLimitQuery"
+          }
+        } 
+        #swagger.parameters['page'] = {
+          in: 'query',
+          required: true,
+          description: '頁數',
+          type: 'string',
+          schema:{
+            $ref:"#/definitions/CustomPageQuery"
+          }
+        } 
+      */
       /**
         #swagger.responses[200]={
           description:'OK',
@@ -34,6 +55,7 @@ export class CartRoute extends BaseRoute {
         }
        */
       UserVerify,
+      this.usePipe(GetCartPipe),
       this.responseHandler(this.controller.getCart),
     );
 
