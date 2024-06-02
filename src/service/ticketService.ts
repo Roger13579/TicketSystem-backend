@@ -8,14 +8,12 @@ import { TicketRepository } from '../repository/ticketRepository';
 import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { TicketFilterDto } from '../dto/ticket/ticketFilterDto';
 import { ITicket } from '../models/ticket';
-import { ProductRepository } from '../repository/productRepository';
 
 const logger = log4js.getLogger(`TicketService`);
 
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
-  private readonly productRepository: ProductRepository =
-    new ProductRepository();
+
   public findTickets = async (
     ticketFilterDto: TicketFilterDto,
   ): Promise<

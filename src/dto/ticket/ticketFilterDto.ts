@@ -16,7 +16,7 @@ export class TicketFilterDto {
   private readonly _sortBy?: string;
   private readonly _ids?: string[];
   private readonly _productName?: string;
-  private readonly accountType?: string;
+  private readonly isAdmin?: boolean;
 
   get status() {
     return this._status;
@@ -71,17 +71,15 @@ export class TicketFilterDto {
     };
   }
   get options() {
-    const selectStr =
-      this.accountType === AccountType.admin
-        ? 'title photoPath price theater startAt isPublic recommendWeight'
-        : 'title photoPath price theater startAt -isPublic -recommendWeight';
-    const projection =
-      this.accountType === AccountType.admin
-        ? {}
-        : {
-            writeOffAt: 0,
-            writeOffStaff: 0,
-          };
+    const selectStr = this.isAdmin
+      ? 'title photoPath price theater startAt isPublic recommendWeight'
+      : 'title photoPath price theater startAt -isPublic -recommendWeight';
+    const projection = this.isAdmin
+      ? {}
+      : {
+          writeOffAt: 0,
+          writeOffStaff: 0,
+        };
     return {
       populate: {
         path: 'product',
@@ -110,7 +108,7 @@ export class TicketFilterDto {
       (req.user as IUser).accountType !== AccountType.admin
         ? (req.user as IUser)._id
         : undefined;
-    this.accountType = (req.user as IUser).accountType;
+    this.isAdmin = (req.user as IUser).accountType === AccountType.admin;
     this._status = status as TicketStatus;
     this._ids = ids?.split(',');
     this._productName = productName;
