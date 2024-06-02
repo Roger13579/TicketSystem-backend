@@ -1,4 +1,4 @@
-import { Schema, model, PaginateModel, Query, PopulateOptions } from 'mongoose';
+import { Schema, model, PaginateModel } from 'mongoose';
 import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import { TicketStatus } from '../types/ticket.type';
 import {
