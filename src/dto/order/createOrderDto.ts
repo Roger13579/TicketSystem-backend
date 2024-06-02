@@ -22,8 +22,17 @@ export class CreateOrderDto {
 
   static createValidProduct({ item, product }: IValidateAmount) {
     const { productId, amount, plan } = item;
-    const { price, title, brief, type, genre, vendor, theater, plans } =
-      product;
+    const {
+      price,
+      title,
+      brief,
+      type,
+      genre,
+      vendor,
+      theater,
+      plans,
+      startAt,
+    } = product;
 
     const existedPlan = plan
       ? find(plans || [], (p) =>
@@ -44,6 +53,7 @@ export class CreateOrderDto {
       genre,
       vendor,
       theater,
+      startAt,
       ...(existedPlan && { plan: existedPlan }),
     };
   }

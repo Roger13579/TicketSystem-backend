@@ -182,4 +182,7 @@ export const enum CustomResponseType {
 
   ORDER_PLAN_ERROR = '6536',
   ORDER_PLAN_ERROR_MESSAGE = '訂單中的方案錯誤',
+
+  INVALID_TICKET_FILTER = '6537',
+  INVALID_TICKET_FILTER_MESSAGE = '無效的票券查詢條件：',
 }
