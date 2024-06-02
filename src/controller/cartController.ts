@@ -1,21 +1,22 @@
 import { EditCartProductDTO } from '../dto/cart/editCartProductDto';
-import { IUser } from '../models/user';
+import { GetCartDTO } from '../dto/cart/getCartDto';
 import { CartService } from '../service/cartService';
-import { IEditCartProductReq } from '../types/cart.type';
-import { IUserReq } from '../types/common.type';
+import { IEditCartProductReq, IGetCartReq } from '../types/cart.type';
 import { CustomResponseType } from '../types/customResponseType';
+import { GetCartVO } from '../vo/cart/getCartVo';
 import { BaseController } from './baseController';
 
 export class CartController extends BaseController {
   private readonly cartService = new CartService();
 
-  public readonly getCart = async (req: IUserReq) => {
-    const { _id } = req.user as IUser;
-    const cart = await this.cartService.getCart(_id);
+  public readonly getCart = async (req: IGetCartReq) => {
+    const getCartDto = new GetCartDTO(req);
+    const { limit, page } = getCartDto;
+    const cart = await this.cartService.getCart(getCartDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { cart },
+      new GetCartVO(cart, limit, page),
     );
   };
 

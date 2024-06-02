@@ -4,6 +4,7 @@ import { IProductId } from '../models/baseModel';
 import { IOrderProduct } from '../models/order';
 import { IProduct } from '../models/product';
 import { Request } from 'express';
+import { Types } from 'mongoose';
 
 export enum PaymentMethod {
   linePay = 'linePay',
@@ -95,4 +96,11 @@ export interface ILinePayConfirmReq extends Request {
     transactionId?: string;
     orderId?: string;
   };
+}
+
+export interface IUpdateOrderParam {
+  orderId: Types.ObjectId;
+  thirdPartyPaymentId: string;
+  paymentStatus: PaymentStatus;
+  paidAt?: Date;
 }

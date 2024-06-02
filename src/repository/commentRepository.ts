@@ -1,98 +1,41 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { NewCommentDTO } from '../dto/comment/newCommentDto';
-import { ModelName } from '../models/baseModel';
 import CommentModel, { IComment } from '../models/comment';
-import { collectionName } from '../utils/common';
+import ProductModel from '../models/product';
 
 export class CommentRepository {
-  private createFilter = (getCommentsDto: GetCommentsDTO) => {
-    const {
-      productIds,
-      status,
-      ratings,
-      createdAtFrom,
-      createdAtTo,
-      accounts,
-      content,
-      // productName, // TODO: 後台使用
-    } = getCommentsDto;
-
-    const contentRegex = content ? new RegExp(content) : undefined;
-    return {
-      ...(!!productIds && { productId: { $in: productIds } }),
-      ...(status && { status }),
-      ...(!!ratings && { rating: { $in: ratings } }),
-      ...(contentRegex && { content: { $regex: contentRegex } }),
-      ...(!!accounts && { account: { $in: accounts } }),
-      ...((createdAtFrom || createdAtTo) && {
-        createdAt: {
-          ...(createdAtFrom && { $lte: createdAtFrom }),
-          ...(createdAtTo && { $gte: createdAtTo }),
-        },
-      }),
-    };
-  };
-
-  public createComment = async (newCommentDto: NewCommentDTO) => {
-    const { comment } = newCommentDto;
-    return await CommentModel.create(comment);
-  };
+  public createComment = async ({ comment }: NewCommentDTO) =>
+    await CommentModel.create(comment);
 
   public deleteComments = async (filter: FilterQuery<IComment>) => {
     return await CommentModel.deleteMany(filter);
   };
 
-  public findComments = async (getCommentsDto: GetCommentsDTO) => {
-    const { page, limit, sortBy } = getCommentsDto;
+  public findComments = async ({
+    filter,
+    options,
+    productName,
+  }: GetCommentsDTO) => {
+    const productIds: Types.ObjectId[] = [];
+    if (!!productName) {
+      // 商品名稱的模糊搜尋
+      const titleRegex = new RegExp(productName);
+      const ids: Types.ObjectId[] = await ProductModel.find({
+        title: { $regex: titleRegex },
+      })
+        .select('_id')
+        .exec()
+        .then((list) => list.map((item) => item._id));
+      productIds.push(...ids);
+    }
 
-    const filter = this.createFilter(getCommentsDto);
-
-    return await CommentModel.aggregate([
-      { $match: filter },
+    return await CommentModel.paginate(
       {
-        $sort: {
-          [`${sortBy ? sortBy.replace('-', '') : 'createdAt'}`]:
-            sortBy?.includes('-') ? -1 : 1,
-        },
+        ...filter,
+        ...(productIds.length > 0 && { productId: { $in: productIds } }),
       },
-      { $skip: (page - 1) * limit },
-      { $limit: limit },
-      {
-        $lookup: {
-          from: collectionName(ModelName.user),
-          localField: 'userId',
-          foreignField: '_id',
-          as: 'user',
-        },
-      },
-      // {
-      //   $lookup: {
-      //     from: collectionName(ModelName.product),
-      //     localField: 'productId',
-      //     foreignField: '_id',
-      //     as: 'product',
-      //   },
-      // },// 未來有需要商品資訊的時候再加
-      {
-        $project: {
-          _id: 1,
-          rating: 1,
-          content: 1,
-          createdAt: 1,
-          user: {
-            account: '$user.account',
-            avatarPath: '$user.avatarPath',
-            name: '$user.name',
-          },
-          // product: 1, // 未來有需要商品資訊的時候再加
-        },
-      },
-    ]);
-  };
-
-  public countComments = async (getCommentsDto: GetCommentsDTO) => {
-    const filter = this.createFilter(getCommentsDto);
-    return await CommentModel.countDocuments(filter);
+      options,
+    );
   };
 }

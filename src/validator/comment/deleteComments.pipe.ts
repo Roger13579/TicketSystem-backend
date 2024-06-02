@@ -9,17 +9,14 @@ export class DeleteCommentsPipe extends PipeBase {
       .withMessage(
         CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentIds',
       )
-      .isArray()
-      .custom(this.isNotEmptyArray)
+      .isArray({ min: 1 })
       .withMessage(
         CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentIds',
       ),
-    body('commentIds.*')
-      .exists()
-      .isString()
-      .withMessage(
-        CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentId',
-      ),
+    this.nonEmptyStringValidation(
+      body('commentIds.*'),
+      CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE + 'commentId',
+    ),
     this.validationHandler,
   ];
 

@@ -49,12 +49,11 @@ export class CommentController extends BaseController {
 
   public readonly getComments = async (req: IGetCommentsReq) => {
     const getCommentsDto = new GetCommentsDTO(req);
-    const { page, limit } = getCommentsDto;
     const info = await this.commentService.getComments(getCommentsDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new GetCommentsVo(info, page, limit),
+      new GetCommentsVo(info),
     );
   };
 }

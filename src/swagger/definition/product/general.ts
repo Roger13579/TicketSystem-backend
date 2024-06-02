@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { MovieGenre, ProductType } from '../../../types/product.type';
 import { CustomResponseType } from '../../../types/customResponseType';
+import { PaginationSuccess } from '../common';
 
 /**
  * @description swagger autogen fit 的商品方案
@@ -98,9 +99,7 @@ export const GetProductsSuccess = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     $products: [ProductItem],
-    $page: 1,
-    $limit: 10,
-    $totalCount: 1,
+    ...PaginationSuccess,
   },
 };
 

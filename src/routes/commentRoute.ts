@@ -48,8 +48,9 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['status'] = {
             in: 'query',
             required: false,
-            description: '評論狀態 (member 只能下 active，admin 才可以下 disabled)',
+            description: '評論狀態，member 只能使用 active',
             type: 'string',
+            enum:['active','disabled'],
             schema:{
               $ref:"#/definitions/CustomStatusQuery"
             }
@@ -84,7 +85,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['productName'] = {
             in: 'query',
             required: false,
-            description: '模糊搜尋：商品名稱，和 ProductIds 不能同時用，只有 admin 才可以用這個查',
+            description: '模糊搜尋：商品名稱 (Admin 專用)，不能和 ProductIds 同時使用',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomGetProductTitleQuery"
@@ -93,7 +94,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['productIds'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：商品 id 列表，和 ProductIds 不能同時用',
+            description: '精準搜尋：商品 id 列表，不能和 ProductName 同時使用，非使用者一定要使用該 query',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomGetCommentsProductIdsQuery"
@@ -102,7 +103,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['accounts'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：帳號列表，admin 才能用',
+            description: '精準搜尋：帳號列表 (Admin 專用)',
             type: 'string',
             schema:{
               $ref:"#/definitions/CustomGetCommentsProductIdsQuery"
@@ -110,9 +111,10 @@ export class CommentRoute extends BaseRoute {
           } 
           #swagger.parameters['sortBy'] = {
             in: 'query',
-            required: false,
-            description: '排序根據, e.g. rating, createdAt, account, productName, productId,降冪則在前面加上 - ',
+            required: true,
+            description: '排序根據，降冪則在前面加上 -',
             type: 'string',
+            enum: ["rating", "createdAt", "account", "productName", "productId"],
             schema:{
               $ref: "#/definitions/CustomSortByQuery"
             }
@@ -120,7 +122,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.parameters['content'] = {
             in: 'query',
             required: false,
-            description: '模糊搜尋：評論內容',
+            description: '模糊搜尋：評論內容 (Admin 專用)',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetCommentsContentQuery"
@@ -171,7 +173,7 @@ export class CommentRoute extends BaseRoute {
     this.router.delete(
       '/v1/comment',
       /**
-       * #swagger.tags = ['Comment']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '批次刪除評論'
        * #swagger.security=[{"Bearer": []}]
        */

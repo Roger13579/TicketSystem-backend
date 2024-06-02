@@ -227,7 +227,7 @@ export class UserService {
     next: NextFunction,
   ): Promise<IUser | void> {
     const authenticate = (): Promise<GoogleProfileDto> =>
-      new Promise((resolve, _reject) => {
+      new Promise((resolve) => {
         passport.authenticate(
           'google',
           { session: false },

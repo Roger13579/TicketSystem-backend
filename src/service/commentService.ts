@@ -42,9 +42,6 @@ export class CommentService {
   };
 
   public getComments = async (getCommentsDto: GetCommentsDTO) => {
-    const comments = await this.commentRepository.findComments(getCommentsDto);
-    const totalCount =
-      await this.commentRepository.countComments(getCommentsDto);
-    return { comments, totalCount };
+    return await this.commentRepository.findComments(getCommentsDto);
   };
 }

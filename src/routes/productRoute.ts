@@ -175,7 +175,7 @@ export class ProductRoute extends BaseRoute {
           }
           #swagger.parameters['limit'] = {
             in: 'query',
-            required: false,
+            required: true,
             description: '每頁資料數',
             type: 'string',
             schema:{
@@ -184,9 +184,10 @@ export class ProductRoute extends BaseRoute {
           }
           #swagger.parameters['sortBy'] = {
             in: 'query',
-            required: false,
-            description: '排序根據, e.g. startAt, price, sellStartAt, type, vendor, theater, title, _id, soldAmount,createdAt,降冪則在前面加上 - ',
+            required: true,
+            description: '排序根據，降冪則在前面加上 - ',
             type: 'string',
+            enum:["startAt", "price", "sellStartAt","startAt", "type", "vendor", "theater", "title", "_id", "soldAmount","createdAt","recommendWeight"],
             schema:{
               $ref: "#/definitions/CustomSortByQuery"
             }
@@ -235,8 +236,8 @@ export class ProductRoute extends BaseRoute {
     this.router.post(
       '/v1/product',
       /**
-       * #swagger.tags = ['Product']
-       * #swagger.summary = '新增商品'
+       * #swagger.tags = ['Admin']
+       * #swagger.summary = '批次新增商品'
        * #swagger.security=[{"Bearer": []}],
        */
       /*
@@ -272,7 +273,7 @@ export class ProductRoute extends BaseRoute {
     this.router.delete(
       '/v1/product',
       /**
-       * #swagger.tags = ['Product']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '批次刪除商品'
        * #swagger.security=[{"Bearer": []}],
        */
@@ -302,7 +303,7 @@ export class ProductRoute extends BaseRoute {
     this.router.patch(
       '/v1/product',
       /**
-       * #swagger.tags = ['Product']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '批次編輯商品'
        * #swagger.security=[{"Bearer": []}],
        */

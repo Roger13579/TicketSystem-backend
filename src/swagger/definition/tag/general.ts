@@ -1,4 +1,5 @@
 import { CustomResponseType } from '../../../types/customResponseType';
+import { PaginationSuccess } from '../common';
 
 export const customTag = {
   $name: '超級棒的標籤',
@@ -12,9 +13,7 @@ export const GetTagsSuccess = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     $tags: [customTag],
-    $page: 1,
-    $limit: 10,
-    $totalCount: 2,
+    ...PaginationSuccess,
   },
 };
 

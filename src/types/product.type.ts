@@ -50,7 +50,7 @@ export type IPlan = {
 
 export interface ICreateProductsReq extends Request {
   body: {
-    products: (Omit<IProduct, 'tags'> & { tagNames: string[] })[];
+    products: (Omit<IProduct, 'tags'> & { tagNames?: string[] })[];
   };
 }
 
@@ -88,6 +88,7 @@ export enum ProductSortBy {
   id = 'id',
   soldAmount = 'soldAmount',
   createdAt = 'createdAt',
+  recommendWeight = 'recommendWeight',
 }
 
 export interface IDeleteProductsReq extends Request {
@@ -121,7 +122,7 @@ export interface IEditContent {
   cancelPolicies?: [string];
   certificates?: [string];
   brief?: string;
-  tagNames?: string[];
+  tags?: { tagId: Types.ObjectId }[];
 }
 
 export interface IEditProductsReq extends Request {

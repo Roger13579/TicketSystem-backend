@@ -1,5 +1,5 @@
 import { PaginateModel, Schema, model } from 'mongoose';
-import { schemaOption } from '../utils/constants';
+import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import { BaseModel, ModelName } from './baseModel';
 import paginate from 'mongoose-paginate-v2';
 
@@ -16,7 +16,7 @@ const schema = new Schema<ITag>(
       trim: true,
     },
   },
-  schemaOption,
+  { ...schemaOption, ...virtualSchemaOption },
 ).plugin(paginate);
 
 const TagModel = model<ITag, PaginateModel<ITag>>(ModelName.tag, schema);

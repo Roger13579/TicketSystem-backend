@@ -1,29 +1,83 @@
 import { PipeBase } from '../pipe.base';
-import { Meta, query } from 'express-validator';
+import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
-import moment from 'moment/moment';
 import {
   IGetOrdersReq,
   OrderSortBy,
   PaymentStatus,
 } from '../../types/order.type';
+import { OptionType, TCustomValidator } from '../index.type';
+
+// 管理者和使用者都可以使用的
 
 export class GetOrderPipe extends PipeBase {
+  private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
+    const { createdAtTo } = (req as IGetOrdersReq).query;
+    return this.validatePeriod(value, createdAtTo, (a, b) => b.isAfter(a));
+  };
+
+  private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
+    const { createdAtFrom } = (req as IGetOrdersReq).query;
+    return this.validatePeriod(value, createdAtFrom, (a, b) => a.isBefore(b));
+  };
+
+  private validatePaidAtFrom: TCustomValidator = (value, { req }) => {
+    const { paidAtTo } = (req as IGetOrdersReq).query;
+    return this.validatePeriod(value, paidAtTo, (a, b) => b.isAfter(a));
+  };
+
+  private validatePaidAtTo: TCustomValidator = (value, { req }) => {
+    const { paidAtFrom } = (req as IGetOrdersReq).query;
+    return this.validatePeriod(value, paidAtFrom, (a, b) => a.isBefore(b));
+  };
+
   public transform = () => [
-    query('limit')
-      .exists()
-      .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'limit'),
-    query('page')
-      .exists()
-      .toInt()
-      .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'page')
-      .isInt({ min: 1 })
-      .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'page'),
+    this.limitValidation(
+      query('limit'),
+      CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'limit',
+    ),
+    this.positiveIntValidation(
+      query('page'),
+      CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'page',
+    ),
+    query('ids')
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'ids',
+      ),
+    query('thirdPartyPaymentIds')
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'thirdPartyPaymentIds',
+      ),
+    query('accounts')
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'accounts',
+      ),
+    query('emails')
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'emails',
+      ),
+    query('phones')
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'phones',
+      ),
     query('sortBy')
       .optional()
-      .custom((value: string | undefined) =>
-        this.isValidOption(value, 'item', OrderSortBy),
-      )
+      .custom(this.validateOption(OptionType.item, OrderSortBy))
       .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'sortBy'),
     query('status')
       .optional()
@@ -31,75 +85,36 @@ export class GetOrderPipe extends PipeBase {
       .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'status'),
     query('createdAtFrom')
       .optional()
-      .custom(this.isValidDate)
-      .withMessage(
-        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'createdAtFrom',
-      )
-      .custom((value: string, { req }: Meta) => {
-        const { createdAtTo } = (req as IGetOrdersReq).query;
-        if (
-          createdAtTo &&
-          this.isValidDate(value) &&
-          this.isValidDate('createdAtTo')
-        ) {
-          return moment('createdAtTo').isAfter(moment(value));
-        }
-        return true;
-      })
+      .custom(this.validateDate)
+      .custom(this.validateCreatedAtFrom)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'createdAtFrom',
       ),
     query('createdAtTo')
       .optional()
-      .custom(this.isValidDate)
+      .custom(this.validateDate)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'createdAtTo',
       )
-      .custom((value: string, { req }: Meta) => {
-        const { createdAtFrom } = (req as IGetOrdersReq).query;
-        if (
-          createdAtFrom &&
-          this.isValidDate(value) &&
-          this.isValidDate('createdAtFrom')
-        ) {
-          return moment('createdAtFrom').isBefore(moment(value));
-        }
-        return true;
-      })
+      .custom(this.validateCreatedAtTo)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'createdAtTo',
       ),
     query('paidAtFrom')
       .optional()
-      .custom(this.isValidDate)
+      .custom(this.validateDate)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'paidAtFrom',
       )
-      .custom((value: string, { req }: Meta) => {
-        const { paidAtTo } = (req as IGetOrdersReq).query;
-        if (paidAtTo && this.isValidDate(value) && this.isValidDate(paidAtTo)) {
-          return moment(paidAtTo).isAfter(moment(value));
-        }
-        return true;
-      })
+      .custom(this.validatePaidAtFrom)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'paidAtFrom',
       ),
     query('paidAtTo')
       .optional()
-      .custom(this.isValidDate)
+      .custom(this.validateDate)
       .withMessage(CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'paidAtTo')
-      .custom((value: string, { req }: Meta) => {
-        const { paidAtFrom } = (req as IGetOrdersReq).query;
-        if (
-          paidAtFrom &&
-          this.isValidDate(value) &&
-          this.isValidDate(paidAtFrom)
-        ) {
-          return moment(paidAtFrom).isBefore(moment(value));
-        }
-        return true;
-      })
+      .custom(this.validatePaidAtTo)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'paidAtTo',
       ),
