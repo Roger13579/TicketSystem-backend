@@ -1,4 +1,4 @@
-import { IUserReq } from './common.type';
+import { IUserReq, SortOrder } from './common.type';
 
 export enum TicketStatus {
   verified = 'verified', // 已核銷
@@ -17,10 +17,11 @@ export interface IGetTicketsReq extends IUserReq {
     isPublished?: string;
     page?: string;
     limit?: string;
-    sortBy?: string;
+    sortField?: string;
+    sortOrder?: SortOrder;
   };
 }
-export enum TicketSortBy {
+export enum TicketSortField {
   createdAt = 'createdAt',
   expiredAt = 'expiredAt',
   status = 'status',

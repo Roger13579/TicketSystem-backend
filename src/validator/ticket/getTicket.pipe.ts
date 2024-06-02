@@ -4,7 +4,7 @@ import { CustomResponseType } from '../../types/customResponseType';
 import { OptionType, TCustomValidator } from '../index.type';
 import {
   IGetTicketsReq,
-  TicketSortBy,
+  TicketSortField,
   TicketStatus,
 } from '../../types/ticket.type';
 
@@ -70,7 +70,7 @@ export class GetTicketPipe extends PipeBase {
       ),
     query('sortBy')
       .optional()
-      .custom(this.validateOption(OptionType.item, TicketSortBy))
+      .custom(this.validateOption(OptionType.item, TicketSortField))
       .withMessage(CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'sortBy'),
 
     query('status')
