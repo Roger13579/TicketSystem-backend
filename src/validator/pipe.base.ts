@@ -14,7 +14,8 @@ export abstract class PipeBase {
   public abstract transform(): any;
 
   /**
-   * @description 管理者可以使用，非管理者完全不可使用
+   * 驗證：管理者可以使用，非管理者完全不可使用
+   * @description 使用時請放在 optional() 後面
    */
   protected isAdminOnly: TCustomValidator = (value, { req }) =>
     (req.user && req.user.accountType === AccountType.admin) || !value;
@@ -35,6 +36,13 @@ export abstract class PipeBase {
    */
   protected isMemberMust: TCustomValidator = (value, { req }) =>
     (req.user && req.user.accountType === AccountType.admin) || !!value;
+
+  /**
+   * 驗證：未登入者一定要給
+   * @description 使用時必須放到 chain 的最上面，再接 optional()
+   */
+  protected isNoLoginMust: TCustomValidator = (value, { req }) =>
+    (req.user && req.user._id) || !!value;
 
   /**
    * @description 驗證為 valid 日期
@@ -61,7 +69,6 @@ export abstract class PipeBase {
       .exists()
       .withMessage(message)
       .toInt()
-      .withMessage(message)
       .isInt({ min: 1 })
       .withMessage(message);
 
@@ -113,7 +120,6 @@ export abstract class PipeBase {
       .optional()
       .withMessage(message)
       .toInt()
-      .withMessage(message)
       .isInt({ min: 1, max: 100 })
       .withMessage(message);
 
@@ -149,7 +155,8 @@ export abstract class PipeBase {
 
       const values = propNames.map((name) => query[name]).filter(Boolean);
 
-      return values.length === 1;
+      // 如何處理兩個都沒有的情況
+      return values.length < 2;
     };
 
   protected constructor() {}

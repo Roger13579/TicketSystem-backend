@@ -1,13 +1,13 @@
 import moment from 'moment';
-import { IGetCommentsReq } from '../../types/comment.type';
-import { Status } from '../../types/common.type';
+import { CommentSortField, IGetCommentsReq } from '../../types/comment.type';
+import { SortOrder, Status } from '../../types/common.type';
 import { AccountType } from '../../types/user.type';
 import { IUser } from '../../models/user';
 import { Types } from 'mongoose';
 
 export class GetCommentsDTO {
   private readonly _productName?: string;
-  private readonly _productIds?: Types.ObjectId[];
+  private _productIds?: Types.ObjectId[]; // 如果使用 productName 模糊搜尋，就需要
   private readonly _limit: number = 10;
   private readonly _page: number = 1;
   private readonly _status?: Status;
@@ -16,58 +16,46 @@ export class GetCommentsDTO {
   private readonly _createdAtTo?: Date;
   private readonly _accounts?: string[];
   private readonly _content?: string;
-  private readonly _sortBy?: string;
+  private readonly _sort: Record<string, 1 | -1>;
   private readonly _isAdmin: boolean = false;
+  private readonly _isLogin: boolean = false;
+  private readonly _userId?: Types.ObjectId;
 
-  get page() {
-    return this._page;
-  }
-
-  get productIds() {
-    return this._productIds;
-  }
-
-  get productName() {
-    return this._productName;
-  }
-
-  get limit() {
-    return this._limit;
-  }
-
-  get status() {
-    return this._status;
-  }
-
-  get ratings() {
-    return this._ratings;
-  }
-
-  get createdAtFrom() {
-    return this._createdAtFrom;
-  }
-  get createdAtTo() {
-    return this._createdAtTo;
-  }
+  /**
+   * @description lookup to users
+   */
   get accounts() {
-    return this._accounts;
-  }
-  get content() {
-    return this._content;
+    return this._isAdmin ? this._accounts : undefined;
   }
 
-  get sortBy() {
-    return this._sortBy;
+  /**
+   * @description lookup to products
+   */
+  get productNameRegex() {
+    return this._productName && this._isAdmin
+      ? new RegExp(this._productName)
+      : undefined;
   }
 
   get filter() {
     const contentRegex = this._content ? new RegExp(this._content) : undefined;
+    /**
+     * @description 已登入使用者 + 看自己的 comment => 在已登入的情況下，沒有 productId 就搜自己的所有 product
+     */
+    const memberFilter = {
+      ...(!this._productIds &&
+        this._userId &&
+        this._isLogin &&
+        !this._isAdmin && { userId: this._userId }),
+    };
+
     return {
+      ...memberFilter,
+      // 如果有 productId 就先搜 productId
       ...(!!this._productIds && { productId: { $in: this._productIds } }),
       ...(this._status && { status: this._status }),
       ...(!!this._ratings && { rating: { $in: this._ratings } }),
       ...(contentRegex && { content: { $regex: contentRegex } }),
-      ...(!!this._accounts && { account: { $in: this._accounts } }),
       ...((this._createdAtFrom || this._createdAtTo) && {
         createdAt: {
           ...(this._createdAtFrom && { $lte: this._createdAtFrom }),
@@ -77,8 +65,20 @@ export class GetCommentsDTO {
     };
   }
 
-  get options() {
-    const projection = {
+  get page() {
+    return this._page;
+  }
+
+  get limit() {
+    return this._limit;
+  }
+
+  get sort(): Record<string, 1 | -1> {
+    return this._sort;
+  }
+
+  get projection() {
+    return {
       _id: 1,
       rating: 1,
       content: 1,
@@ -92,15 +92,18 @@ export class GetCommentsDTO {
       },
       productId: 1,
     };
+  }
+
+  get options() {
     return {
-      sort: this._sortBy,
+      sort: this._sort,
       skip: (this._page - 1) * this._limit,
       limit: this._limit,
-      projection,
     };
   }
 
   constructor(req: IGetCommentsReq) {
+    const { query, user } = req;
     const {
       productIds,
       productName,
@@ -112,11 +115,17 @@ export class GetCommentsDTO {
       createdAtTo,
       accounts,
       content,
-      sortBy,
-    } = req.query;
+      sortField,
+      sortOrder,
+    } = query;
 
     if (req.user && (req.user as IUser).accountType === AccountType.admin) {
       this._isAdmin = true;
+    }
+
+    if (user && (user as IUser)._id) {
+      this._userId = (user as IUser)._id;
+      this._isLogin = true;
     }
 
     this._productIds = productIds
@@ -125,7 +134,10 @@ export class GetCommentsDTO {
     this._productName = productName;
 
     this._limit = limit ? Number(limit) : 10;
-    this._sortBy = sortBy;
+    this._sort = {
+      [`${sortField || CommentSortField.createdAt}`]:
+        sortOrder === SortOrder.asc ? 1 : -1,
+    };
     this._page = page ? Number(page) : 1;
 
     this._content = content;

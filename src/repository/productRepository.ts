@@ -14,6 +14,9 @@ export class ProductRepository {
   public findProducts = async ({ filter, options }: GetProductDTO) =>
     await ProductModel.paginate(filter, options);
 
+  public findProductsByFilter = async (filter: FilterQuery<IProduct>) =>
+    await ProductModel.find(filter);
+
   public findProduct = async (filter: FilterQuery<IProduct>) =>
     await ProductModel.findOne(filter);
 

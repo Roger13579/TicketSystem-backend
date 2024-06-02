@@ -21,7 +21,7 @@ import {
   PaginateResult,
   Types,
 } from 'mongoose';
-import { checkDateOrder } from '../utils/common';
+import { areTimesInOrder } from '../utils/common';
 import { OrderFilterDto } from '../dto/order/orderFilterDto';
 import axios from 'axios';
 import {
@@ -34,6 +34,7 @@ import {
 import { LinePayOrderDTO } from '../dto/order/linePayOrderDto';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
 import { get, some, sumBy } from 'lodash';
+import { SortOrder } from '../types/common.type';
 
 const logger = log4js.getLogger(`OrderService`);
 
@@ -52,11 +53,14 @@ export class OrderService {
     const { createdAtFrom, createdAtTo, paidAtFrom, paidAtTo } = orderFilterDTO;
 
     // 確認時間順序
-    checkDateOrder(
-      { prop: 'createdAtFrom', value: createdAtFrom },
-      { prop: 'createdAtTo', value: createdAtTo },
-      { prop: 'paidAtFrom', value: paidAtFrom },
-      { prop: 'paidAtTo', value: paidAtTo },
+    areTimesInOrder(
+      [
+        { name: 'createdAtFrom', value: createdAtFrom },
+        { name: 'createdAtTo', value: createdAtTo },
+        { name: 'paidAtFrom', value: paidAtFrom },
+        { name: 'paidAtTo', value: paidAtTo },
+      ],
+      SortOrder.asc,
     );
 
     return await this.orderRepository.findOrders(orderFilterDTO);

@@ -1,6 +1,5 @@
 import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
-import { ResponseObject } from '../utils/responseObject';
 import { ProductService } from '../service/productService';
 import {
   IDeleteProductsReq,
@@ -19,9 +18,7 @@ import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
 
-  public getProducts = async (
-    req: IGetProductsReq,
-  ): Promise<ResponseObject> => {
+  public getProducts = async (req: IGetProductsReq) => {
     const getProductDto = new GetProductDTO(req);
     const info = await this.productService.findProducts(getProductDto);
     return this.formatResponse(
@@ -31,9 +28,7 @@ class ProductController extends BaseController {
     );
   };
 
-  public createProducts = async (
-    req: ICreateProductsReq,
-  ): Promise<ResponseObject> => {
+  public createProducts = async (req: ICreateProductsReq) => {
     const createProductDto = new CreateProductDTO(req);
     const products = await this.productService.createProducts(createProductDto);
     return this.formatResponse(

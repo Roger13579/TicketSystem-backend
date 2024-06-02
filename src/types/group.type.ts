@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IUserReq } from './common.type';
+import { IUserReq, SortOrder } from './common.type';
 
 export enum GroupStatus {
   ongoing = 'ongoing', // 正在揪團
@@ -35,14 +35,14 @@ export interface IGetGroupsReq extends IUserReq {
     movieTitle?: string;
     theater?: string;
     participantCount?: string;
-    status?: string;
+    status?: GroupStatus;
     haveTicket?: string;
     startAt?: string;
     endAt?: string;
     page?: string;
     limit?: string;
-    sortBy?: string;
-    accountType?: string;
+    sortField?: string;
+    sortOrder?: SortOrder;
   };
 }
 
@@ -58,7 +58,8 @@ export interface IParticipant {
   lineId: string;
 }
 
-export enum GroupSortBy {
+export enum GroupSortField {
+  createdAt = 'createdAt',
   startAt = 'startAt',
   title = 'title',
   movieTitle = 'movieTitle',

@@ -29,15 +29,45 @@ export class ProductRoute extends BaseRoute {
        * #swagger.summary = '取得商品列表'
        * #swagger.security=[{"Bearer": []}],
        */
-      /*  #swagger.parameters['title'] = {
+      /*  
+          #swagger.parameters['limit'] = {
             in: 'query',
-            required: false,
-            description: '模糊搜尋：商品名稱',
+            required: true,
+            description: '每頁資料數',
             type: 'string',
             schema:{
-              $ref:"#/definitions/CustomGetProductTitleQuery"
+              $ref: "#/definitions/CustomLimitQuery"
             }
-          } 
+          }
+          #swagger.parameters['page'] = {
+            in: 'query',
+            required: true,
+            description: '頁數',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomPageQuery"
+            }
+          }
+          #swagger.parameters['isLaunched'] = {
+            in: 'query',
+            required: false,
+            description: '是否販售',
+            type: 'string',
+            enum:['true','false'],
+            schema:{
+              $ref: "#/definitions/CustomBooleanQuery"
+            }
+          }
+          #swagger.parameters['isPublic'] = {
+            in: 'query',
+            required: true,
+            description: '是否公開，非管理者只能選擇 true',
+            type: 'string',
+            enum:['true','false'],
+            schema:{
+              $ref: "#/definitions/CustomBooleanQuery"
+            }
+          }
           #swagger.parameters['types'] = {
             in: 'query',
             required: false,
@@ -65,6 +95,15 @@ export class ProductRoute extends BaseRoute {
               $ref: "#/definitions/CustomGetProductVendorsQuery"
             }
           }
+          #swagger.parameters['title'] = {
+            in: 'query',
+            required: false,
+            description: '模糊搜尋：商品名稱',
+            type: 'string',
+            schema:{
+              $ref:"#/definitions/CustomGetProductTitleQuery"
+            }
+          } 
           #swagger.parameters['theaters'] = {
             in: 'query',
             required: false,
@@ -72,24 +111,6 @@ export class ProductRoute extends BaseRoute {
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetProductTheatersQuery"
-            }
-          }
-          #swagger.parameters['isLaunched'] = {
-            in: 'query',
-            required: false,
-            description: '是否販售',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomBooleanQuery"
-            }
-          }
-          #swagger.parameters['isPublic'] = {
-            in: 'query',
-            required: false,
-            description: '是否公開',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomBooleanQuery"
             }
           }
           #swagger.parameters['startAtFrom'] = {
@@ -131,7 +152,7 @@ export class ProductRoute extends BaseRoute {
           #swagger.parameters['recommendWeights'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：推薦權重 (多個則以逗號分開)',
+            description: '精準搜尋：推薦權重 (多個則以逗號分開) (Admin 專用)',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetProductRecommendWeightQuery"
@@ -158,38 +179,30 @@ export class ProductRoute extends BaseRoute {
           #swagger.parameters['tags'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：標籤 (多個則以逗號分開)，先不要用',
+            description: '精準搜尋：標籤 Id',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetProductTagQuery"
             }
           }
-          #swagger.parameters['page'] = {
+          #swagger.parameters['sortField'] = {
             in: 'query',
-            required: true,
-            description: '頁數',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomPageQuery"
-            }
-          }
-          #swagger.parameters['limit'] = {
-            in: 'query',
-            required: true,
-            description: '每頁資料數',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomLimitQuery"
-            }
-          }
-          #swagger.parameters['sortBy'] = {
-            in: 'query',
-            required: true,
-            description: '排序根據，降冪則在前面加上 - ',
+            required: false,
+            description: '排序根據',
             type: 'string',
             enum:["startAt", "price", "sellStartAt","startAt", "type", "vendor", "theater", "title", "_id", "soldAmount","createdAt","recommendWeight"],
             schema:{
-              $ref: "#/definitions/CustomSortByQuery"
+              $ref: "#/definitions/CustomSortFieldQuery"
+            }
+          }
+          #swagger.parameters['sortOrder'] = {
+            in: 'query',
+            required: false,
+            description: '排序順序',
+            type: 'string',
+            enum: ["asc", "desc"],
+            schema:{
+              $ref: "#/definitions/CustomSortOrderQuery"
             }
           }
       */
