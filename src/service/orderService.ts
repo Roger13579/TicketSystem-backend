@@ -94,7 +94,6 @@ export class OrderService {
           item,
           product,
         });
-
         validProducts.push(validProduct);
       } else {
         throwError(
@@ -118,7 +117,6 @@ export class OrderService {
     }
 
     createOrderDto.setProducts = validProducts;
-
     return await this.orderRepository.createOrder(createOrderDto);
   }
 
@@ -186,7 +184,7 @@ export class OrderService {
     // 使用 HASH 再次 SHA 加密字串，作為驗證使用
     const shaEncrypt = this.createShaEncrypt(aesEncrypt);
     logger.info('shaEncrypt:', shaEncrypt);
-    return new NewebpayOrderVo(shaEncrypt, aesEncrypt);
+    return new NewebpayOrderVo(order._id, shaEncrypt, aesEncrypt);
   }
 
   public async linePayProcess(order: IOrder) {
@@ -214,7 +212,10 @@ export class OrderService {
           paymentStatus: PaymentStatus.pending,
         };
         await this.orderRepository.updateOrder(params);
-        return { paymentUrl: paymentUrl.web };
+        return {
+          orderId: order._id,
+          paymentUrl: paymentUrl.web,
+        };
       } else {
         const error = new Error(returnMessage);
         error.name = returnCode;

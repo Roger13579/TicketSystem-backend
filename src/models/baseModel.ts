@@ -137,4 +137,7 @@ export const productSnapshotSchemaDef = {
     required: true,
     min: 1,
   },
+  startAt: {
+    type: Date,
+  },
 };

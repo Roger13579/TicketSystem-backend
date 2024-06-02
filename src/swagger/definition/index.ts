@@ -12,6 +12,7 @@ import { commentDefinitions, commentCustomDefinitions } from './comment';
 import { orderDefinition, orderCustomDefinition } from './order';
 import { cartDefinitions, cartCustomDefinitions } from './cart';
 import { tagCustomDefinitions, tagDefinitions } from './tag';
+import { ticketCustomDefinition, ticketDefinition } from './ticket';
 
 export const definitions = {
   ...commonDefinitions,
@@ -23,6 +24,7 @@ export const definitions = {
   ...cartDefinitions,
   ...tagDefinitions,
   ...orderDefinition,
+  ...ticketDefinition,
 };
 
 export const customDefinitions = {
@@ -35,4 +37,5 @@ export const customDefinitions = {
   ...cartCustomDefinitions,
   ...tagCustomDefinitions,
   ...orderCustomDefinition,
+  ...ticketCustomDefinition,
 };

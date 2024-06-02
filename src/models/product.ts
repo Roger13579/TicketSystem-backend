@@ -181,7 +181,8 @@ schema.index(
 );
 
 schema.pre<Query<unknown, IProduct>>(['find', 'findOne'], function (next) {
-  const isTagsShown = this.projection().tags === 1;
+  const isTagsShown =
+    this.projection() !== undefined && this.projection().tags === 1;
   // 沒有要取 tags 的資料，就不需要 populate
   if (isTagsShown) {
     const populateOptions: PopulateOptions = {

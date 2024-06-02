@@ -142,4 +142,5 @@ export interface IProductSnapshot extends IProductId {
   vendor: string;
   theater: string;
   price: number;
+  startAt: Date;
 }
