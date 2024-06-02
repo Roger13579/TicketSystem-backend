@@ -9,12 +9,19 @@ export enum TicketStatus {
 
 export interface IGetTicketsReq extends IUserReq {
   query: {
+    ids?: string;
+    productName?: string;
     status?: string;
-    startAtFrom?: string;
-    startAtTo?: string;
-    isShared?: string;
+    expiredAtFrom?: string;
+    expiredAtTo?: string;
+    isPublished?: string;
     page?: string;
     limit?: string;
     sortBy?: string;
   };
+}
+export enum TicketSortBy {
+  createdAt = 'createdAt',
+  expiredAt = 'expiredAt',
+  status = 'status',
 }

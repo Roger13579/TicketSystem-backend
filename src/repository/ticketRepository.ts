@@ -15,27 +15,9 @@ export class TicketRepository {
       PaginateDocument<ITicket, NonNullable<unknown>, PaginateOptions>
     >
   > => {
-    const { page, limit, sortBy } = ticketFilterDto;
-    const filter = this.createTicketFilter(ticketFilterDto);
-    const options = {
-      ...(page && limit && { skip: (page - 1) * limit }),
-      ...(limit && { limit }),
-      sort: sortBy || '-createdAt',
-    };
-    return await TicketModel.paginate(filter, options);
+    return await TicketModel.paginate(
+      ticketFilterDto.filter,
+      ticketFilterDto.options,
+    );
   };
-
-  private createTicketFilter(ticketFilterDto: TicketFilterDto) {
-    const { status, startAtFrom, startAtTo, isShared } = ticketFilterDto;
-    return {
-      ...(status && { status: { $eq: status } }),
-      ...(isShared && { isShared: { $eq: isShared } }),
-      ...((startAtFrom || startAtTo) && {
-        startAt: {
-          ...(startAtFrom && { $lte: startAtFrom }),
-          ...(startAtTo && { $gte: startAtTo }),
-        },
-      }),
-    };
-  }
 }

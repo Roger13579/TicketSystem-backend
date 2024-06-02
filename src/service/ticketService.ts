@@ -8,12 +8,14 @@ import { TicketRepository } from '../repository/ticketRepository';
 import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { TicketFilterDto } from '../dto/ticket/ticketFilterDto';
 import { ITicket } from '../models/ticket';
+import { ProductRepository } from '../repository/productRepository';
 
 const logger = log4js.getLogger(`TicketService`);
 
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
-
+  private readonly productRepository: ProductRepository =
+    new ProductRepository();
   public findTickets = async (
     ticketFilterDto: TicketFilterDto,
   ): Promise<
@@ -21,12 +23,12 @@ export class TicketService {
       PaginateDocument<ITicket, NonNullable<unknown>, PaginateOptions>
     >
   > => {
-    const { startAtFrom, startAtTo } = ticketFilterDto;
+    const { expiredAtFrom, expiredAtTo } = ticketFilterDto;
 
     // 確認時間順序
     checkDateOrder(
-      { prop: 'startAtFrom', value: startAtFrom },
-      { prop: 'startAtTo', value: startAtTo },
+      { prop: 'expiredAtFrom', value: expiredAtFrom },
+      { prop: 'expiredAtTo', value: expiredAtTo },
     );
 
     return await this.ticketRepository.findtickets(ticketFilterDto);
@@ -40,6 +42,7 @@ export class TicketService {
           () => ({
             ...item,
             productId: item.productId,
+            startAt: item.startAt,
             amount: 1,
           }),
         );

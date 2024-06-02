@@ -1,5 +1,5 @@
-import { Schema, model, PaginateModel } from 'mongoose';
-import { schemaOption } from '../utils/constants';
+import { Schema, model, PaginateModel, Query, PopulateOptions } from 'mongoose';
+import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import { TicketStatus } from '../types/ticket.type';
 import {
   BaseModel,
@@ -10,13 +10,13 @@ import {
   schemaDef,
 } from './baseModel';
 import paginate from 'mongoose-paginate-v2';
-import { IOrder } from './order';
 
 export interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
   amount: number;
   status: TicketStatus;
   isPublished: boolean;
   chatRoomId: string;
+  expiredAt?: Date;
   writeOffAt?: Date;
   writeOffStaff?: Date;
   shareCode?: string;
@@ -42,23 +42,35 @@ const schema = new Schema<ITicket>(
       type: Boolean,
       required: true,
     },
+    expiredAt: {
+      type: Date,
+      required: true,
+    },
     chatRoomId: {
       type: String,
     },
     writeOffAt: {
       type: Date,
+      select: true,
     },
     writeOffStaff: {
-      type: Date,
+      type: String,
+      select: true,
     },
     shareCode: {
       type: String,
     },
   },
-  schemaOption,
+  { ...schemaOption, ...virtualSchemaOption },
 ).plugin(paginate);
+schema.virtual('product', {
+  ref: 'Product',
+  localField: 'productId',
+  foreignField: '_id',
+  justOne: true,
+});
 
-export const TicketModel = model<ITicket, PaginateModel<IOrder>>(
+export const TicketModel = model<ITicket, PaginateModel<ITicket>>(
   ModelName.ticket,
   schema,
 );

@@ -1,5 +1,7 @@
 import { BaseRoute } from './baseRoute';
 import { TicketController } from '../controller/ticketController';
+import { UserCheck } from '../middleware/userVerify';
+import { GetTicketPipe } from '../validator/ticket/getTicket.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -33,89 +35,52 @@ export class TicketRoute extends BaseRoute {
       /*  #swagger.parameters['status'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：訂單狀態',
+            description: '精準搜尋：票券狀態',
             type: 'string',
             schema:{
-              $ref:"#/definitions/CustomGetOrderStatusQuery"
+              $ref:"#/definitions/CustomGetTicketStatusQuery"
             }
           }
           #swagger.parameters['ids'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：訂單編號列表',
+            description: '精準搜尋：票券編號列表',
             type: 'string',
             schema:{
-              $ref:"#/definitions/CustomGetOrderIdQuery"
+              $ref:"#/definitions/CustomGetTicketIdQuery"
             }
           }
-          #swagger.parameters['thirdPartyPaymentIds'] = {
+          #swagger.parameters['productName'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：第三方金流訂單編號列表',
+            description: '模糊搜尋：商品名稱',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetOrderThirdPartyPaymentIdQuery"
+              $ref: "#/definitions/CustomGetTicketProductName"
             }
           }
-          #swagger.parameters['accounts'] = {
+          #swagger.parameters['isPublished'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：帳號列表',
+            description: '精準搜尋：是否上架分票',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomGetOrderAccountQuery"
+              $ref: "#/definitions/CustomGetTicketIsPublished"
             }
           }
-          #swagger.parameters['emails'] = {
+          #swagger.parameters['expiredAtFrom'] = {
             in: 'query',
             required: false,
-            description: '精準搜尋：email列表',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomGetOrderEmailQuery"
-            }
-          }
-          #swagger.parameters['phones'] = {
-            in: 'query',
-            required: false,
-            description: '精準搜尋：電話號碼列表',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomGetOrderPhoneQuery"
-            }
-          }
-
-          #swagger.parameters['createdAtFrom'] = {
-            in: 'query',
-            required: false,
-            description: '訂單成立時間-起',
+            description: '有效時間-起',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomTimeAtFromQuery"
             }
           }
-          #swagger.parameters['createdAtTo'] = {
+          #swagger.parameters['expiredAtTo'] = {
             in: 'query',
             required: false,
-            description: '訂單成立時間-迄',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomTimeAtToQuery"
-            }
-          }
-          #swagger.parameters['paidAtFrom'] = {
-            in: 'query',
-            required: false,
-            description: '付款時間-起',
-            type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomTimeAtFromQuery"
-            }
-          }
-          #swagger.parameters['paidAtTo'] = {
-            in: 'query',
-            required: false,
-            description: '付款時間-迄',
+            description: '有效時間-迄',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomTimeAtToQuery"
@@ -153,12 +118,12 @@ export class TicketRoute extends BaseRoute {
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/GetOrdersSuccess"
+              $ref: "#/definitions/GetTicketsSuccess"
             }
           }
       */
-      // UserCheck,
-      // this.usePipe(GetOrderPipe),
+      UserCheck,
+      this.usePipe(GetTicketPipe),
       this.responseHandler(this.controller.getTickets),
     );
   }

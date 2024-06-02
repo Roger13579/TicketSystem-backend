@@ -1,12 +1,12 @@
 import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
 import { Request } from 'express';
-import { GetOrderVo } from '../vo/order/getOrderVo';
 import { TicketService } from '../service/ticketService';
 import { TicketFilterDto } from '../dto/ticket/ticketFilterDto';
 import { IGetTicketsReq } from '../types/ticket.type';
 import { IOrder } from '../models/order';
 import { OrderRepository } from '../repository/orderRepository';
+import { GetTicketVo } from '../vo/ticket/getTicketVo';
 
 export class TicketController extends BaseController {
   private readonly ticketService = new TicketService();
@@ -29,7 +29,7 @@ export class TicketController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      // new GetOrderVo(info),
+      new GetTicketVo(info),
     );
   };
 }

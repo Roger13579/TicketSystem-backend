@@ -9,6 +9,7 @@ export class CreateTicketDto {
   private readonly amount: number;
   private readonly status: TicketStatus;
   private readonly isPublished: boolean;
+  private readonly expiredAt: Date;
 
   constructor(
     userId: Types.ObjectId,
@@ -21,5 +22,6 @@ export class CreateTicketDto {
     this.amount = orderProduct.amount;
     this.status = TicketStatus.unverified;
     this.isPublished = false;
+    this.expiredAt = orderProduct.startAt;
   }
 }
