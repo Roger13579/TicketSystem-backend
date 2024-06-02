@@ -13,3 +13,8 @@ export interface ICreateTagReq extends Request {
     name: string;
   };
 }
+
+export enum TagSortBy {
+  createdAt = 'createdAt',
+  name = 'name',
+}

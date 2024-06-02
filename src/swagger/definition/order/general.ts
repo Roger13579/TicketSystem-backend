@@ -1,6 +1,8 @@
+import moment from 'moment';
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaymentMethod, PaymentStatus } from '../../../types/order.type';
 import { MovieGenre, ProductType } from '../../../types/product.type';
+import { PaginationSuccess } from '../common';
 
 /**
  * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
@@ -28,8 +30,8 @@ export const OrderItem = {
   paymentMethod: PaymentMethod.linePay,
   $price: 300,
   status: PaymentStatus.pending,
-  $createdAt: new Date(),
-  paidAt: new Date(),
+  $createdAt: moment().toDate(),
+  paidAt: moment().toDate(),
 };
 
 /**
@@ -40,9 +42,7 @@ export const GetOrdersSuccess = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     $orders: [OrderItem],
-    $page: 1,
-    $limit: 10,
-    $totalCount: 5,
+    ...PaginationSuccess,
   },
 };
 

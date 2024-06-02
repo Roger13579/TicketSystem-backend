@@ -52,7 +52,7 @@ export class LinePayOrderDTO {
             plan.discount &&
             plan.headCount &&
             plan.name
-          ); // plan = {}
+          );
           return {
             id: productId.toString(),
             name: title,

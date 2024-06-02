@@ -1,11 +1,12 @@
+import { uniq } from 'lodash';
 import { IProduct } from '../../models/product';
 import { ICreateProductsReq } from '../../types/product.type';
 
 export class CreateProductDTO {
   private readonly _products: (Omit<IProduct, 'tags'> & {
-    tagNames: string[];
+    tagNames?: string[];
   })[];
-  private readonly _tagNames: string[];
+  private readonly _tagNames?: string[];
 
   get tagNames() {
     return this._tagNames;
@@ -17,14 +18,12 @@ export class CreateProductDTO {
 
   constructor(req: ICreateProductsReq) {
     const { products } = req.body;
-    this._tagNames = products.map(({ tagNames }) => tagNames).flat();
+    const tagNameList = uniq(
+      products.map(({ tagNames }) => tagNames || []).flat(),
+    );
 
-    this._products = products.map((item) => {
-      const { tagNames } = item;
-      return {
-        ...item,
-        tagNames,
-      };
-    });
+    this._tagNames = tagNameList;
+
+    this._products = products;
   }
 }

@@ -1,5 +1,8 @@
+import moment from 'moment';
 import { CustomResponseType } from '../../types/customResponseType';
 import { HttpStatus } from '../../types/responseType';
+import { Status } from '../../types/common.type';
+import { ProductSortBy } from '../../types/product.type';
 
 export const Success = {
   $status: CustomResponseType.OK,
@@ -55,7 +58,7 @@ export const LoginSuccess = {
     account: 'rrroger',
     email: 'roger@gmail.com',
     token: 'token',
-    refeshToken: 'refeshToken',
+    refreshToken: 'refreshToken',
     accountType: 'member',
   },
 };
@@ -72,7 +75,7 @@ export const UserDetail = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     name: 'roger',
-    createdAt: '2024-05-02T14:54:58.972Z',
+    createdAt: moment().toDate(),
     birthDate: null,
     email: 'roger@gmail.com',
     gender: 'none',
@@ -119,16 +122,22 @@ export const CustomLimitQuery = {
   example: '10',
 };
 export const CustomSortByQuery = {
-  example: '-createdAt',
+  example: ProductSortBy.createdAt,
 };
 
 export const CustomTimeAtFromQuery = {
-  example: '2024-05-16T03:33:20.000+00:00',
+  example: moment().toDate(),
 };
 export const CustomTimeAtToQuery = {
-  example: '2024-05-17T03:33:20.000+00:00',
+  example: moment().toDate(),
 };
 
 export const CustomStatusQuery = {
-  example: 'active',
+  example: Status.active,
+};
+
+export const PaginationSuccess = {
+  $page: 10,
+  $limit: 1,
+  $totalCount: 1,
 };

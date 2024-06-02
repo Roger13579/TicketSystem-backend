@@ -2,8 +2,6 @@ import { throwError } from './errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import { forEach } from 'lodash';
 
-export const collectionName = (model: string) => model.toLowerCase() + 's';
-
 /**
  * @description 比較日期，如果其中一个日期是 undefined，則認為它比另一个日期大
  */

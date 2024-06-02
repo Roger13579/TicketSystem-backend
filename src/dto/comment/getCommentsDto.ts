@@ -17,7 +17,7 @@ export class GetCommentsDTO {
   private readonly _accounts?: string[];
   private readonly _content?: string;
   private readonly _sortBy?: string;
-  private readonly _accountType?: AccountType;
+  private readonly _isAdmin: boolean = false;
 
   get page() {
     return this._page;
@@ -55,12 +55,49 @@ export class GetCommentsDTO {
   get content() {
     return this._content;
   }
+
   get sortBy() {
     return this._sortBy;
   }
 
-  get accountType() {
-    return this._accountType;
+  get filter() {
+    const contentRegex = this._content ? new RegExp(this._content) : undefined;
+    return {
+      ...(!!this._productIds && { productId: { $in: this._productIds } }),
+      ...(this._status && { status: this._status }),
+      ...(!!this._ratings && { rating: { $in: this._ratings } }),
+      ...(contentRegex && { content: { $regex: contentRegex } }),
+      ...(!!this._accounts && { account: { $in: this._accounts } }),
+      ...((this._createdAtFrom || this._createdAtTo) && {
+        createdAt: {
+          ...(this._createdAtFrom && { $lte: this._createdAtFrom }),
+          ...(this._createdAtTo && { $gte: this._createdAtTo }),
+        },
+      }),
+    };
+  }
+
+  get options() {
+    const projection = {
+      _id: 1,
+      rating: 1,
+      content: 1,
+      createdAt: 1,
+      status: this._isAdmin ? 1 : -1, // admin 才能看到 status
+      user: {
+        ...(this._isAdmin && { _id: '$user._id' }),
+        account: '$user.account',
+        avatarPath: '$user.avatarPath',
+        name: '$user.name',
+      },
+      productId: 1,
+    };
+    return {
+      sort: this._sortBy,
+      skip: (this._page - 1) * this._limit,
+      limit: this._limit,
+      projection,
+    };
   }
 
   constructor(req: IGetCommentsReq) {
@@ -78,7 +115,9 @@ export class GetCommentsDTO {
       sortBy,
     } = req.query;
 
-    this._accountType = (req.user as IUser).accountType;
+    if (req.user && (req.user as IUser).accountType === AccountType.admin) {
+      this._isAdmin = true;
+    }
 
     this._productIds = productIds
       ?.split(',')
