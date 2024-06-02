@@ -1,9 +1,13 @@
 import moment from 'moment/moment';
-import { IGetTicketsReq, TicketStatus } from '../../types/ticket.type';
-import { OrderSortBy } from '../../types/order.type';
+import {
+  IGetTicketsReq,
+  TicketSortField,
+  TicketStatus,
+} from '../../types/ticket.type';
 import { Types } from 'mongoose';
 import { IUser } from '../../models/user';
 import { AccountType } from '../../types/user.type';
+import { SortOrder } from '../../types/common.type';
 
 export class TicketFilterDto {
   private readonly _status?: TicketStatus;
@@ -13,7 +17,7 @@ export class TicketFilterDto {
   private readonly _isPublished?: boolean;
   private readonly _page: number;
   private readonly _limit: number;
-  private readonly _sortBy?: string;
+  private readonly _sort?: Record<string, 1 | -1>;
   private readonly _ids?: string[];
   private readonly _productName?: string;
   private readonly isAdmin?: boolean;
@@ -42,8 +46,8 @@ export class TicketFilterDto {
     return this._limit;
   }
 
-  get sortBy() {
-    return this._sortBy;
+  get sort() {
+    return this._sort;
   }
 
   get ids() {
@@ -87,7 +91,7 @@ export class TicketFilterDto {
       },
       skip: (this._page - 1) * this._limit,
       ...(this._limit && { limit: this._limit }),
-      sort: this._sortBy || `-${OrderSortBy.createdAt}`,
+      sort: this._sort,
       projection,
     };
   }
@@ -101,7 +105,8 @@ export class TicketFilterDto {
       isPublished,
       page,
       limit,
-      sortBy,
+      sortField,
+      sortOrder,
     } = req.query;
     this._userId =
       req.user !== undefined &&
@@ -112,7 +117,10 @@ export class TicketFilterDto {
     this._status = status as TicketStatus;
     this._ids = ids?.split(',');
     this._productName = productName;
-    this._sortBy = sortBy;
+    this._sort = {
+      [`${sortField || TicketSortField.createdAt}`]:
+        sortOrder === SortOrder.asc ? 1 : -1,
+    };
     this._limit = Number(limit);
     this._page = Number(page);
     this._isPublished = isPublished != null ? JSON.parse(isPublished) : false;

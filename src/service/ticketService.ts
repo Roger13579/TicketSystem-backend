@@ -3,11 +3,12 @@ import { IOrder, IOrderProduct } from '../models/order';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import { PaginateDocument, PaginateOptions, PaginateResult } from 'mongoose';
-import { checkDateOrder } from '../utils/common';
+import { areTimesInOrder } from '../utils/common';
 import { TicketRepository } from '../repository/ticketRepository';
 import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { TicketFilterDto } from '../dto/ticket/ticketFilterDto';
 import { ITicket } from '../models/ticket';
+import { SortOrder } from '../types/common.type';
 
 const logger = log4js.getLogger(`TicketService`);
 
@@ -24,9 +25,12 @@ export class TicketService {
     const { expiredAtFrom, expiredAtTo } = ticketFilterDto;
 
     // 確認時間順序
-    checkDateOrder(
-      { prop: 'expiredAtFrom', value: expiredAtFrom },
-      { prop: 'expiredAtTo', value: expiredAtTo },
+    areTimesInOrder(
+      [
+        { name: 'expiredAtFrom', value: expiredAtFrom },
+        { name: 'expiredAtTo', value: expiredAtTo },
+      ],
+      SortOrder.asc,
     );
 
     return await this.ticketRepository.findtickets(ticketFilterDto);
