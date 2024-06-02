@@ -1,4 +1,4 @@
-import { PopulateOptions, Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import {
   BaseModel,
@@ -46,19 +46,8 @@ const schema = new Schema<ICart>(
       required: true,
     },
   },
-  { ...schemaOption, ...virtualSchemaOption },
+  schemaOption,
 );
-
-schema.pre('findOne', function (this, next) {
-  const options: PopulateOptions = {
-    path: 'items.productId',
-    select:
-      '_id title type genre price soldAmount amount isLaunched isPublic photoPath -recommendWeight sellStartAt sellEndAt',
-  };
-
-  this.populate(options);
-  next();
-});
 
 const CartModel = model<ICart>(ModelName.cart, schema);
 

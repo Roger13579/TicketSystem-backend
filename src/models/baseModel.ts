@@ -105,6 +105,7 @@ export const productSnapshotSchemaDef = {
     type: String,
     required: true,
     trim: true,
+    default: '',
   },
   type: {
     type: String,

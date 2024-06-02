@@ -8,65 +8,66 @@ export class CreateProductsPipe extends PipeBase {
     return [
       body('products')
         .exists()
-        .custom(this.isNotEmptyArray)
+        .isArray({ min: 1 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'products',
         ),
-      body('products.*.title')
-        .exists()
-        .trim()
-        .isString()
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'title',
-        )
+      this.nonEmptyStringValidation(
+        body('products.*.title'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'title',
+      )
         .isLength({ min: 1, max: 40 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'title',
         ),
-      body('products.*.brief')
-        .exists()
-        .trim()
+      body('products.*.tags')
+        .optional()
+        .custom(this.validateExclusiveProps('tagNames', 'tags'))
+        .withMessage(
+          CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+            'tagIds 和 tagNames 不可以同時使用',
+        ),
+      body('products.*.tags.*.tagId')
+        .if(body('products.*.tags').exists())
         .isString()
         .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'brief',
-        )
+          CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'tagId',
+        ),
+      body('products.*.tagNames')
+        .optional()
+        .custom(this.validateExclusiveProps('tagNames', 'tags'))
+        .withMessage(
+          CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+            'tagIds 和 tagNames 不可以同時使用',
+        ),
+      this.nonEmptyStringValidation(
+        body('products.*.brief'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'brief',
+      )
         .isLength({ min: 1, max: 100 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'brief',
         ),
       body('products.*.type')
         .exists()
-        .trim()
         .isIn(Object.keys(ProductType))
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'type',
         ),
       body('products.*.genre')
         .exists()
-        .trim()
         .isIn(Object.keys(MovieGenre))
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'genre',
         ),
-      body('products.*.vendor')
-        .exists()
-        .trim()
-        .isString()
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'vendor',
-        )
-        .isLength({ min: 1 })
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'vendor',
-        ),
-      body('products.*.theater')
-        .exists()
-        .trim()
-        .isString()
-        .isLength({ min: 1 })
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'theater',
-        ),
+      this.nonEmptyStringValidation(
+        body('products.*.vendor'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'vendor',
+      ),
+      this.nonEmptyStringValidation(
+        body('products.*.theater'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'theater',
+      ),
       body('products.*.price')
         .exists()
         .isInt({ min: 100 })
@@ -81,25 +82,24 @@ export class CreateProductsPipe extends PipeBase {
         ),
       body('products.*.plans')
         .optional()
-        .isArray()
-        .isLength({ min: 1 })
+        .isArray({ min: 1 })
         .withMessage(CustomResponseType.INVALID_CREATE_PRODUCT + 'plans'),
       body('products.*.plans.*.name')
-        .if(body('products.*.plans').isArray().isLength({ min: 1 }))
+        .if(body('products.*.plans').isArray({ min: 1 }))
         .exists()
         .isString()
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.name',
         ),
       body('products.*.plans.*.discount')
-        .if(body('products.*.plans').isArray().isLength({ min: 1 }))
+        .if(body('products.*.plans').isArray({ min: 1 }))
         .exists()
         .isFloat({ min: 0.1, max: 1 })
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.discount',
         ),
       body('products.*.plans.*.headCount')
-        .if(body('products.*.plans').isArray().isLength({ min: 1 }))
+        .if(body('products.*.plans').isArray({ min: 1 }))
         .exists()
         .isInt({ min: 2 })
         .withMessage(
@@ -107,22 +107,22 @@ export class CreateProductsPipe extends PipeBase {
         ),
       body('products.*.startAt')
         .exists()
-        .custom(this.isValidDate)
+        .custom(this.validateDate)
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'startAt',
         ),
       body('products.*.endAt')
-        .custom(this.isValidDate)
+        .custom(this.validateDate)
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'endAt',
         ),
       body('products.*.sellStartAt')
-        .custom(this.isValidDate)
+        .custom(this.validateDate)
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'sellStartAt',
         ),
       body('products.*.sellEndAt')
-        .custom(this.isValidDate)
+        .custom(this.validateDate)
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'sellStartEnd',
         ),
@@ -141,12 +141,10 @@ export class CreateProductsPipe extends PipeBase {
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'isLaunched',
         ),
-      body('products.*.photoPath')
-        .optional()
-        .isString()
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'photoPath',
-        ),
+      this.nonEmptyStringValidation(
+        body('products.*.photoPath'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'photoPath',
+      ),
       this.validationHandler,
     ];
   }

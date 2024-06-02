@@ -1,4 +1,5 @@
 import { CustomResponseType } from '../../../types/customResponseType';
+import { PaginationSuccess } from '../common';
 
 /**
  * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
@@ -32,8 +33,6 @@ export const GetGroupsSuccess = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     $groups: [GroupItem],
-    $page: 1,
-    $limit: 10,
-    $totalCount: 5,
+    ...PaginationSuccess,
   },
 };

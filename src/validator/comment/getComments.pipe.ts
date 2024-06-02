@@ -1,139 +1,117 @@
-import { Meta, query } from 'express-validator';
+import { query } from 'express-validator';
 import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
-import { IUser } from '../../models/user';
-import { AccountType } from '../../types/user.type';
-import { IUserReq, Status } from '../../types/common.type';
 import {
   CommentSortBy,
   IGetCommentsReq,
   RatingRange,
 } from '../../types/comment.type';
-import moment from 'moment';
+import { OptionType, TCustomValidator } from '../index.type';
+import { Status } from '../../types/common.type';
+
+// 管理者和使用者都可以使用的
 
 export class GetCommentsPipe extends PipeBase {
-  public transform = () => [
-    query('limit')
-      .exists()
-      .withMessage(CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'limit')
-      .toInt()
-      .withMessage(CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'limit')
-      .isInt({ min: 1, max: 100 })
-      .withMessage(CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'limit'),
-    query('page')
-      .exists()
-      .withMessage(CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'page')
-      .toInt()
-      .withMessage(CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'page')
-      .isInt({ min: 1 })
-      .withMessage(CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'page'),
-    query('status')
-      .custom((value: string | undefined, { req }: Meta) => {
-        const { accountType } = req.user as IUser;
+  private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
+    const { createdAtTo } = (req as IGetCommentsReq).query;
+    return this.validatePeriod(value, createdAtTo, (a, b) => a.isAfter(b));
+  };
 
-        return (
-          accountType === AccountType.admin ||
-          (accountType === AccountType.member && value === Status.active)
-        );
-      })
+  private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
+    const { createdAtFrom } = (req as IGetCommentsReq).query;
+    return this.validatePeriod(value, createdAtFrom, (a, b) => a.isBefore(b));
+  };
+
+  public transform = () => [
+    this.limitValidation(
+      query('limit'),
+      CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'limit',
+    ),
+    this.positiveIntValidation(
+      query('page'),
+      CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'page',
+    ),
+    query('status')
+      .custom(this.validateMemberSpecific(Status.active)) // 非管理者只能看 active 的 comment
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'status',
+      )
+      .optional()
+      .isIn(Object.keys(Status))
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'status',
       ),
     query('ratings')
       .optional()
-      .custom((value: string | undefined) =>
-        this.isValidOption(value, 'array', RatingRange),
-      )
+      .custom(this.validateOption(OptionType.array, RatingRange))
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'rating',
       ),
     query('createdAtFrom')
       .optional()
-      .custom(this.isValidDate)
-      .custom((value: string, { req }: Meta) => {
-        const { createdAtTo } = (req as IGetCommentsReq).query;
-
-        if (
-          createdAtTo &&
-          this.isValidDate(value) &&
-          this.isValidDate(createdAtTo)
-        ) {
-          return moment(value).isAfter(moment(createdAtTo));
-        }
-        return true;
-      })
+      .custom(this.validateDate) // 確定為 valid Date
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'createdAtFrom',
+      )
+      .custom(this.validateCreatedAtFrom)
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'createdAtFrom',
       ),
     query('accounts')
       .optional()
-      .custom((value: string | undefined, { req }: Meta) => {
-        const { accountType } = (req as IUserReq).user as IUser;
-
-        return (accountType === AccountType.admin && !!value) || !value;
-      })
+      .custom(this.isAdminOnly)
       .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'accounts',
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'accounts',
       ),
     query('content')
       .optional()
+      .custom(this.isAdminOnly)
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'content',
+      )
       .isString()
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'content',
       ),
     query('createdAtTo')
       .optional()
-      .custom(this.isValidDate)
-      .custom((value: string, { req }: Meta) => {
-        const { createdAtFrom } = (req as IGetCommentsReq).query;
-
-        if (
-          createdAtFrom &&
-          this.isValidDate(value) &&
-          this.isValidDate(createdAtFrom)
-        ) {
-          return moment(value).isBefore(moment(createdAtFrom));
-        }
-        return true;
-      })
+      .custom(this.validateDate)
+      .custom(this.validateCreatedAtTo)
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'createdAtTo',
       ),
-    query('productName')
+    query('productName') // 只有管理者可以用這個搜
       .optional()
-      .custom((value: string | undefined, { req }: Meta) => {
-        const { user, query } = req as IGetCommentsReq;
-        const { accountType } = user as IUser;
-        const { productIds } = query;
-
-        if (accountType === AccountType.member) {
-          return !value; // 使用者不可以用 productName 查
-        } else if (accountType === AccountType.admin) {
-          if (!!productIds && !!value) {
-            return false;
-          }
-        } else {
-          return true;
-        }
-      })
+      .custom(this.isAdminOnly)
       .withMessage(
-        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'productName',
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          CustomResponseType.PERMISSION_DENIED_MESSAGE +
+          'productName',
+      )
+      .custom(this.validateExclusiveProps('productIds', 'productName'))
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          'productIds 和 productName 不可以同時使用',
       ),
     query('productIds')
-      .optional()
-      .custom((value: string | undefined, { req }: Meta) => {
-        const { query } = req as IGetCommentsReq;
-        const { productName } = query;
-        return !(!!productName && !!value);
-      })
+      .custom(this.isMemberMust)
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'productIds',
+      )
+      .custom(this.validateExclusiveProps('productIds', 'productName'))
+      .withMessage(
+        CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
+          'productIds 和 productName 不可以同時使用',
       ),
     query('sortBy')
       .optional()
-      .custom((value: string | undefined) =>
-        this.isValidOption(value, 'item', CommentSortBy),
-      )
+      .custom(this.validateOption(OptionType.item, CommentSortBy))
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE + 'sortBy',
       ),

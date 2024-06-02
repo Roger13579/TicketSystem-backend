@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { PaginateModel, PopulateOptions, Query, Schema, model } from 'mongoose';
 import { Status } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
 import {
@@ -8,6 +8,7 @@ import {
   ModelName,
   schemaDef,
 } from './baseModel';
+import paginate from 'mongoose-paginate-v2';
 
 export interface IComment extends BaseModel, IProductId, IUserId {
   rating: number;
@@ -36,8 +37,41 @@ const schema = new Schema<IComment>(
     },
   },
   schemaOption,
-);
+).plugin(paginate);
 
-const CommentModel = model<IComment>(ModelName.comment, schema);
+schema.pre<Query<unknown, IComment>>(['find', 'findOne'], function (next) {
+  const { user } = this.projection();
+
+  const isUserIdShown = !!user._id;
+  const populateOptions: PopulateOptions = {
+    path: 'userId',
+    select: `name ${isUserIdShown ? '' : '-_id'} account avatarPath`,
+  };
+  this.populate(populateOptions);
+
+  next();
+});
+
+const transform = (_doc: unknown, ret: Record<string, unknown>) => {
+  ret.user = ret.userId;
+  delete ret.userId;
+  delete ret.id;
+  return ret;
+};
+
+schema.set('toJSON', {
+  virtuals: true,
+  transform,
+});
+
+schema.set('toObject', {
+  virtuals: true,
+  transform,
+});
+
+const CommentModel = model<IComment, PaginateModel<IComment>>(
+  ModelName.comment,
+  schema,
+);
 
 export default CommentModel;

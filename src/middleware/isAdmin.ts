@@ -16,7 +16,7 @@ export const IsAdmin = async (
   if (accountType !== AccountType.admin) {
     return next(
       new AppError(
-        CustomResponseType.PERMISSION_DENIED_MESSAGE,
+        CustomResponseType.PERMISSION_DENIED_MESSAGE + '非管理者',
         HttpStatus.UNAUTHORIZED,
         CustomResponseType.PERMISSION_DENIED,
       ),

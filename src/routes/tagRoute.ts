@@ -68,7 +68,7 @@ export class TagRoute extends BaseRoute {
     this.router.post(
       '/v1/tag',
       /**
-       * #swagger.tags = ['Tag']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '新增標籤'
        * #swagger.security=[{"Bearer": []}]
        */
@@ -98,7 +98,7 @@ export class TagRoute extends BaseRoute {
     this.router.patch(
       '/v1/tag/:tagId',
       /**
-       * #swagger.tags = ['Tag']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '編輯標籤'
        * #swagger.security=[{"Bearer": []}]
        */
@@ -136,7 +136,7 @@ export class TagRoute extends BaseRoute {
     this.router.delete(
       '/v1/tag/:tagId',
       /**
-       * #swagger.tags = ['Tag']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '刪除標籤'
        * #swagger.security=[{"Bearer": []}]
        */

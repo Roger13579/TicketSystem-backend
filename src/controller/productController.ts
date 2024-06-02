@@ -2,19 +2,19 @@ import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
 import { ProductService } from '../service/productService';
-import { NewProductVo } from '../vo/product/newProductVo';
 import {
   IDeleteProductsReq,
   IEditProductsReq,
   ICreateProductsReq,
   IGetProductsReq,
 } from '../types/product.type';
-import { IProduct } from '../models/product';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { EditProductDTO } from '../dto/product/editProductsDto';
-import { ProductFilterDTO } from '../dto/product/productFilterDto';
+import { GetProductDTO } from '../dto/product/getProductDto';
 import { GetProductVo } from '../vo/product/getProductVo';
 import { CreateProductDTO } from '../dto/product/createProductDto';
+import { IUserReq } from '../types/common.type';
+import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
@@ -22,8 +22,8 @@ class ProductController extends BaseController {
   public getProducts = async (
     req: IGetProductsReq,
   ): Promise<ResponseObject> => {
-    const productFilterDto = new ProductFilterDTO(req);
-    const info = await this.productService.findProducts(productFilterDto);
+    const getProductDto = new GetProductDTO(req);
+    const info = await this.productService.findProducts(getProductDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
@@ -39,24 +39,24 @@ class ProductController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new NewProductVo(products as IProduct[]),
+      { products },
     );
   };
 
   public getProductDetail = async (
-    req: Request,
+    req: IUserReq,
     res: Response,
     next: NextFunction,
   ) => {
+    const getProductDetailDto = new GetProductDetailDTO(req);
     const product = await this.productService.getProductDetail(
-      req.params.id,
+      getProductDetailDto,
       next,
     );
-    const { products } = new NewProductVo([product] as IProduct[]);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { product: products[0] },
+      { product },
     );
   };
 
@@ -67,7 +67,7 @@ class ProductController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new NewProductVo(products as IProduct[]),
+      { products },
     );
   };
 
@@ -77,7 +77,7 @@ class ProductController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new NewProductVo(products as IProduct[]),
+      { products },
     );
   };
 }

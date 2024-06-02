@@ -1,4 +1,8 @@
-import { IGetOrdersReq, PaymentStatus } from '../../types/order.type';
+import {
+  IGetOrdersReq,
+  OrderSortBy,
+  PaymentStatus,
+} from '../../types/order.type';
 import moment from 'moment/moment';
 
 export class OrderFilterDto {
@@ -13,28 +17,8 @@ export class OrderFilterDto {
   private readonly _paidAtFrom?: Date;
   private readonly _paidAtTo?: Date;
   private readonly _page: number;
-  private readonly _limit: number;
-  private readonly _sortBy?: string;
-
-  get status() {
-    return this._status;
-  }
-
-  get ids() {
-    return this._ids;
-  }
-
-  get thirdPartyPaymentIds() {
-    return this._thirdPartyPaymentIds;
-  }
-
-  get accounts() {
-    return this._accounts;
-  }
-
-  get emails() {
-    return this._emails;
-  }
+  private readonly _limit: number = 0;
+  private readonly _sortBy?: OrderSortBy;
 
   get createdAtFrom() {
     return this._createdAtFrom;
@@ -42,10 +26,6 @@ export class OrderFilterDto {
 
   get createdAtTo() {
     return this._createdAtTo;
-  }
-
-  get phones() {
-    return this._phones;
   }
 
   get paidAtFrom() {
@@ -56,17 +36,43 @@ export class OrderFilterDto {
     return this._paidAtTo;
   }
 
-  get page() {
-    return this._page;
+  get filter() {
+    return {
+      ...(this._status && { status: { $eq: this._status } }),
+      ...(this._ids && { _id: { $in: this._ids } }),
+      ...(this._thirdPartyPaymentIds && {
+        thirdPartyPaymentId: { $in: this._thirdPartyPaymentIds },
+      }),
+      ...(this._accounts && { account: { $in: this._accounts } }),
+      ...(this._emails && { deliveryInfo: { email: { $in: this._emails } } }),
+      ...((this._createdAtFrom || this._createdAtTo) && {
+        startAt: {
+          ...(this._createdAtFrom && { $lte: this._createdAtFrom }),
+          ...(this._createdAtTo && { $gte: this._createdAtTo }),
+        },
+      }),
+      ...((this._paidAtFrom || this._paidAtTo) && {
+        sellStartAt: {
+          ...(this._paidAtFrom && { $lte: this._paidAtFrom }),
+          ...(this._paidAtTo && { $gte: this._paidAtTo }),
+        },
+      }),
+      ...(this._phones && { deliveryInfo: { phone: { $in: this._phones } } }),
+    };
   }
 
-  get limit() {
-    return this._limit;
+  get options() {
+    return {
+      populate: {
+        path: 'user',
+        select: 'account name phone email',
+      },
+      skip: (this._page - 1) * this._limit,
+      ...(this._limit && { limit: this._limit }),
+      sort: this._sortBy || `-${OrderSortBy.createdAt}`,
+    };
   }
 
-  get sortBy() {
-    return this._sortBy;
-  }
   constructor(req: IGetOrdersReq) {
     const {
       status,
@@ -89,7 +95,7 @@ export class OrderFilterDto {
 
     this._thirdPartyPaymentIds = thirdPartyPaymentIds?.split(',');
 
-    this._sortBy = sortBy;
+    this._sortBy = sortBy as OrderSortBy;
     this._limit = Number(limit);
     this._page = Number(page);
 

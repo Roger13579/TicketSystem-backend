@@ -6,6 +6,17 @@ import { UserRepository } from '../repository/userRepository';
 import { IUserReq } from '../types/common.type';
 import { HttpStatus } from '../types/responseType';
 
+const verifyTokenAndFindUser = async (authorization?: string) => {
+  if (authorization && authorization.startsWith('Bearer ')) {
+    const token = authorization.split(' ')[1];
+    const payload = jwt.verify(token, process.env.JWT_SECRETS) as JwtPayload;
+    const userRepository = new UserRepository();
+    const user = await userRepository.findById(payload.id);
+    return user;
+  }
+  return null;
+};
+
 /**
  * @description 只取得身分，不限制行為
  */
@@ -14,18 +25,10 @@ export const UserCheck = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const userRepository = new UserRepository();
-
-  let token: string = '';
-  const authorization = req.headers.authorization;
   try {
-    if (authorization && authorization.startsWith('Bearer ')) {
-      token = authorization.split(' ')[1];
-      const payload = jwt.verify(token, process.env.JWT_SECRETS) as JwtPayload;
-      const user = await userRepository.findById(payload.id);
-      if (user) {
-        req.user = user;
-      }
+    const user = await verifyTokenAndFindUser(req.headers.authorization);
+    if (user) {
+      req.user = user;
     }
     return next();
   } catch (err) {
@@ -42,30 +45,22 @@ export const UserVerify = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const userRepository = new UserRepository();
-
-  let token: string = '';
   const authorization = req.headers.authorization;
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throwError(
+      CustomResponseType.NOT_LOGIN_MESSAGE,
+      CustomResponseType.NOT_LOGIN,
+    );
+  }
   try {
-    if (authorization && authorization.startsWith('Bearer ')) {
-      token = authorization.split(' ')[1];
-    } else {
-      throwError(
-        CustomResponseType.NOT_LOGIN_MESSAGE,
-        CustomResponseType.NOT_LOGIN,
-      );
-    }
-    const payload = jwt.verify(token, process.env.JWT_SECRETS) as JwtPayload;
-    const user = await userRepository.findById(payload.id);
+    const user = await verifyTokenAndFindUser(authorization);
     if (user) {
       req.user = user;
     } else {
-      return next(
-        new AppError(
-          CustomResponseType.UNREGISTERED_USER,
-          HttpStatus.UNAUTHORIZED,
-          CustomResponseType.UNREGISTERED_USER_MESSAGE,
-        ),
+      throw new AppError(
+        CustomResponseType.UNREGISTERED_USER,
+        HttpStatus.UNAUTHORIZED,
+        CustomResponseType.UNREGISTERED_USER_MESSAGE,
       );
     }
     return next();

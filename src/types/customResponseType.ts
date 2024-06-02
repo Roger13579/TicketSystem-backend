@@ -73,7 +73,7 @@ export const enum CustomResponseType {
   NOT_LOGIN_MESSAGE = '尚未登入',
 
   PERMISSION_DENIED = '6401',
-  PERMISSION_DENIED_MESSAGE = '不允許使用該方法',
+  PERMISSION_DENIED_MESSAGE = '不允許使用該方法：',
 
   ACCOUNT_DISABLED = '6402',
   ACCOUNT_DISABLED_MESSAGE = '此帳號已停用',
