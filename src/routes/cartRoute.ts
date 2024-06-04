@@ -1,6 +1,6 @@
 import { CartController } from '../controller/cartController';
 import { UserVerify } from '../middleware/userVerify';
-import { EditCartProductPipe } from '../validator/cart/editCartProduct.pipe';
+import { EditCartPipe } from '../validator/cart/editCart.pipe';
 import { GetCartPipe } from '../validator/cart/getCart.pipe';
 import { BaseRoute } from './baseRoute';
 
@@ -59,18 +59,54 @@ export class CartRoute extends BaseRoute {
       this.responseHandler(this.controller.getCart),
     );
 
+    // 刪除購物車內商品
+    this.router.delete(
+      '/v1/cart/:productId',
+      /**
+       * #swagger.tags = ['Cart']
+       * #swagger.summary = '刪除購物車內商品'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['productId'] ={
+          in:'path',
+          description:'商品ID',
+          required: true,
+          type: 'string'
+        }
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK',
+          schema:{
+            $ref:'#/definitions/EditCartSuccess'
+          }
+        }
+       */
+      UserVerify,
+      this.responseHandler(this.controller.deleteItem),
+    );
+
     // 編輯購物車
     this.router.patch(
-      '/v1/cart',
+      '/v1/cart/:productId',
       /**
        * #swagger.tags = ['Cart']
        * #swagger.summary = '編輯使用者購物車'
        * #swagger.security=[{"Bearer": []}]
        */
       /*
+        #swagger.parameters['productId'] ={
+          in:'path',
+          description:'商品ID',
+          required: true,
+          type: 'string'
+        }
+       */
+      /*
         #swagger.parameters['obj'] ={
           in:'body',
-          description:'欲編輯的商品，若要刪除則 amount 為 0',
+          description:'欲編輯的商品資料',
           schema:{
             $ref:"#/definitions/CustomEditCartObj"
           }
@@ -85,8 +121,8 @@ export class CartRoute extends BaseRoute {
         }
        */
       UserVerify,
-      this.usePipe(EditCartProductPipe),
-      this.responseHandler(this.controller.editCartProduct),
+      this.usePipe(EditCartPipe),
+      this.responseHandler(this.controller.editCart),
     );
   }
 }

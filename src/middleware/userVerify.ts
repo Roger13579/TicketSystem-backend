@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { AppError, throwError } from '../utils/errorHandler';
+import { AppError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import jwt, { TokenExpiredError, JwtPayload } from 'jsonwebtoken';
 import { UserRepository } from '../repository/userRepository';
@@ -47,9 +47,12 @@ export const UserVerify = async (
 ) => {
   const authorization = req.headers.authorization;
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throwError(
-      CustomResponseType.NOT_LOGIN_MESSAGE,
-      CustomResponseType.NOT_LOGIN,
+    return next(
+      new AppError(
+        CustomResponseType.NOT_LOGIN,
+        HttpStatus.UNAUTHORIZED,
+        CustomResponseType.NOT_LOGIN_MESSAGE,
+      ),
     );
   }
   try {

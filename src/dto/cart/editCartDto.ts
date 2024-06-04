@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 import { IUser } from '../../models/user';
-import { EditCartType, IEditCartProductReq } from '../../types/cart.type';
+import { EditCartType, IEditCartReq } from '../../types/cart.type';
 
-export class EditCartProductDTO {
+export class EditCartDTO {
   private readonly _userId: Types.ObjectId;
   private readonly _productId: Types.ObjectId;
   private readonly _amount: number;
@@ -24,12 +24,12 @@ export class EditCartProductDTO {
     return this._amount;
   }
 
-  constructor(req: IEditCartProductReq) {
-    const { user, body } = req;
-    const { amount, productId, type } = body;
+  constructor(req: IEditCartReq) {
+    const { user, body, params } = req;
+    const { amount, type } = body;
     this._type = type;
     this._userId = (user as IUser)._id;
     this._amount = amount;
-    this._productId = productId;
+    this._productId = new Types.ObjectId(params.productId);
   }
 }
