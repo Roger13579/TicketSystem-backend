@@ -1,12 +1,20 @@
-import { Meta, body } from 'express-validator';
+import { Meta, body, param } from 'express-validator';
 import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
-import { EditCartType, IEditCartProductReq } from '../../types/cart.type';
+import { EditCartType, IEditCartReq } from '../../types/cart.type';
 
-export class EditCartProductPipe extends PipeBase {
+export class EditCartPipe extends PipeBase {
+  private validateAmount = (value: number, { req }: Meta) => {
+    const { type } = (req as IEditCartReq).body;
+    const isSetNegativeAmount = type === EditCartType.set && value < 1;
+    const isNonIncAmount = type === EditCartType.inc && value === 0;
+    const isInvalid = isSetNegativeAmount || isNonIncAmount;
+    return !isInvalid;
+  };
+
   public transform = () => [
     this.nonEmptyStringValidation(
-      body('productId'),
+      param('productId'),
       CustomResponseType.INVALID_ADD_CART_MESSAGE + 'productId',
     ),
     body('type')
@@ -18,13 +26,7 @@ export class EditCartProductPipe extends PipeBase {
       .exists()
       .withMessage(CustomResponseType.INVALID_ADD_CART_MESSAGE + 'amount')
       .isInt()
-      .custom((value: number, { req }: Meta) => {
-        const { type } = (req as IEditCartProductReq).body;
-
-        const invalidSet = type === EditCartType.set && value < 1;
-
-        return !invalidSet;
-      })
+      .custom(this.validateAmount)
       .withMessage(CustomResponseType.INVALID_ADD_CART_MESSAGE + 'amount'),
     this.validationHandler,
   ];

@@ -1,10 +1,15 @@
 import { Types } from 'mongoose';
-import { EditCartProductDTO } from '../dto/cart/editCartProductDto';
+import { EditCartDTO } from '../dto/cart/editCartDto';
 import { CartRepository } from '../repository/cartRepository';
 import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
-import { EditCartType, ICartPagination } from '../types/cart.type';
+import {
+  EditCartType,
+  ICartPagination,
+  THandleExistedItemProp,
+} from '../types/cart.type';
 import { GetCartDTO } from '../dto/cart/getCartDto';
+import { DeleteItemDTO } from '../dto/cart/deleteItemDto';
 
 export class CartService {
   private readonly cartRepository: CartRepository = new CartRepository();
@@ -22,65 +27,74 @@ export class CartService {
     return newCart;
   };
 
-  public readonly editCartProduct = async (
-    editCartProductDto: EditCartProductDTO,
-  ) => {
-    const { productId, amount, userId, type } = editCartProductDto;
+  public readonly deleteItem = async (deleteItemDto: DeleteItemDTO) => {
+    const item = await this.cartRepository.deleteItem(deleteItemDto);
 
-    const existedCart = await this.cartRepository.findCartByUserId(userId);
+    if (!item) {
+      throwError(
+        CustomResponseType.INVALID_EDIT_CART_MESSAGE +
+          '刪除失敗，購物車內無該項商品',
+        CustomResponseType.INVALID_EDIT_CART,
+      );
+    }
+    return item;
+  };
 
-    // 數量為 0 ，購物車不存在 => 創建空購物車
-    if (!existedCart && amount === 0) {
-      return await this.cartRepository.createCart(userId);
+  private readonly handleExistedItem = async ({
+    existedItem,
+    editCartDto,
+  }: THandleExistedItemProp) => {
+    const { type, amount } = editCartDto;
+    const isDeletable =
+      type === EditCartType.inc &&
+      amount < 0 &&
+      existedItem.amount + amount <= 0;
+
+    if (isDeletable) {
+      return await this.cartRepository.deleteItem(editCartDto);
     }
 
-    // 購物車不存在，數量不為 0 => 創建新購物車並添加商品
+    const isEditable =
+      (type === EditCartType.inc &&
+        (amount > 0 || (amount < 0 && existedItem.amount + amount > 0))) ||
+      (type === EditCartType.set && amount !== existedItem.amount);
+
+    if (isEditable) {
+      return await this.cartRepository.editCart(editCartDto);
+    }
+
+    throwError(
+      CustomResponseType.INVALID_EDIT_CART,
+      CustomResponseType.INVALID_EDIT_CART_MESSAGE +
+        '該購物車商品數量相同，不須編輯',
+    );
+  };
+
+  public readonly editCart = async (editCartDto: EditCartDTO) => {
+    const { productId, amount, userId } = editCartDto;
+    let existedCart = await this.cartRepository.findCartByUserId(userId);
+
     if (!existedCart) {
-      await this.cartRepository.createCart(userId);
-      return await this.cartRepository.addCartProduct(editCartProductDto);
+      existedCart = await this.cartRepository.createCart(userId);
     }
 
-    // 購物車存在，檢查商品是否已存在於購物車中
     const existedItem = existedCart.items.find((item) =>
       item.productId?.equals(new Types.ObjectId(productId)),
     );
 
-    // 商品已存在於購物車中，數量為 0 => 刪除商品
-    if (!!existedItem && amount === 0) {
-      return await this.cartRepository.deleteCartProduct(editCartProductDto);
+    if (!!existedItem) {
+      return await this.handleExistedItem({ existedItem, editCartDto });
     }
 
-    // 商品已存在於購物車中，數量不為 0，舊數量和新數量不同 => 編輯商品
-    if (
-      !!existedItem &&
-      (amount !== existedItem.amount || type === EditCartType.inc)
-    ) {
-      return await this.cartRepository.editCartProduct(editCartProductDto);
+    if (amount > 0) {
+      return await this.cartRepository.addItem(editCartDto);
     }
 
-    // 商品已存在於購物車中，數量不為 0，舊數量和新數量相同 => 錯誤訊息
-    if (!!existedItem && amount === existedItem.amount) {
-      throwError(
-        CustomResponseType.INVALID_EDIT_CART,
-        CustomResponseType.INVALID_ADD_CART_MESSAGE +
-          '該購物車商品數量相同，不須編輯',
-      );
-      return;
-    }
+    throwError(
+      CustomResponseType.INVALID_EDIT_CART,
+      CustomResponseType.INVALID_EDIT_CART_MESSAGE + '編輯數量無效',
+    );
 
-    // 商品不存在於購物車中，數量為 0 => 錯誤訊息
-    if (!existedItem && amount === 0) {
-      throwError(
-        CustomResponseType.INVALID_EDIT_CART,
-        CustomResponseType.INVALID_ADD_CART_MESSAGE + '購物車內沒有該商品',
-      );
-      return;
-    }
-
-    // 商品不存在於購物車中，數量不為 0 => 則新增商品
-
-    const cart = await this.cartRepository.addCartProduct(editCartProductDto);
-
-    return cart;
+    return null;
   };
 }

@@ -10,7 +10,7 @@ import {
 
 const { userId, productId } = schemaDef;
 
-interface IItem extends IProductId, BaseModel {
+export interface IItem extends IProductId, BaseModel {
   amount: number;
 }
 
