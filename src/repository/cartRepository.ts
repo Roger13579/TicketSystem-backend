@@ -1,9 +1,10 @@
 import { Types } from 'mongoose';
 import CartModel from '../models/cart';
-import { EditCartProductDTO } from '../dto/cart/editCartProductDto';
+import { EditCartDTO } from '../dto/cart/editCartDto';
 import { updateOptions } from '../utils/constants';
 import { EditCartType } from '../types/cart.type';
 import { GetCartDTO } from '../dto/cart/getCartDto';
+import { DeleteItemDTO } from '../dto/cart/deleteItemDto';
 
 export class CartRepository {
   public createCart = async (userId: Types.ObjectId) => {
@@ -60,7 +61,6 @@ export class CartRepository {
       },
       {
         $project: {
-          // 要留下哪些資料
           _id: 1,
           userId: 1,
           totalCount: { $size: '$items' },
@@ -77,8 +77,8 @@ export class CartRepository {
     return await CartModel.findOne({ userId });
   };
 
-  public addCartProduct = async (editCartProductDto: EditCartProductDTO) => {
-    const { userId, productId, amount } = editCartProductDto;
+  public addItem = async (editCartDto: EditCartDTO) => {
+    const { userId, productId, amount } = editCartDto;
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $ne: productId } },
       { $push: { items: { productId, amount } } },
@@ -86,8 +86,10 @@ export class CartRepository {
     );
   };
 
-  public deleteCartProduct = async (editCartProductDto: EditCartProductDTO) => {
-    const { userId, productId } = editCartProductDto;
+  public deleteItem = async ({
+    userId,
+    productId,
+  }: DeleteItemDTO | EditCartDTO) => {
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $eq: productId } },
       { $pull: { items: { productId } } },
@@ -95,8 +97,8 @@ export class CartRepository {
     );
   };
 
-  public editCartProduct = async (editCartProductDto: EditCartProductDTO) => {
-    const { productId, userId, amount, type } = editCartProductDto;
+  public editCart = async (editCartDto: EditCartDTO) => {
+    const { productId, userId, amount, type } = editCartDto;
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $eq: productId } },
       {

@@ -1,16 +1,17 @@
 import { Types } from 'mongoose';
 import { IUserReq } from './common.type';
 import { IProduct } from '../models/product';
+import { EditCartDTO } from '../dto/cart/editCartDto';
+import { IItem } from '../models/cart';
 
 export enum EditCartType {
   inc = 'inc',
   set = 'set',
 }
 
-export interface IEditCartProductReq extends IUserReq {
+export interface IEditCartReq extends IUserReq {
   body: {
     type: EditCartType;
-    productId: Types.ObjectId;
     amount: number;
   };
 }
@@ -50,3 +51,8 @@ export interface ICartPagination {
   totalCount: number;
   items: ICartPaginationItem[];
 }
+
+export type THandleExistedItemProp = {
+  existedItem: IItem;
+  editCartDto: EditCartDTO;
+};
