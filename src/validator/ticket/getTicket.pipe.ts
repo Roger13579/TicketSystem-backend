@@ -7,6 +7,7 @@ import {
   TicketSortField,
   TicketStatus,
 } from '../../types/ticket.type';
+import { SortOrder } from '../../types/common.type';
 
 export class GetTicketPipe extends PipeBase {
   private validateExpiredAtFrom: TCustomValidator = (value, { req }) => {
@@ -62,17 +63,24 @@ export class GetTicketPipe extends PipeBase {
       .withMessage(
         CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'expiredAtTo',
       ),
-    query('isShared')
+    query('isPublished')
       .optional()
       .isIn(booleanStrings)
       .withMessage(
-        CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'isPublic',
+        CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'isPublished',
       ),
-    query('sortBy')
+    query('sortField')
       .optional()
       .custom(this.validateOption(OptionType.item, TicketSortField))
-      .withMessage(CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'sortBy'),
-
+      .withMessage(
+        CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'sortField',
+      ),
+    query('sortOrder')
+      .optional()
+      .custom(this.validateOption(OptionType.item, SortOrder))
+      .withMessage(
+        CustomResponseType.INVALID_TICKET_FILTER_MESSAGE + 'sortOrder',
+      ),
     query('status')
       .optional()
       .isIn(Object.keys(TicketStatus))
