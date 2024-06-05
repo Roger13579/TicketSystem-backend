@@ -53,7 +53,7 @@ export class TicketRoute extends BaseRoute {
           #swagger.parameters['productName'] = {
             in: 'query',
             required: false,
-            description: '模糊搜尋：商品名稱',
+            description: '模糊搜尋：商品名稱(Admin 專用)',
             type: 'string',
             schema:{
               $ref: "#/definitions/CustomGetTicketProductName"
@@ -63,7 +63,7 @@ export class TicketRoute extends BaseRoute {
             in: 'query',
             required: false,
             description: '精準搜尋：是否上架分票',
-            type: 'string',
+            type: 'boolean',
             schema:{
               $ref: "#/definitions/CustomGetTicketIsPublished"
             }
@@ -104,13 +104,24 @@ export class TicketRoute extends BaseRoute {
               $ref: "#/definitions/CustomLimitQuery"
             }
           }
-          #swagger.parameters['sortBy'] = {
+          #swagger.parameters['sortField'] = {
             in: 'query',
             required: false,
-            description: '排序根據, e.g. createdAt, status,降冪則在前面加上 - ',
+            description: '排序根據',
             type: 'string',
+            enum: ["createdAt", "expiredAt", "status"],
             schema:{
-              $ref: "#/definitions/CustomSortByQuery"
+              $ref: "#/definitions/CustomSortFieldQuery"
+            }
+          }
+          #swagger.parameters['sortOrder'] = {
+            in: 'query',
+            required: false,
+            description: '排序順序',
+            type: 'string',
+            enum: ["asc", "desc"],
+            schema:{
+              $ref: "#/definitions/CustomSortOrderQuery"
             }
           }
       */

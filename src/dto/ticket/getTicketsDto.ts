@@ -9,7 +9,7 @@ import { IUser } from '../../models/user';
 import { AccountType } from '../../types/user.type';
 import { SortOrder } from '../../types/common.type';
 
-export class TicketFilterDto {
+export class GetTicketsDto {
   private readonly _status?: TicketStatus;
   private readonly _userId?: Types.ObjectId | undefined;
   private readonly _expiredAtFrom?: Date;
@@ -17,10 +17,10 @@ export class TicketFilterDto {
   private readonly _isPublished?: boolean;
   private readonly _page: number;
   private readonly _limit: number;
-  private readonly _sort?: Record<string, 1 | -1>;
+  private readonly _sort: Record<string, 1 | -1>;
   private readonly _ids?: string[];
   private readonly _productName?: string;
-  private readonly isAdmin?: boolean;
+  private readonly _isAdmin?: boolean;
 
   get status() {
     return this._status;
@@ -56,10 +56,17 @@ export class TicketFilterDto {
   get productName() {
     return this._productName;
   }
+  /**
+   * @description lookup to products
+   */
+  get productNameRegex() {
+    return this._productName && this._isAdmin
+      ? new RegExp(this._productName)
+      : undefined;
+  }
   get userId() {
     return this._userId;
   }
-  // TODO 研究如何加上 productName 條件
   get filter() {
     return {
       ...(this._status && { status: { $eq: this._status } }),
@@ -75,24 +82,58 @@ export class TicketFilterDto {
     };
   }
   get options() {
-    const selectStr = this.isAdmin
-      ? 'title photoPath price theater startAt isPublic recommendWeight'
-      : 'title photoPath price theater startAt -isPublic -recommendWeight';
-    const projection = this.isAdmin
-      ? {}
+    const productSelect = this._isAdmin
+      ? {
+          title: 1,
+          photoPath: 1,
+          price: 1,
+          theater: 1,
+          startAt: 1,
+          isPublic: 1,
+          recommendWeight: 1,
+        }
       : {
-          writeOffAt: 0,
-          writeOffStaff: 0,
+          title: 1,
+          photoPath: 1,
+          price: 1,
+          theater: 1,
+          startAt: 1,
+        };
+    const ticketSelect = this._isAdmin
+      ? {
+          _id: 1,
+          productId: 1,
+          userId: 1,
+          orderId: 1,
+          amount: 1,
+          status: 1,
+          isPublished: 1,
+          expiredAt: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          writeOffAt: 1,
+          writeOffStaff: 1,
+          product: 1,
+        }
+      : {
+          _id: 1,
+          productId: 1,
+          userId: 1,
+          orderId: 1,
+          amount: 1,
+          status: 1,
+          isPublished: 1,
+          expiredAt: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          product: 1,
         };
     return {
-      populate: {
-        path: 'product',
-        select: selectStr,
-      },
+      productSelect,
       skip: (this._page - 1) * this._limit,
       ...(this._limit && { limit: this._limit }),
       sort: this._sort,
-      projection,
+      ticketSelect,
     };
   }
   constructor(req: IGetTicketsReq) {
@@ -113,7 +154,10 @@ export class TicketFilterDto {
       (req.user as IUser).accountType !== AccountType.admin
         ? (req.user as IUser)._id
         : undefined;
-    this.isAdmin = (req.user as IUser).accountType === AccountType.admin;
+    this._isAdmin =
+      req.user !== undefined
+        ? (req.user as IUser).accountType === AccountType.admin
+        : false;
     this._status = status as TicketStatus;
     this._ids = ids?.split(',');
     this._productName = productName;
