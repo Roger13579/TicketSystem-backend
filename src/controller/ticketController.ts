@@ -2,7 +2,7 @@ import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
 import { Request } from 'express';
 import { TicketService } from '../service/ticketService';
-import { TicketFilterDto } from '../dto/ticket/ticketFilterDto';
+import { GetTicketsDto } from '../dto/ticket/getTicketsDto';
 import { IGetTicketsReq } from '../types/ticket.type';
 import { IOrder } from '../models/order';
 import { OrderRepository } from '../repository/orderRepository';
@@ -24,12 +24,13 @@ export class TicketController extends BaseController {
   };
 
   public getTickets = async (req: IGetTicketsReq) => {
-    const ticketFilterDto = new TicketFilterDto(req);
-    const info = await this.ticketService.findTickets(ticketFilterDto);
+    const getTicketsDto = new GetTicketsDto(req);
+    const { page, limit } = getTicketsDto;
+    const info = await this.ticketService.findTickets(getTicketsDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new GetTicketVo(info),
+      new GetTicketVo(info[0], page, limit),
     );
   };
 }

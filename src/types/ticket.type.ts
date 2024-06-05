@@ -1,4 +1,5 @@
 import { IUserReq, SortOrder } from './common.type';
+import { Types } from 'mongoose';
 
 export enum TicketStatus {
   verified = 'verified', // 已核銷
@@ -21,6 +22,39 @@ export interface IGetTicketsReq extends IUserReq {
     sortOrder?: SortOrder;
   };
 }
+export interface IGetTicketsRes {
+  metadata: [
+    {
+      totalCount?: number;
+    },
+  ];
+  tickets: IGetTicket[];
+}
+export interface IGetTicket {
+  _id: Types.ObjectId;
+  productId: Types.ObjectId;
+  userId: Types.ObjectId;
+  orderId: Types.ObjectId;
+  amount: number;
+  status: TicketStatus;
+  isPublished: boolean;
+  expiredAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  writeOffAt: Date;
+  writeOffStaff: string;
+  product: {
+    _id: Types.ObjectId;
+    title: string;
+    theater: string;
+    price: number;
+    startAt: Date;
+    recommendWeight: number;
+    isPublic: boolean;
+    photoPath: string;
+  };
+}
+
 export enum TicketSortField {
   createdAt = 'createdAt',
   expiredAt = 'expiredAt',
