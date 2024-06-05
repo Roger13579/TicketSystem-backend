@@ -15,6 +15,11 @@ export class TicketRepository {
       : undefined;
     return TicketModel.aggregate([
       {
+        $match: {
+          ...ticketFilterDto.filter,
+        },
+      },
+      {
         $lookup: {
           localField: 'productId',
           from: 'products',
@@ -30,7 +35,6 @@ export class TicketRepository {
       { $unwind: '$product' },
       {
         $match: {
-          ...ticketFilterDto.filter,
           ...(ticketFilterDto.productNameRegex && productNameFilter),
         },
       },
