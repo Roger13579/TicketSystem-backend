@@ -4,6 +4,7 @@ import CommentModel, { IComment } from '../models/comment';
 import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 import { FilterQuery, Types } from 'mongoose';
 import { updateOptions } from '../utils/constants';
+import { createGetCommentPipeline } from '../utils/aggregate/comment/getComment.pipeline';
 
 export class CommentRepository {
   public createComment = async ({ comment }: NewCommentDTO) =>
@@ -31,64 +32,9 @@ export class CommentRepository {
     return await CommentModel.deleteMany(filter);
   };
 
-  public findComments = async ({
-    filter,
-    sort,
-    accounts,
-    productNameRegex,
-    page,
-    limit,
-    projection,
-  }: GetCommentsDTO) => {
-    const productNameFilter = productNameRegex
-      ? {
-          'product.title': { $regex: productNameRegex },
-        }
-      : undefined;
-    const accountsFilter = accounts
-      ? {
-          'user.account': { $in: accounts },
-        }
-      : undefined;
-    return await CommentModel.aggregate([
-      {
-        $lookup: {
-          localField: 'productId',
-          from: 'products',
-          foreignField: '_id',
-          as: 'product',
-        },
-      },
-      {
-        $lookup: {
-          localField: 'userId',
-          from: 'users',
-          foreignField: '_id',
-          as: 'user',
-        },
-      },
-      { $unwind: '$product' },
-      { $unwind: '$user' },
-      {
-        $match: {
-          ...filter,
-          ...(productNameRegex && productNameFilter),
-          ...(accounts && accountsFilter),
-        },
-      },
-      {
-        $facet: {
-          metadata: [{ $count: 'totalCount' }],
-          comments: [
-            { $sort: sort },
-            { $skip: (page - 1) * limit },
-            {
-              $limit: limit,
-            },
-            { $project: projection },
-          ],
-        },
-      },
-    ]);
+  public findComments = async (getCommentsDto: GetCommentsDTO) => {
+    const pipeline = createGetCommentPipeline(getCommentsDto);
+    const results = await CommentModel.aggregate(pipeline);
+    return results[0];
   };
 }

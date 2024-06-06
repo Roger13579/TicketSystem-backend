@@ -63,12 +63,11 @@ export interface IGetComment {
   };
 }
 
-export interface IGetCommentsRes {
-  metadata: [
-    {
-      totalCount?: number;
-    },
-  ];
+export interface IGetCommentsPagination {
+  metadata: {
+    totalCount: number;
+  };
+
   comments: IGetComment[];
 }
 
