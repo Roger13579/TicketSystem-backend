@@ -10,6 +10,8 @@ export class GetCartVO {
   public readonly totalCount: number;
   public readonly userId: Types.ObjectId;
   public readonly items: unknown[];
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
 
   constructor(
     cart:
@@ -21,6 +23,8 @@ export class GetCartVO {
     page: number,
     limit: number,
   ) {
+    this.createdAt = cart.createdAt;
+    this.updatedAt = cart.updatedAt;
     this._id = cart._id;
     this.page = page;
     this.limit = limit;

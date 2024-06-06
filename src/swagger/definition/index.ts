@@ -7,10 +7,10 @@ import { orderDefinition, orderCustomDefinition } from './order';
 import { cartDefinitions, cartCustomDefinitions } from './cart';
 import { tagCustomDefinitions, tagDefinitions } from './tag';
 import { ticketCustomDefinition, ticketDefinition } from './ticket';
+import { userDefinition } from './user';
 
 export const definitions = {
   ...commonDefinitions,
-
   UploadFileSuccess,
   ...productDefinition,
   ...groupDefinition,
@@ -19,6 +19,7 @@ export const definitions = {
   ...tagDefinitions,
   ...orderDefinition,
   ...ticketDefinition,
+  ...userDefinition,
 };
 
 export const customDefinitions = {

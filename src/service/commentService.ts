@@ -5,7 +5,7 @@ import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { Types } from 'mongoose';
-import { IGetCommentsRes } from '../types/comment.type';
+import { IGetCommentsPagination } from '../types/comment.type';
 import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 
 export class CommentService {
@@ -48,7 +48,7 @@ export class CommentService {
 
   public getComments = async (
     getCommentsDto: GetCommentsDTO,
-  ): Promise<IGetCommentsRes[]> =>
+  ): Promise<IGetCommentsPagination> =>
     await this.commentRepository.findComments(getCommentsDto);
 
   public editComments = async (editCommentDto: EditCommentsDTO) => {

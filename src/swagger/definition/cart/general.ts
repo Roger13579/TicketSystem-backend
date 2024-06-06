@@ -28,21 +28,23 @@ export const optionalItem = {
 const defaultCart = {
   $_id: '665b553acbea41c4b7a8dcdf',
   $userId: '6656fdfaea3c0ab9e916788e',
+  $createdAt: '2024-06-01T17:07:06.055Z',
+  $updatedAt: '2024-06-05T15:20:06.616Z',
 };
 
 const detailItem = {
   $product: {
     $_id: '665b00748f529f5f17923acd',
-    $title: '這是個很棒的電影名稱喔',
-    $type: ProductType.preScreeningMeeting,
-    $genre: MovieGenre.action,
-    $price: 1100,
-    $soldAmount: 0,
-    $amount: 100,
-    $isLaunched: true,
-    $photoPath: 'https://images.unsplash.com/abc',
-    $sellStartAt: moment().toDate(),
-    $sellEndAt: moment().toDate(),
+    title: '這是個很棒的電影名稱喔',
+    type: ProductType.preScreeningMeeting,
+    genre: MovieGenre.action,
+    price: 1100,
+    soldAmount: 0,
+    amount: 100,
+    isLaunched: true,
+    photoPath: 'https://images.unsplash.com/abc',
+    sellStartAt: moment().toDate(),
+    sellEndAt: moment().toDate(),
   },
   $amount: 7,
 };
