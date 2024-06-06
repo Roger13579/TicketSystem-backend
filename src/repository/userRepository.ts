@@ -3,6 +3,9 @@ import { UserDetailDto } from '../dto/user/userDetailDto';
 import { Types } from 'mongoose';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
 import { updateOptions } from '../utils/constants';
+import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
+import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
+import { createGetFavoritePipeline } from '../utils/aggregate/user/getFavorite.pipeline';
 
 export class UserRepository {
   public async createUser(
@@ -116,4 +119,34 @@ export class UserRepository {
   public async findByThirdPartyId(id: string): Promise<IUser | null> {
     return UserModel.findOne({ thirdPartyId: id });
   }
+
+  public findFavoriteByUserId = async (
+    getUserFavoriteDto: GetUserFavoriteDTO,
+  ) => {
+    const pipeline = createGetFavoritePipeline(getUserFavoriteDto);
+    const results = await UserModel.aggregate(pipeline);
+    return results[0];
+  };
+
+  public addFavorite = async ({ userId, productId }: EditFavoriteDTO) => {
+    return await UserModel.findOneAndUpdate(
+      {
+        _id: userId,
+        'favorites.productId': { $ne: productId },
+      },
+      { $push: { favorites: { productId } } },
+      { ...updateOptions, projection: { favorites: 1 } },
+    );
+  };
+
+  public deleteFavorite = async ({ userId, productId }: EditFavoriteDTO) => {
+    return await UserModel.findOneAndUpdate(
+      {
+        _id: userId,
+        'favorites.productId': { $eq: productId },
+      },
+      { $pull: { favorites: { productId } } },
+      { ...updateOptions, projection: { favorites: 1 } },
+    );
+  };
 }
