@@ -51,7 +51,7 @@ export class CommentController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      new GetCommentsVo(info[0], page, limit),
+      new GetCommentsVo(info, page, limit),
     );
   };
 
