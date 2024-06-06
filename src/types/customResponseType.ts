@@ -188,4 +188,7 @@ export const enum CustomResponseType {
 
   EDIT_COMMENT_ERROR = '6538',
   EDIT_COMMENT_ERROR_MESSAGE = '無效的評論編輯：',
+
+  EDIT_FAVORITE_ERROR = '6539',
+  EDIT_FAVORITE_ERROR_MESSAGE = '無效的編輯收藏：',
 }

@@ -27,7 +27,7 @@ export interface IUser extends BaseModel {
   accountType: AccountType;
   status: Status;
   groups?: [IGroupId];
-  collects?: [IProductId];
+  favorites?: [IProductId];
   myTickets?: [ITicketId];
 }
 
@@ -104,7 +104,7 @@ const schema = new Schema<IUser>(
       type: [{ groupId }],
       default: [],
     },
-    collects: {
+    favorites: {
       type: [{ productId }],
       default: [],
     },

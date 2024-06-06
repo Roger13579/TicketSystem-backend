@@ -11,11 +11,18 @@ import { ResetPwdDto } from '../dto/user/resetPwdDto';
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
-import { TGoogleUser } from '../types/user.type';
+import { IGetFavoritePagination, TGoogleUser } from '../types/user.type';
+import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
+import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
+import { ProductRepository } from '../repository/productRepository';
+
 const logger = log4js.getLogger(`UserService`);
 
 export class UserService {
   private readonly userRepository: UserRepository = new UserRepository();
+
+  private readonly productRepository: ProductRepository =
+    new ProductRepository();
 
   public async createUser(
     account: string,
@@ -258,6 +265,52 @@ export class UserService {
       return user;
     }
   }
+
+  public getFavorite = async (
+    getUserFavoriteDto: GetUserFavoriteDTO,
+  ): Promise<IGetFavoritePagination> =>
+    await this.userRepository.findFavoriteByUserId(getUserFavoriteDto);
+
+  public addFavorite = async (editFavoriteDto: EditFavoriteDTO) => {
+    const { productId } = editFavoriteDto;
+    const availableProduct = await this.productRepository.findProduct({
+      _id: productId,
+      isPublic: true,
+    });
+
+    if (!availableProduct) {
+      throwError(
+        CustomResponseType.EDIT_FAVORITE_ERROR_MESSAGE + '該商品無法被收藏',
+        CustomResponseType.EDIT_FAVORITE_ERROR,
+      );
+      return null;
+    }
+
+    const favorite = await this.userRepository.addFavorite(editFavoriteDto);
+
+    if (!favorite) {
+      throwError(
+        CustomResponseType.EDIT_FAVORITE_ERROR_MESSAGE + '該商品已被收藏',
+        CustomResponseType.EDIT_FAVORITE_ERROR,
+      );
+      return null;
+    }
+
+    return favorite;
+  };
+
+  public deleteFavorite = async (editFavoriteDto: EditFavoriteDTO) => {
+    const favorite = await this.userRepository.deleteFavorite(editFavoriteDto);
+    if (!favorite) {
+      throwError(
+        CustomResponseType.EDIT_FAVORITE_ERROR_MESSAGE +
+          '該商品不存在於收藏列表',
+        CustomResponseType.EDIT_FAVORITE_ERROR,
+      );
+      return null;
+    }
+    return favorite;
+  };
 
   private pwdValidate(pwd: string, confirmPwd: string): void {
     if (pwd !== confirmPwd) {
