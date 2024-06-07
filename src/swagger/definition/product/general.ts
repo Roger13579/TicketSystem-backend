@@ -103,10 +103,58 @@ export const GetProductsSuccess = {
   },
 };
 
+const subInfo = {
+  $subStatus: CustomResponseType.PRODUCT_NOT_FOUND,
+  $subMessage: CustomResponseType.PRODUCT_NOT_FOUND_MESSAGE,
+};
+
 export const EditProductsSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     $products: [{ ...ProductItem, ...ProductDetailItem }],
+    $errors: [
+      {
+        $product: {
+          $id: ProductItem.$_id,
+          $content: {
+            title: ProductItem.$title,
+            brief: ProductItem.$brief,
+            type: ProductItem.$type,
+            genre: ProductItem.$genre,
+            vendor: ProductItem.vendor,
+            theater: ProductItem.$theater,
+            price: ProductItem.price,
+            amount: ProductItem.amount,
+            isLaunched: ProductItem.isLaunched,
+            isPublic: ProductItem.isPublic,
+            recommendWeight:
+              CreateProductsSuccess.$data.$products[0].recommendWeight,
+            sellEndAt: ProductItem.sellEndAt,
+            sellStartAt: ProductItem.sellStartAt,
+            endAt: ProductItem.endAt,
+            startAt: ProductItem.startAt,
+            photoPath: ProductItem.photoPath,
+          },
+        },
+        ...subInfo,
+      },
+    ],
+  },
+};
+
+export const DeleteProductsSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $products: [{ ...ProductItem, ...ProductDetailItem }],
+    $errors: [
+      {
+        $product: {
+          $id: ProductItem.$_id,
+        },
+        ...subInfo,
+      },
+    ],
   },
 };

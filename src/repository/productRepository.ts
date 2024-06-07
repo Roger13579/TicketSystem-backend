@@ -54,19 +54,20 @@ export class ProductRepository {
     return newProducts;
   };
 
+  public deleteProduct = async (id: Types.ObjectId) =>
+    await ProductModel.findByIdAndDelete(id, updateOptions);
+
+  public updateProduct = async (id: Types.ObjectId, content?: IEditContent) =>
+    ProductModel.findByIdAndUpdate(id, content, updateOptions);
+
   public editProductsSoldAmount = async (products: IOrderProduct[]) => {
-    const promises = products.map(({ productId, amount }) => {
-      ProductModel.findByIdAndUpdate(
-        productId,
-        { $inc: { soldAmount: amount } },
-        updateOptions,
-      );
-    });
+    const promises = products.map(
+      async ({ productId, amount }) =>
+        await ProductModel.findByIdAndUpdate(productId, {
+          $inc: { soldAmount: amount },
+        }),
+    );
 
-    const newProducts = await Promise.all(promises).then((values) => {
-      return values;
-    });
-
-    return newProducts;
+    await Promise.all(promises).then((values) => values);
   };
 }

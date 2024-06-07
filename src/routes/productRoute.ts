@@ -303,7 +303,7 @@ export class ProductRoute extends BaseRoute {
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/DeleteSuccess"
+              $ref: "#/definitions/DeleteProductsSuccess"
             }
           }
        */

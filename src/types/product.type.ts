@@ -1,6 +1,6 @@
 import { IProduct } from '../models/product';
 import { Request } from 'express';
-import { IUserReq, SortOrder } from './common.type';
+import { ISubResponse, IUserReq, SortOrder } from './common.type';
 import { Types } from 'mongoose';
 import { IProductId } from '../models/baseModel';
 
@@ -145,3 +145,9 @@ export interface IProductSnapshot extends IProductId {
   price: number;
   startAt: Date;
 }
+
+export interface IInvalidProduct extends ISubResponse {
+  product: unknown;
+}
+
+export type TCreateInvalidProductParam = (product: unknown) => IInvalidProduct;
