@@ -1,11 +1,16 @@
-import { Request, Response, NextFunction, Router } from 'express';
-import { ResponseObject } from '../utils/responseObject';
-import { BaseController } from '../controller/baseController';
+import { Router } from 'express';
 import { HttpStatus } from '../types/responseType';
 import log4js from '../config/log4js';
 import { PipeBase } from '../validator/pipe.base';
+import { IUserReq, TMethod } from '../types/common.type';
+import { BaseController } from '../controller/baseController';
 
 const logger = log4js.getLogger(`BaseRoute`);
+
+type TResponseHandler = (
+  method: TMethod<IUserReq>,
+  controller?: BaseController,
+) => TMethod<IUserReq, void>;
 
 export abstract class BaseRoute {
   public router = Router();
@@ -30,15 +35,9 @@ export abstract class BaseRoute {
     return pipe.transform();
   }
 
-  protected responseHandler(
-    method: (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ) => Promise<ResponseObject>,
-    controller = this.controller,
-  ) {
-    return (req: Request, res: Response, next: NextFunction) => {
+  protected responseHandler: TResponseHandler =
+    (method, controller = this.controller) =>
+    (req, res, next) => {
       method
         .call(this.controller, req, res, next)
         .then((obj) => res.status(HttpStatus.OK).json(obj))
@@ -47,5 +46,4 @@ export abstract class BaseRoute {
           next(controller.formatResponse(err.message, err.status));
         });
     };
-  }
 }

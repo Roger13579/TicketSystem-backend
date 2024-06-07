@@ -13,17 +13,15 @@ import { GroupFilterDto } from '../dto/group/groupFilterDto';
 import { updateOptions } from '../utils/constants';
 
 export class GroupRepository {
-  public async createGroup(createGroupDto: CreateGroupDto): Promise<IGroup> {
+  public async createGroup(createGroupDto: CreateGroupDto) {
     return GroupModel.create(new GroupModel(createGroupDto));
   }
 
-  public async findById(groupId: Types.ObjectId): Promise<IGroup | null> {
+  public async findById(groupId: Types.ObjectId) {
     return GroupModel.findById(groupId);
   }
 
-  public async updateGroup(
-    updateGroupDto: UpdateGroupDto,
-  ): Promise<IGroup | null> {
+  public async updateGroup(updateGroupDto: UpdateGroupDto) {
     return GroupModel.findByIdAndUpdate(
       { _id: new Types.ObjectId(updateGroupDto.groupId) },
       {
@@ -34,17 +32,12 @@ export class GroupRepository {
     );
   }
 
-  public async joinGroup(
-    group: IGroup,
-    joinGroupDto: JoinGroupDto,
-  ): Promise<IGroup | null> {
+  public async joinGroup(group: IGroup, joinGroupDto: JoinGroupDto) {
     group.participant?.push(joinGroupDto.participant);
     return group.save();
   }
 
-  public async leaveGroup(
-    leaveGroupDto: LeaveGroupDto,
-  ): Promise<IGroup | null> {
+  public async leaveGroup(leaveGroupDto: LeaveGroupDto) {
     return GroupModel.findByIdAndUpdate(
       { _id: new Types.ObjectId(leaveGroupDto.groupId) },
       {
@@ -57,7 +50,7 @@ export class GroupRepository {
       updateOptions,
     );
   }
-  public async deleteGroup(groupId: Types.ObjectId): Promise<IGroup | null> {
+  public async deleteGroup(groupId: Types.ObjectId) {
     return GroupModel.findByIdAndDelete({ _id: groupId });
   }
   public async findGroups({

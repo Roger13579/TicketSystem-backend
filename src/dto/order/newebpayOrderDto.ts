@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { IOrder } from '../../models/order';
 
 export class NewebpayOrderDto {
@@ -21,7 +22,7 @@ export class NewebpayOrderDto {
   private readonly _email: string;
 
   constructor(order: IOrder) {
-    this._TimeStamp = Math.round(new Date().getTime() / 1000);
+    this._TimeStamp = Math.round(moment().toDate().getTime() / 1000);
     this._Amt = order.price;
     this._MerchantOrderNo = order.id.toString();
     this._email =

@@ -1,5 +1,5 @@
 import { query } from 'express-validator';
-import { PipeBase, booleanStrings } from '../pipe.base';
+import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
 import {
   IGetProductsReq,
@@ -10,6 +10,7 @@ import {
 } from '../../types/product.type';
 import { OptionType, TCustomValidator } from '../index.type';
 import { SortOrder } from '../../types/common.type';
+import { booleanStrings } from '../../utils/constants';
 
 // 管理者和使用者都可以使用的
 

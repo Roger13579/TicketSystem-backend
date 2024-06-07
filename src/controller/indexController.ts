@@ -1,44 +1,44 @@
-import { NextFunction, Request, Response } from 'express';
 import { BaseController } from './baseController';
-import { ResponseObject } from '../utils/responseObject';
 import { CustomResponseType } from '../types/customResponseType';
 import bcrypt from 'bcrypt';
 import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
 import { ResetPwdDto } from '../dto/user/resetPwdDto';
 import { IUser } from '../models/user';
-import { ILoginReq, IRefreshTokenReq } from '../types/user.type';
+import {
+  IForgetPwdReq,
+  IGoogleSignUpReq,
+  ILoginReq,
+  IRefreshTokenReq,
+  IResetPwdReq,
+  ISignUpReq,
+} from '../types/user.type';
+import { IUserReq, TMethod } from '../types/common.type';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
 
-  public signUp = async (req: Request): Promise<ResponseObject> => {
-    const { email, account, pwd, confirmPwd } = req.body;
-    await this.userService.createUser(account, email, pwd, confirmPwd);
+  public signUp: TMethod<ISignUpReq> = async (req) => {
+    const { email, account, pwd } = req.body;
+    await this.userService.createUser(account, email, pwd);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
     );
   };
-  public googleSignUp = async (req: Request): Promise<ResponseObject> => {
-    const { account, pwd, confirmPwd } = req.body;
+  public googleSignUp: TMethod<IGoogleSignUpReq> = async (req) => {
+    const { account, pwd } = req.body;
     const thirdPartyId = (req.user as IUser).thirdPartyId as string;
-    await this.userService.updateUserFromGoogle(
-      account,
-      pwd,
-      confirmPwd,
-      thirdPartyId,
-    );
+    await this.userService.updateUserFromGoogle(account, pwd, thirdPartyId);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
     );
   };
 
-  public login = async (req: ILoginReq): Promise<ResponseObject> => {
-    const account = req.body.account;
-    const pwd = req.body.pwd;
-    const user = (await this.userService.findByAccount(account)) as IUser;
+  public login: TMethod<ILoginReq> = async (req) => {
+    const { account, pwd } = req.body;
+    const user = await this.userService.findByAccount(account);
     const dbPwd = user.pwd;
     const compare = await bcrypt.compare(pwd, dbPwd);
     if (compare) {
@@ -59,30 +59,26 @@ class IndexController extends BaseController {
     }
   };
 
-  public forgotPwd = async (req: Request): Promise<ResponseObject> => {
-    return this.userService.forgotPwd(req.body.email).then(() => {
-      return this.formatResponse(
-        CustomResponseType.OK_MESSAGE,
-        CustomResponseType.OK,
-      );
-    });
+  public forgotPwd: TMethod<IForgetPwdReq> = async (req) => {
+    await this.userService.forgotPwd(req.body.email);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+    );
   };
 
-  public resetPwd = async (req: Request): Promise<ResponseObject> => {
+  public resetPwd: TMethod<IResetPwdReq> = async (req) => {
     const resetPwdDto = new ResetPwdDto(req);
-    return this.userService.resetPwd(resetPwdDto).then(() => {
-      return this.formatResponse(
-        CustomResponseType.OK_MESSAGE,
-        CustomResponseType.OK,
-      );
-    });
+    await this.userService.resetPwd(resetPwdDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+    );
   };
 
-  public refreshToken = async (
-    req: IRefreshTokenReq,
-  ): Promise<ResponseObject> => {
-    const token = req.body.refreshToken;
-    const accessToken = await this.userService.refreshToken(token);
+  public refreshToken: TMethod<IRefreshTokenReq> = async (req) => {
+    const { refreshToken } = req.body;
+    const accessToken = await this.userService.refreshToken(refreshToken);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
@@ -90,11 +86,7 @@ class IndexController extends BaseController {
     );
   };
 
-  public googleCallback = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<ResponseObject> => {
+  public googleCallback: TMethod<IUserReq> = async (req, res, next) => {
     const authUser = await this.userService.googleAuth(req, res, next);
     if (authUser) {
       const { accessToken, refreshToken } = this.userService.generateJWT(

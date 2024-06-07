@@ -1,11 +1,11 @@
 import { IUser } from '../../models/user';
-import { IUserReq } from '../../types/common.type';
+import { Gender, IUpdateUserDetailReq } from '../../types/user.type';
 
 export class UserDetailDto {
   private readonly id: string;
   private readonly name: string;
   private readonly birthDate: Date;
-  private readonly gender: string;
+  private readonly gender: Gender;
   private readonly phone: string;
   private readonly address: string;
 
@@ -28,7 +28,7 @@ export class UserDetailDto {
     return this.address;
   }
 
-  constructor(req: IUserReq) {
+  constructor(req: IUpdateUserDetailReq) {
     this.id = (req.user as IUser).id.toString();
     const { name, birthDate, gender, phone, address } = req.body;
     this.name = name;

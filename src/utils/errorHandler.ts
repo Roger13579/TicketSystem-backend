@@ -7,6 +7,9 @@ import { IThrowError } from '../types/common.type';
  * @param {String} errMessage
  */
 class AppError extends Error {
+  private _statusCode?: number;
+  private _status?: string;
+
   get status() {
     return this._status;
   }
@@ -21,8 +24,6 @@ class AppError extends Error {
   set statusCode(value: number | undefined) {
     this._statusCode = value;
   }
-  private _statusCode: number | undefined;
-  private _status: string | undefined;
 
   constructor(status: string, statusCode: number, errMessage: string) {
     super(errMessage);

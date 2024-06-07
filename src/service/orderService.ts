@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import log4js from '../config/log4js';
 import * as crypto from 'node:crypto';
 import { CreateOrderDto } from '../dto/order/createOrderDto';
@@ -10,17 +9,13 @@ import { CustomResponseType } from '../types/customResponseType';
 import { NewebpayOrderDto } from '../dto/order/newebpayOrderDto';
 import { NewebpayOrderVo } from '../vo/order/newebpayOrderVo';
 import {
+  INewebPayCheckOrderReq,
   IValidateAmount,
   IValidatePrice,
   NewebpayResponse,
   PaymentStatus,
 } from '../types/order.type';
-import {
-  PaginateDocument,
-  PaginateOptions,
-  PaginateResult,
-  Types,
-} from 'mongoose';
+import { Types } from 'mongoose';
 import { areTimesInOrder } from '../utils/common';
 import { OrderFilterDto } from '../dto/order/orderFilterDto';
 import axios from 'axios';
@@ -35,6 +30,7 @@ import { LinePayOrderDTO } from '../dto/order/linePayOrderDto';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
 import { get, some, sumBy } from 'lodash';
 import { SortOrder } from '../types/common.type';
+import moment from 'moment';
 
 const logger = log4js.getLogger(`OrderService`);
 
@@ -43,13 +39,7 @@ export class OrderService {
   private readonly productRepository: ProductRepository =
     new ProductRepository();
 
-  public findOrders = async (
-    orderFilterDTO: OrderFilterDto,
-  ): Promise<
-    PaginateResult<
-      PaginateDocument<IOrder, NonNullable<unknown>, PaginateOptions>
-    >
-  > => {
+  public findOrders = async (orderFilterDTO: OrderFilterDto) => {
     const { createdAtFrom, createdAtTo, paidAtFrom, paidAtTo } = orderFilterDTO;
 
     // 確認時間順序
@@ -66,7 +56,7 @@ export class OrderService {
     return await this.orderRepository.findOrders(orderFilterDTO);
   };
 
-  public async createOrder(createOrderDto: CreateOrderDto): Promise<IOrder> {
+  public async createOrder(createOrderDto: CreateOrderDto) {
     const validProducts: IOrderProduct[] = [];
     const { items, price } = createOrderDto;
     for (const item of items) {
@@ -155,9 +145,12 @@ export class OrderService {
           orderId: new Types.ObjectId(orderId),
           thirdPartyPaymentId: info.transactionId.toString(),
           paymentStatus: PaymentStatus.paid,
-          paidAt: new Date(),
+          paidAt: moment().toDate(),
         });
-        const { products } = updatedOrder as IOrder;
+        if (!updatedOrder) {
+          throw new Error();
+        }
+        const { products } = updatedOrder;
         // 更改 product soldAmount
         await this.productRepository.editProductsSoldAmount(products);
         return updatedOrder;
@@ -176,7 +169,7 @@ export class OrderService {
     }
   }
 
-  public async newebpayProcess(order: IOrder): Promise<NewebpayOrderVo> {
+  public async newebpayProcess(order: IOrder) {
     // 使用 Unix Timestamp 作為訂單編號（金流也需要加入時間戳記）
     const newebpayOrderDto = new NewebpayOrderDto(order);
 
@@ -234,7 +227,7 @@ export class OrderService {
     }
   }
 
-  public async newebPayCheckOrder(req: Request): Promise<IOrder | null> {
+  public async newebPayCheckOrder(req: INewebPayCheckOrderReq) {
     logger.info('req.body notify data', req.body);
     const response = req.body;
 
@@ -265,7 +258,7 @@ export class OrderService {
       orderId: new Types.ObjectId(data.Result.MerchantOrderNo),
       thirdPartyPaymentId: data.Result.TradeNo,
       paymentStatus: PaymentStatus.paid,
-      paidAt: new Date(),
+      paidAt: moment().toDate(),
     };
     // 交易完成，將成功資訊儲存於資料庫
     const updatedOrder = await this.orderRepository.updateOrder(params);
@@ -350,7 +343,7 @@ export class OrderService {
 
   private createLinePayReq = (params: ICreateLinePayReqParams) => {
     const { body, orderId, uri } = params;
-    const nonce = new Date().valueOf().toString() + orderId.toString();
+    const nonce = moment().toDate().valueOf().toString() + orderId.toString();
     const string = `${process.env.LINEPAY_CHANNEL_SECRET_KEY}${uri}${JSON.stringify(body)}${nonce}`;
     const hmac = crypto.createHmac(
       'sha256',

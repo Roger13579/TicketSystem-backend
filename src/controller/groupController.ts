@@ -9,22 +9,19 @@ import {
   TJoinGroupReq,
   TUpdateGroupReq,
 } from '../types/group.type';
-import { ResponseObject } from '../utils/responseObject';
 import { UpdateGroupDto } from '../dto/group/updateGroupDto';
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
-import { Request } from 'express';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
 import { GetGroupVo } from '../vo/group/getGroupVo';
 import { Types } from 'mongoose';
 import { IUser } from '../models/user';
+import { IUserReq, TMethod } from '../types/common.type';
 
 export class GroupController extends BaseController {
   private readonly groupService = new GroupService();
 
-  public createGroup = async (
-    req: TCreateGroupReq,
-  ): Promise<ResponseObject> => {
+  public createGroup: TMethod<TCreateGroupReq> = async (req) => {
     const createGroupDto = new CreateGroupDto(req);
     const group = (await this.groupService.createGroup(
       createGroupDto,
@@ -37,9 +34,7 @@ export class GroupController extends BaseController {
       },
     );
   };
-  public updateGroup = async (
-    req: TUpdateGroupReq,
-  ): Promise<ResponseObject> => {
+  public updateGroup: TMethod<TUpdateGroupReq> = async (req) => {
     const updateGroupDto = new UpdateGroupDto(req);
     await this.groupService.updateGroup(updateGroupDto);
     return this.formatResponse(
@@ -47,7 +42,7 @@ export class GroupController extends BaseController {
       CustomResponseType.OK,
     );
   };
-  public joinGroup = async (req: TJoinGroupReq): Promise<ResponseObject> => {
+  public joinGroup: TMethod<TJoinGroupReq> = async (req) => {
     const joinGroupDto = new JoinGroupDto(req);
     await this.groupService.joinGroup(joinGroupDto);
     return this.formatResponse(
@@ -56,7 +51,7 @@ export class GroupController extends BaseController {
       {},
     );
   };
-  public leaveGroup = async (req: Request): Promise<ResponseObject> => {
+  public leaveGroup: TMethod<IUserReq> = async (req) => {
     const leaveGroupDto = new LeaveGroupDto(req);
     await this.groupService.leaveGroup(leaveGroupDto);
     return this.formatResponse(
@@ -65,7 +60,7 @@ export class GroupController extends BaseController {
       {},
     );
   };
-  public deleteGroup = async (req: Request): Promise<ResponseObject> => {
+  public deleteGroup: TMethod<IUserReq> = async (req) => {
     const userId = (req.user as IUser)._id;
     const groupId = new Types.ObjectId(req.params['groupId']);
     await this.groupService.deleteGroup(userId, groupId);
@@ -75,7 +70,7 @@ export class GroupController extends BaseController {
       {},
     );
   };
-  public getGroups = async (req: IGetGroupsReq): Promise<ResponseObject> => {
+  public getGroups: TMethod<IGetGroupsReq> = async (req) => {
     const groupFilterDto = new GroupFilterDto(req);
     const groups = await this.groupService.findGroups(groupFilterDto);
     return this.formatResponse(

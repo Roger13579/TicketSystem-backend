@@ -3,7 +3,7 @@ import { IUser } from '../models/user';
 import log4js from '../config/log4js';
 const logger = log4js.getLogger(`mailer`);
 
-export const mailer = async (user: IUser, token: string): Promise<void> => {
+export const mailer = async (user: IUser, token: string) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {

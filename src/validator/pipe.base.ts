@@ -1,17 +1,20 @@
-import { NextFunction } from 'express';
 import { Meta, ValidationChain, validationResult } from 'express-validator';
 import { CustomResponseType } from '../types/customResponseType';
 import { throwError } from '../utils/errorHandler';
 import { includes, keys } from 'lodash';
-import { AccountType } from '../types/user.type';
-import { OptionType, TCustomValidator } from './index.type';
+import {
+  AccountType,
+  IGoogleSignUpReq,
+  IResetPwdReq,
+  ISignUpReq,
+} from '../types/user.type';
+import { OptionType, TCustomValidation, TCustomValidator } from './index.type';
 import moment from 'moment';
-
-export const booleanStrings = ['true', 'false'];
+import { IUserReq, TMethod } from '../types/common.type';
 
 export abstract class PipeBase {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public abstract transform(): any;
+  public abstract transform(): any[];
 
   /**
    * 驗證：管理者可以使用，非管理者完全不可使用
@@ -52,19 +55,22 @@ export abstract class PipeBase {
     return date instanceof Date && !isNaN(date.getTime());
   };
 
-  protected validationHandler(req: Request, res: Response, next: NextFunction) {
+  protected validationHandler: TMethod<IUserReq, void> = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const arr = errors.array();
-      throwError(arr[0].msg, CustomResponseType.FORMAT_ERROR);
+      throwError(
+        arr.map((err) => err.msg).join('/'),
+        CustomResponseType.FORMAT_ERROR,
+      );
     }
     next();
-  }
+  };
 
   /**
    * @description 驗證為正整數
    */
-  protected positiveIntValidation = (chain: ValidationChain, message: string) =>
+  protected positiveIntValidation: TCustomValidation = (chain, message) =>
     chain
       .exists()
       .withMessage(message)
@@ -116,7 +122,7 @@ export abstract class PipeBase {
   /**
    * @description 針對 limit 的驗證，必為 1 ~ 100 的正整數
    */
-  protected limitValidation = (chain: ValidationChain, message: string) =>
+  protected limitValidation: TCustomValidation = (chain, message) =>
     chain
       .custom(this.isMemberMust)
       .withMessage(message)
@@ -149,7 +155,7 @@ export abstract class PipeBase {
    * 驗證：多個屬性不可同時存在
    * @param propNames - 需要檢查的屬性名稱數組
    */
-  validateExclusiveProps =
+  protected validateExclusiveProps =
     (...propNames: string[]): TCustomValidator<unknown> =>
     (_value, { req: { query } }) => {
       if (!query) {
@@ -162,5 +168,10 @@ export abstract class PipeBase {
       return values.length < 2;
     };
 
-  protected constructor() {}
+  protected validateConfirmPwd: TCustomValidator<string> = (value, { req }) => {
+    const { pwd } = (req as ISignUpReq | IGoogleSignUpReq | IResetPwdReq).body;
+    return pwd === value;
+  };
+
+  constructor() {}
 }

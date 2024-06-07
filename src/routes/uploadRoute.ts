@@ -49,6 +49,8 @@ export class UploadRoute extends BaseRoute {
       UserVerify,
       this.usePipe(UploadFilePipe),
       uploadFile,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       this.responseHandler(this.controller.uploadFile),
     );
   }

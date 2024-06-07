@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
-import { IUserReq } from './common.type';
-import { Request } from 'express';
+import { IUserReq, TPaginationQuery } from './common.type';
 import { IProduct } from '../models/product';
 
 export enum Gender {
@@ -12,6 +11,10 @@ export enum Gender {
 export enum AccountType {
   admin = 'admin',
   member = 'member',
+}
+
+export enum ThirdPartyType {
+  google = 'google',
 }
 
 export type TGoogleUser = {
@@ -32,23 +35,20 @@ export interface IResetPwdReq extends IUserReq {
   };
 }
 
-export interface ILoginReq extends Request {
+export interface ILoginReq extends IUserReq {
   body: {
     account: string;
     pwd: string;
   };
 }
-export interface IRefreshTokenReq extends Request {
+export interface IRefreshTokenReq extends IUserReq {
   body: {
     refreshToken: string;
   };
 }
 
 export interface IGetUserFavoriteReq extends IUserReq {
-  query: {
-    limit?: string;
-    page?: string;
-  };
+  query: TPaginationQuery;
 }
 
 interface FavoriteItem
@@ -71,4 +71,37 @@ export interface IGetFavoritePagination {
   _id: Types.ObjectId;
   totalCount: number;
   favorites: FavoriteItem[];
+}
+
+export interface ISignUpReq extends IUserReq {
+  body: {
+    email: string;
+    account: string;
+    pwd: string;
+    confirmPwd: string;
+  };
+}
+
+export interface IGoogleSignUpReq extends IUserReq {
+  body: {
+    account: string;
+    pwd: string;
+    confirmPwd: string;
+  };
+}
+
+export interface IForgetPwdReq extends IUserReq {
+  body: {
+    email: string;
+  };
+}
+
+export interface IUpdateUserDetailReq extends IUserReq {
+  body: {
+    name: string;
+    birthDate: Date;
+    gender: Gender;
+    phone: string;
+    address: string;
+  };
 }

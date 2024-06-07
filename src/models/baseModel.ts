@@ -24,6 +24,10 @@ export interface IUserId {
   userId: Types.ObjectId;
 }
 
+export interface ITagId {
+  tagId: Types.ObjectId;
+}
+
 export interface IProductId {
   productId: Types.ObjectId;
 }

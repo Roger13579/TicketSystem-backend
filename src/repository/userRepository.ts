@@ -1,4 +1,4 @@
-import { UserModel, IUser } from '../models/user';
+import { UserModel } from '../models/user';
 import { UserDetailDto } from '../dto/user/userDetailDto';
 import { Types } from 'mongoose';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
@@ -6,34 +6,33 @@ import { updateOptions } from '../utils/constants';
 import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { createGetFavoritePipeline } from '../utils/aggregate/user/getFavorite.pipeline';
+import {
+  AccountType,
+  IGetFavoritePagination,
+  ThirdPartyType,
+} from '../types/user.type';
 
 export class UserRepository {
-  public async createUser(
-    account: string,
-    email: string,
-    pwd: string,
-  ): Promise<IUser> {
+  public async createUser(account: string, email: string, pwd: string) {
     return UserModel.create(
       new UserModel({
         email,
         account,
         pwd,
-        accountType: 'member',
+        accountType: AccountType.member,
       }),
     );
   }
-  public async createUserByGoogle(
-    googleUser: GoogleProfileDto,
-  ): Promise<IUser> {
+  public async createUserByGoogle(googleUser: GoogleProfileDto) {
     return UserModel.create(
       new UserModel({
         account: googleUser.getEmail,
         email: googleUser.getEmail,
         thirdPartyId: googleUser.getId,
-        thirdPartyType: 'google',
+        thirdPartyType: ThirdPartyType.google,
         avatarPath: googleUser.getPicture,
         isThirdPartyVerified: googleUser.getEmailVerified,
-        accountType: 'member',
+        accountType: AccountType.member,
       }),
     );
   }
@@ -41,7 +40,7 @@ export class UserRepository {
     account: string,
     pwd: string,
     thirdPartyId: string,
-  ): Promise<IUser | null> {
+  ) {
     return UserModel.findOneAndUpdate(
       { thirdPartyId: thirdPartyId },
       new UserModel({
@@ -51,9 +50,7 @@ export class UserRepository {
     );
   }
 
-  public async updateUserDetail(
-    userDetailDto: UserDetailDto,
-  ): Promise<IUser | null> {
+  public async updateUserDetail(userDetailDto: UserDetailDto) {
     return UserModel.findByIdAndUpdate(
       { _id: new Types.ObjectId(userDetailDto.getId) },
       {
@@ -67,7 +64,7 @@ export class UserRepository {
     );
   }
 
-  public async updatePwd(id: string, pwd: string): Promise<IUser | null> {
+  public async updatePwd(id: string, pwd: string) {
     return UserModel.findByIdAndUpdate(
       { _id: new Types.ObjectId(id) },
       { pwd },
@@ -75,10 +72,7 @@ export class UserRepository {
     );
   }
 
-  public async addGroupToUser(
-    id: Types.ObjectId,
-    groupId: Types.ObjectId,
-  ): Promise<IUser | null> {
+  public async addGroupToUser(id: Types.ObjectId, groupId: Types.ObjectId) {
     return UserModel.findByIdAndUpdate(
       { _id: id },
       {
@@ -92,7 +86,7 @@ export class UserRepository {
   public async removeGroupFromUser(
     id: Types.ObjectId,
     groupId: Types.ObjectId,
-  ): Promise<IUser | null> {
+  ) {
     return UserModel.findByIdAndUpdate(
       { _id: id },
       {
@@ -104,32 +98,32 @@ export class UserRepository {
     );
   }
 
-  public async findByEmail(email: string): Promise<IUser | null> {
+  public async findByEmail(email: string) {
     return UserModel.findOne({ email: email });
   }
 
-  public async findByAccount(account: string): Promise<IUser | null> {
+  public async findByAccount(account: string) {
     return UserModel.findOne({ account: account });
   }
 
-  public async findById(id: string): Promise<IUser | null> {
+  public async findById(id: string) {
     return UserModel.findOne({ _id: id });
   }
 
-  public async findByThirdPartyId(id: string): Promise<IUser | null> {
+  public async findByThirdPartyId(id: string) {
     return UserModel.findOne({ thirdPartyId: id });
   }
 
   public findFavoriteByUserId = async (
     getUserFavoriteDto: GetUserFavoriteDTO,
-  ) => {
+  ): Promise<IGetFavoritePagination> => {
     const pipeline = createGetFavoritePipeline(getUserFavoriteDto);
     const results = await UserModel.aggregate(pipeline);
     return results[0];
   };
 
-  public addFavorite = async ({ userId, productId }: EditFavoriteDTO) => {
-    return await UserModel.findOneAndUpdate(
+  public addFavorite = async ({ userId, productId }: EditFavoriteDTO) =>
+    await UserModel.findOneAndUpdate(
       {
         _id: userId,
         'favorites.productId': { $ne: productId },
@@ -137,10 +131,9 @@ export class UserRepository {
       { $push: { favorites: { productId } } },
       { ...updateOptions, projection: { favorites: 1 } },
     );
-  };
 
-  public deleteFavorite = async ({ userId, productId }: EditFavoriteDTO) => {
-    return await UserModel.findOneAndUpdate(
+  public deleteFavorite = async ({ userId, productId }: EditFavoriteDTO) =>
+    await UserModel.findOneAndUpdate(
       {
         _id: userId,
         'favorites.productId': { $eq: productId },
@@ -148,5 +141,4 @@ export class UserRepository {
       { $pull: { favorites: { productId } } },
       { ...updateOptions, projection: { favorites: 1 } },
     );
-  };
 }

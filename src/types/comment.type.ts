@@ -1,6 +1,13 @@
 import { Types } from 'mongoose';
-import { ISubResponse, IUserReq, SortOrder, Status } from './common.type';
+import {
+  ISubResponse,
+  IUserReq,
+  Status,
+  TPaginationQuery,
+} from './common.type';
 import { CustomResponseType } from './customResponseType';
+import { IUser } from '../models/user';
+import { IComment } from '../models/comment';
 
 export enum CommentSortField {
   rating = 'rating',
@@ -11,11 +18,7 @@ export enum CommentSortField {
 }
 
 export interface ICommentProductReq extends IUserReq {
-  body: {
-    productId: Types.ObjectId;
-    rating: number;
-    content: string;
-  };
+  body: Pick<IComment, 'rating' | 'content'> & { productId: Types.ObjectId };
 }
 
 export interface IDeleteCommentsReq extends IUserReq {
@@ -25,9 +28,7 @@ export interface IDeleteCommentsReq extends IUserReq {
 }
 
 export interface IGetCommentsReq extends IUserReq {
-  query: {
-    limit?: string;
-    page?: string;
+  query: TPaginationQuery<CommentSortField> & {
     status?: Status;
     ratings?: string;
     createdAtFrom?: string;
@@ -36,8 +37,6 @@ export interface IGetCommentsReq extends IUserReq {
     productIds?: string;
     accounts?: string;
     content?: string;
-    sortField?: CommentSortField;
-    sortOrder?: SortOrder;
   };
 }
 
@@ -49,25 +48,16 @@ export const RatingRange = {
   5: 5,
 };
 
-export interface IGetComment {
-  _id: Types.ObjectId;
-  productId: Types.ObjectId;
-  rating: number;
-  content: string;
-  status: Status;
-  createdAt: Date;
-  user: {
-    _id: Types.ObjectId;
-    account: string;
-    avatarPath: string;
-    name: string;
-  };
+export interface IGetComment
+  extends Pick<
+    IComment,
+    'rating' | 'content' | 'createdAt' | 'status' | '_id' | 'productId'
+  > {
+  user: Pick<IUser, '_id' | 'account' | 'avatarPath' | 'name'>;
 }
 
 export interface IGetCommentsPagination {
-  metadata: {
-    totalCount: number;
-  };
+  metadata: { totalCount: number };
   comments: IGetComment[];
 }
 

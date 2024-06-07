@@ -3,19 +3,11 @@ import { throwError } from '../utils/errorHandler';
 import log4js from '../config/log4js';
 import { CreateGroupDto } from '../dto/group/createGroupDto';
 import { GroupRepository } from '../repository/groupRepository';
-import { IGroup } from '../models/group';
 import { UpdateGroupDto } from '../dto/group/updateGroupDto';
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { UserRepository } from '../repository/userRepository';
-import {
-  PaginateDocument,
-  PaginateOptions,
-  PaginateResult,
-  Types,
-} from 'mongoose';
+import { Types } from 'mongoose';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
-import { IUser } from '../models/user';
-import { IParticipant } from '../types/group.type';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
 
 const logger = log4js.getLogger(`GroupService`);
@@ -23,9 +15,7 @@ const logger = log4js.getLogger(`GroupService`);
 export class GroupService {
   private readonly groupRepository: GroupRepository = new GroupRepository();
   private readonly userRepository: UserRepository = new UserRepository();
-  public async createGroup(
-    createGroupDto: CreateGroupDto,
-  ): Promise<IGroup | void> {
+  public async createGroup(createGroupDto: CreateGroupDto) {
     return this.groupRepository.createGroup(createGroupDto).catch((err) => {
       logger.error('create group error', err);
       throwError(
@@ -35,9 +25,7 @@ export class GroupService {
     });
   }
 
-  public async updateGroup(
-    updateGroupDto: UpdateGroupDto,
-  ): Promise<IGroup | null | void> {
+  public async updateGroup(updateGroupDto: UpdateGroupDto) {
     return this.groupRepository.updateGroup(updateGroupDto).catch((err) => {
       logger.error('update group error', err);
       throwError(
@@ -47,9 +35,7 @@ export class GroupService {
     });
   }
 
-  public async joinGroup(
-    joinGroupDto: JoinGroupDto,
-  ): Promise<IUser | null | void> {
+  public async joinGroup(joinGroupDto: JoinGroupDto) {
     const group = await this.groupRepository.findById(joinGroupDto.groupId);
     if (!group) {
       throwError(
@@ -59,7 +45,7 @@ export class GroupService {
       );
     } else {
       // 檢查是否已加入過此揪團活動
-      const participant = group.participant as IParticipant[];
+      const participant = group.participant || [];
       const matchGroup = participant
         .map((user) => user.userId)
         .filter(
@@ -96,9 +82,7 @@ export class GroupService {
       }
     }
   }
-  public async leaveGroup(
-    leaveGroupDto: LeaveGroupDto,
-  ): Promise<IUser | null | void> {
+  public async leaveGroup(leaveGroupDto: LeaveGroupDto) {
     const group = await this.groupRepository.findById(leaveGroupDto.groupId);
     if (!group) {
       throwError(
@@ -128,10 +112,7 @@ export class GroupService {
       }
     }
   }
-  public async deleteGroup(
-    userId: Types.ObjectId,
-    groupId: Types.ObjectId,
-  ): Promise<IUser | null | void> {
+  public async deleteGroup(userId: Types.ObjectId, groupId: Types.ObjectId) {
     const group = await this.groupRepository.findById(groupId);
     if (!group) {
       throwError(
@@ -139,7 +120,7 @@ export class GroupService {
         CustomResponseType.NO_DATA_FOUND,
       );
     } else {
-      if ((group.participant as IParticipant[]).length > 1) {
+      if ((group.participant || []).length > 1) {
         throwError(
           CustomResponseType.GROUP_MEMBER_NOT_EMPTY_MESSAGE,
           CustomResponseType.GROUP_MEMBER_NOT_EMPTY,
@@ -162,13 +143,7 @@ export class GroupService {
       }
     }
   }
-  public async findGroups(
-    groupFilterDto: GroupFilterDto,
-  ): Promise<
-    PaginateResult<
-      PaginateDocument<IGroup, NonNullable<unknown>, PaginateOptions>
-    >
-  > {
+  public async findGroups(groupFilterDto: GroupFilterDto) {
     return await this.groupRepository.findGroups(groupFilterDto);
   }
 }

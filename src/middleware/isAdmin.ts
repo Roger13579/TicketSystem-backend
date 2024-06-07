@@ -1,17 +1,12 @@
-import { Response, NextFunction } from 'express';
 import { AppError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
-import { IUserReq } from '../types/common.type';
+import { IUserReq, TMethod } from '../types/common.type';
 import { IUser } from '../models/user';
 import { AccountType } from '../types/user.type';
 import { HttpStatus } from '../types/responseType';
 
-export const IsAdmin = async (
-  req: IUserReq,
-  res: Response,
-  next: NextFunction,
-) => {
-  const accountType = (req.user as IUser).accountType;
+export const IsAdmin: TMethod<IUserReq, void> = async (req, res, next) => {
+  const { accountType } = req.user as IUser;
 
   if (accountType !== AccountType.admin) {
     return next(

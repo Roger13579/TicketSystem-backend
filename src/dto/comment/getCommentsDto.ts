@@ -144,7 +144,7 @@ export class GetCommentsDTO {
     this._accounts = accounts?.split(',');
     this._ratings = ratings?.split(',').map((item) => Number(item));
 
-    this._status = status === undefined ? status : (status as Status);
+    this._status = status;
 
     this._createdAtFrom = createdAtFrom
       ? moment(createdAtFrom).toDate()

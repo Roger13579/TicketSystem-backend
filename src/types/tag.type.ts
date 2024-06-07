@@ -1,17 +1,12 @@
-import { Request } from 'express';
-import { SortOrder } from './common.type';
+import { IUserReq, TPaginationQuery } from './common.type';
 
-export interface IGetTagsReq extends Request {
-  query: {
-    limit?: string;
-    page?: string;
+export interface IGetTagsReq extends IUserReq {
+  query: TPaginationQuery<TagSortField> & {
     name?: string;
-    sortOrder?: SortOrder;
-    sortField?: TagSortField;
   };
 }
 
-export interface ICreateTagReq extends Request {
+export interface ICreateTagReq extends IUserReq {
   body: {
     name: string;
   };
