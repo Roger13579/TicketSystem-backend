@@ -1,7 +1,9 @@
 import { BaseRoute } from './baseRoute';
 import { TicketController } from '../controller/ticketController';
-import { UserCheck } from '../middleware/userVerify';
+import { UserCheck, UserVerify } from '../middleware/userVerify';
 import { GetTicketPipe } from '../validator/ticket/getTicket.pipe';
+import { IsAdmin } from '../middleware/isAdmin';
+import { VerifyTicketsPipe } from '../validator/ticket/verifyTickets.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -136,6 +138,36 @@ export class TicketRoute extends BaseRoute {
       UserCheck,
       this.usePipe(GetTicketPipe),
       this.responseHandler(this.controller.getTickets),
+    );
+
+    this.router.patch(
+      '/v1/ticket',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '批次核銷票券'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'欲核銷的票券列表',
+          schema:{
+            $ref:"#/definitions/CustomVerifyTicketsObj"
+          }
+        } 
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK，要全部票券通過才會真正核銷',
+          schema:{
+            $ref:'#/definitions/VerifyTicketsSuccess'
+          }
+        }
+       */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(VerifyTicketsPipe),
+      this.responseHandler(this.controller.verifyTickets),
     );
   }
 }

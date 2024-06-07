@@ -1,5 +1,10 @@
 import { Types } from 'mongoose';
-import { ISubResponse, IUserReq, TPaginationQuery } from './common.type';
+import {
+  ISubResponse,
+  ITimestamp,
+  IUserReq,
+  TPaginationQuery,
+} from './common.type';
 import { IProduct } from '../models/product';
 import { ICart, IItem } from '../models/cart';
 
@@ -23,7 +28,7 @@ export interface IGetCartReq extends IUserReq {
   query: TPaginationQuery;
 }
 
-interface ICartPaginationItem {
+interface ICartPaginationItem extends ITimestamp {
   product: Pick<
     IProduct,
     | '_id'
@@ -39,8 +44,6 @@ interface ICartPaginationItem {
     | 'sellEndAt'
   >;
   amount: number;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface ICartPagination

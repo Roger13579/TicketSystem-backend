@@ -37,3 +37,8 @@ export type TPaginationQuery<T = undefined> = {
   sortOrder?: SortOrder;
   sortField?: T;
 };
+
+export interface ITimestamp {
+  createdAt: Date;
+  updatedAt: Date;
+}

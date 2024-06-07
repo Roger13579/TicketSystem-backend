@@ -1,4 +1,4 @@
-import { booleanStrings, PipeBase } from '../pipe.base';
+import { PipeBase } from '../pipe.base';
 import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
 import { OptionType, TCustomValidator } from '../index.type';
@@ -8,6 +8,7 @@ import {
   TicketStatus,
 } from '../../types/ticket.type';
 import { SortOrder } from '../../types/common.type';
+import { booleanStrings } from '../../utils/constants';
 
 export class GetTicketPipe extends PipeBase {
   private validateExpiredAtFrom: TCustomValidator<string | undefined> = (

@@ -18,7 +18,7 @@ export const Ticket = {
   updatedAt: moment().toDate().toISOString(),
   expiredAt: moment().toDate().toISOString(),
   writeOffAt: moment().toDate().toISOString(),
-  writeOffStaff: 'rrr',
+  writeOffStaffId: 'rrr',
   product: {
     _id: '66570169343ccb01f586dfed',
     title: '這是個很棒的電影名稱',
@@ -40,5 +40,28 @@ export const GetTicketsSuccess = {
   $data: {
     tickets: [Ticket],
     ...PaginationSuccess,
+  },
+};
+
+export const VerifyTicketsSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $tickets: [
+      {
+        $_id: Ticket.$_id,
+        $productId: Ticket.product._id,
+        $userId: Ticket.userId,
+        $orderId: Ticket.orderId,
+        $amount: Ticket.amount,
+        $status: Ticket.status,
+        $isPublished: Ticket.isPublished,
+        $expiredAt: Ticket.expiredAt,
+        $createdAt: Ticket.createdAt,
+        $updatedAt: Ticket.updatedAt,
+        $writeOffAt: Ticket.writeOffAt,
+        $writeOffStaffId: Ticket.writeOffStaffId,
+      },
+    ],
   },
 };

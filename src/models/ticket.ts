@@ -18,7 +18,7 @@ export interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
   chatRoomId: string;
   expiredAt?: Date;
   writeOffAt?: Date;
-  writeOffStaff?: Date;
+  writeOffStaffId?: IUserId;
   shareCode?: string;
 }
 
@@ -29,6 +29,8 @@ const schema = new Schema<ITicket>(
     productId,
     userId,
     orderId,
+    // 如果是多人套票的話，這個數字就不是 1
+    // 每張票在核銷時，一定都只一次把所有 amount 的票券核銷完，不能一張一張核銷
     amount: {
       type: Number,
       required: true,
@@ -53,10 +55,7 @@ const schema = new Schema<ITicket>(
       type: Date,
       select: true,
     },
-    writeOffStaff: {
-      type: String,
-      select: true,
-    },
+    writeOffStaffId: userId,
     shareCode: {
       type: String,
     },
