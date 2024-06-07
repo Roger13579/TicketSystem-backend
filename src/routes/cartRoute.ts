@@ -1,5 +1,6 @@
 import { CartController } from '../controller/cartController';
 import { UserVerify } from '../middleware/userVerify';
+import { DeleteCartPipe } from '../validator/cart/deleteCart.pipe';
 import { EditCartPipe } from '../validator/cart/editCart.pipe';
 import { GetCartPipe } from '../validator/cart/getCart.pipe';
 import { BaseRoute } from './baseRoute';
@@ -61,52 +62,46 @@ export class CartRoute extends BaseRoute {
 
     // 刪除購物車內商品
     this.router.delete(
-      '/v1/cart/:productId',
+      '/v1/cart',
       /**
        * #swagger.tags = ['Cart']
-       * #swagger.summary = '刪除購物車內商品'
+       * #swagger.summary = '批次刪除購物車內商品'
        * #swagger.security=[{"Bearer": []}]
        */
       /*
-        #swagger.parameters['productId'] ={
-          in:'path',
-          description:'商品ID',
-          required: true,
-          type: 'string'
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'欲刪除的購物車商品資料',
+          schema:{
+            $ref:"#/definitions/CustomDeleteCartObj"
+          }
         }
        */
       /**
         #swagger.responses[200]={
-          description:'OK',
+          description:'errors 代表未成功刪除的購物車的商品列表，items 則為目前成功刪除的所有商品列表',
           schema:{
-            $ref:'#/definitions/EditCartSuccess'
+            $ref:'#/definitions/DeleteCartSuccess'
           }
         }
        */
       UserVerify,
+      this.usePipe(DeleteCartPipe),
       this.responseHandler(this.controller.deleteItem),
     );
 
     // 編輯購物車
     this.router.patch(
-      '/v1/cart/:productId',
+      '/v1/cart',
       /**
        * #swagger.tags = ['Cart']
-       * #swagger.summary = '編輯使用者購物車'
+       * #swagger.summary = '批次編輯使用者購物車'
        * #swagger.security=[{"Bearer": []}]
-       */
-      /*
-        #swagger.parameters['productId'] ={
-          in:'path',
-          description:'商品ID',
-          required: true,
-          type: 'string'
-        }
        */
       /*
         #swagger.parameters['obj'] ={
           in:'body',
-          description:'欲編輯的商品資料',
+          description:'欲編輯的商品資料列表',
           schema:{
             $ref:"#/definitions/CustomEditCartObj"
           }
@@ -114,7 +109,7 @@ export class CartRoute extends BaseRoute {
        */
       /**
         #swagger.responses[200]={
-          description:'OK',
+          description:'errors 代表未成功加到購物車的商品列表，items 則為目前在購物車的所有商品列表',
           schema:{
             $ref:'#/definitions/EditCartSuccess'
           }

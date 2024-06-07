@@ -17,7 +17,7 @@ export abstract class PipeBase {
    * 驗證：管理者可以使用，非管理者完全不可使用
    * @description 使用時請放在 optional() 後面
    */
-  protected isAdminOnly: TCustomValidator = (value, { req }) =>
+  protected isAdminOnly: TCustomValidator<unknown> = (value, { req }) =>
     (req.user && req.user.accountType === AccountType.admin) || !value;
 
   /**
@@ -34,14 +34,14 @@ export abstract class PipeBase {
    * 驗證：非管理者一定要給，管理者則不一定
    * @description 使用時必須放到 chain 的最上面，再接 optional()
    */
-  protected isMemberMust: TCustomValidator = (value, { req }) =>
+  protected isMemberMust: TCustomValidator<unknown> = (value, { req }) =>
     (req.user && req.user.accountType === AccountType.admin) || !!value;
 
   /**
    * 驗證：未登入者一定要給
    * @description 使用時必須放到 chain 的最上面，再接 optional()
    */
-  protected isNoLoginMust: TCustomValidator = (value, { req }) =>
+  protected isNoLoginMust: TCustomValidator<unknown> = (value, { req }) =>
     (req.user && req.user._id) || !!value;
 
   /**
@@ -92,8 +92,11 @@ export abstract class PipeBase {
    * @description 驗證為 valid 選項
    */
   protected validateOption =
-    (type: OptionType, reference: object): TCustomValidator =>
-    (value?: string) => {
+    (
+      type: OptionType,
+      reference: object,
+    ): TCustomValidator<string | undefined> =>
+    (value) => {
       if (!value) {
         return true;
       }
@@ -147,7 +150,7 @@ export abstract class PipeBase {
    * @param propNames - 需要檢查的屬性名稱數組
    */
   validateExclusiveProps =
-    (...propNames: string[]): TCustomValidator =>
+    (...propNames: string[]): TCustomValidator<unknown> =>
     (_value, { req: { query } }) => {
       if (!query) {
         return true;

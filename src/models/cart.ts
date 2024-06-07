@@ -24,16 +24,6 @@ const ItemSchema = new Schema<IItem>(
 
 ItemSchema.index({ productId: 1 }, { unique: true });
 
-ItemSchema.virtual('product').get(function () {
-  return this.productId;
-});
-
-ItemSchema.methods.toJSON = function () {
-  const obj = this.toObject();
-  delete obj.productId;
-  return obj;
-};
-
 export interface ICart extends BaseModel, IUserId {
   items: [IItem];
 }

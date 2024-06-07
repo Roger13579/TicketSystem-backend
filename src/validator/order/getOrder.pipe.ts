@@ -12,22 +12,34 @@ import { SortOrder } from '../../types/common.type';
 // 管理者和使用者都可以使用的
 
 export class GetOrderPipe extends PipeBase {
-  private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
+  private validateCreatedAtFrom: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { createdAtTo } = (req as IGetOrdersReq).query;
     return this.validatePeriod(value, createdAtTo, (a, b) => b.isAfter(a));
   };
 
-  private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
+  private validateCreatedAtTo: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { createdAtFrom } = (req as IGetOrdersReq).query;
     return this.validatePeriod(value, createdAtFrom, (a, b) => a.isBefore(b));
   };
 
-  private validatePaidAtFrom: TCustomValidator = (value, { req }) => {
+  private validatePaidAtFrom: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { paidAtTo } = (req as IGetOrdersReq).query;
     return this.validatePeriod(value, paidAtTo, (a, b) => b.isAfter(a));
   };
 
-  private validatePaidAtTo: TCustomValidator = (value, { req }) => {
+  private validatePaidAtTo: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { paidAtFrom } = (req as IGetOrdersReq).query;
     return this.validatePeriod(value, paidAtFrom, (a, b) => a.isBefore(b));
   };
