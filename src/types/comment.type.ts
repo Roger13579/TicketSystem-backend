@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
-import { IUserReq, SortOrder, Status } from './common.type';
+import { ISubResponse, IUserReq, SortOrder, Status } from './common.type';
+import { CustomResponseType } from './customResponseType';
 
 export enum CommentSortField {
   rating = 'rating',
@@ -67,8 +68,12 @@ export interface IGetCommentsPagination {
   metadata: {
     totalCount: number;
   };
-
   comments: IGetComment[];
+}
+
+export interface IEditComment {
+  id: Types.ObjectId;
+  status: Status;
 }
 
 export interface IEditCommentsReq {
@@ -79,3 +84,12 @@ export interface IEditCommentsReq {
     }[];
   };
 }
+
+export interface IInvalidComment extends ISubResponse {
+  comment: unknown;
+}
+
+export type TCreateInvalidCommentParam = (
+  comment: unknown,
+  status: CustomResponseType,
+) => IInvalidComment;

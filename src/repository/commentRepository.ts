@@ -5,6 +5,7 @@ import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 import { FilterQuery, Types } from 'mongoose';
 import { updateOptions } from '../utils/constants';
 import { createGetCommentPipeline } from '../utils/aggregate/comment/getComment.pipeline';
+import { IEditComment } from '../types/comment.type';
 
 export class CommentRepository {
   public createComment = async ({ comment }: NewCommentDTO) =>
@@ -12,13 +13,14 @@ export class CommentRepository {
 
   public deleteCommentsById = async (ids: Types.ObjectId[]) => {
     const promises = ids.map((id) => CommentModel.findByIdAndDelete(id));
-    const deletedProducts = await Promise.all(promises).then(
-      (values) => values,
-    );
-    return deletedProducts;
+    const comments = await Promise.all(promises).then((values) => values);
+    return comments;
   };
 
-  public editComments = async ({ comments }: EditCommentsDTO) => {
+  public deleteById = async (id: Types.ObjectId) =>
+    await CommentModel.findByIdAndDelete(id);
+
+  public updateComments = async ({ comments }: EditCommentsDTO) => {
     const promises = comments.map(({ id, status }) =>
       CommentModel.findByIdAndUpdate(id, { status }, updateOptions),
     );
@@ -27,6 +29,9 @@ export class CommentRepository {
 
     return editComments;
   };
+
+  public updateById = async ({ id, status }: IEditComment) =>
+    await CommentModel.findByIdAndUpdate(id, { status }, updateOptions);
 
   public deleteComments = async (filter: FilterQuery<IComment>) => {
     return await CommentModel.deleteMany(filter);

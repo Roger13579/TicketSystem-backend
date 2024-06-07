@@ -12,6 +12,7 @@ import { BaseController } from './baseController';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { GetCommentsVo } from '../vo/comment/getCommentsVo';
 import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
+import { UpdateCommentsVo } from '../vo/comment/updateCommentsVo';
 
 export class CommentController extends BaseController {
   private readonly commentService = new CommentService();
@@ -33,14 +34,14 @@ export class CommentController extends BaseController {
     );
   };
 
-  public readonly deleteComments = async (req: IDeleteCommentsReq) => {
-    const comments = await this.commentService.deleteComments(
-      req.body.commentIds,
-    );
+  public readonly deleteComments = async ({
+    body: { commentIds },
+  }: IDeleteCommentsReq) => {
+    const infos = await this.commentService.deleteComments(commentIds);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { comments },
+      new UpdateCommentsVo(infos),
     );
   };
 
@@ -57,11 +58,11 @@ export class CommentController extends BaseController {
 
   public readonly editComments = async (req: IEditCommentsReq) => {
     const editCommentDto = new EditCommentsDTO(req);
-    const comments = await this.commentService.editComments(editCommentDto);
+    const infos = await this.commentService.editComments(editCommentDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { comments },
+      new UpdateCommentsVo(infos),
     );
   };
 }

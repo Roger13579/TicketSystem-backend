@@ -5,18 +5,44 @@ import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { Types } from 'mongoose';
-import { IGetCommentsPagination } from '../types/comment.type';
+import {
+  IGetCommentsPagination,
+  TCreateInvalidCommentParam,
+} from '../types/comment.type';
 import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 
 export class CommentService {
   private readonly commentRepository: CommentRepository =
     new CommentRepository();
 
+  private readonly createInvalidComment: TCreateInvalidCommentParam = (
+    comment,
+    status,
+  ) => {
+    let subMessage = '';
+    switch (status) {
+      case CustomResponseType.INVALID_DELETE_COMMENT:
+        subMessage = CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE;
+        break;
+      case CustomResponseType.EDIT_COMMENT_ERROR:
+        subMessage = CustomResponseType.EDIT_COMMENT_ERROR_MESSAGE;
+        break;
+
+      default:
+        break;
+    }
+    return {
+      comment,
+      subStatus: status,
+      subMessage,
+    };
+  };
+
   public commentProduct = async (
     newCommentDto: NewCommentDTO,
     next: NextFunction,
-  ) => {
-    return this.commentRepository.createComment(newCommentDto).catch((err) => {
+  ) =>
+    await this.commentRepository.createComment(newCommentDto).catch((err) => {
       if (err.name === 'MongoServerError' && err.code === 11000) {
         throwError(
           CustomResponseType.EXISTED_COMMENT_MESSAGE,
@@ -26,22 +52,22 @@ export class CommentService {
       }
       return next(err);
     });
-  };
 
   public deleteComments = async (ids: Types.ObjectId[]) => {
-    const deletedComments =
-      await this.commentRepository.deleteCommentsById(ids);
+    const promises = ids.map(async (id) => {
+      const comment = await this.commentRepository.deleteById(id);
+      if (!comment) {
+        return this.createInvalidComment(
+          { commentId: id },
+          CustomResponseType.INVALID_DELETE_COMMENT,
+        );
+      }
+      return comment;
+    });
 
-    const hasInvalidComment = deletedComments.some(
-      (comment) => comment === null,
+    const deletedComments = await Promise.all(promises).then(
+      (values) => values,
     );
-
-    if (hasInvalidComment) {
-      throwError(
-        CustomResponseType.INVALID_DELETE_COMMENT_MESSAGE,
-        CustomResponseType.INVALID_DELETE_COMMENT,
-      );
-    }
 
     return deletedComments;
   };
@@ -51,17 +77,22 @@ export class CommentService {
   ): Promise<IGetCommentsPagination> =>
     await this.commentRepository.findComments(getCommentsDto);
 
-  public editComments = async (editCommentDto: EditCommentsDTO) => {
-    const comments = await this.commentRepository.editComments(editCommentDto);
+  public editComments = async ({ comments }: EditCommentsDTO) => {
+    const promises = comments.map(async (comment) => {
+      const updatedComment = await this.commentRepository.updateById(comment);
+      if (!updatedComment) {
+        return this.createInvalidComment(
+          comment,
+          CustomResponseType.EDIT_COMMENT_ERROR,
+        );
+      }
+      return updatedComment;
+    });
 
-    const hasInvalidComment = comments.some((comment) => comment === null);
+    const updatedComments = await Promise.all(promises).then(
+      (values) => values,
+    );
 
-    if (hasInvalidComment) {
-      throwError(
-        CustomResponseType.EDIT_COMMENT_ERROR_MESSAGE,
-        CustomResponseType.EDIT_COMMENT_ERROR,
-      );
-    }
-    return comments;
+    return updatedComments;
   };
 }

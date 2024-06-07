@@ -1,9 +1,8 @@
 import { Types } from 'mongoose';
-import { Status } from '../../types/common.type';
-import { IEditCommentsReq } from '../../types/comment.type';
+import { IEditComment, IEditCommentsReq } from '../../types/comment.type';
 
 export class EditCommentsDTO {
-  private readonly _comments: { id: Types.ObjectId; status: Status }[];
+  private readonly _comments: IEditComment[];
 
   get comments() {
     return this._comments;
