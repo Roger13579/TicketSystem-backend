@@ -14,6 +14,7 @@ import { GetProductVo } from '../vo/product/getProductVo';
 import { CreateProductDTO } from '../dto/product/createProductDto';
 import { IUserReq } from '../types/common.type';
 import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
+import { UpdateProductsVO } from '../vo/product/updateProductsVo';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
@@ -56,23 +57,21 @@ class ProductController extends BaseController {
   };
 
   public deleteProducts = async (req: IDeleteProductsReq) => {
-    const products = await this.productService.deleteProducts(
-      req.body.productIds,
-    );
+    const infos = await this.productService.deleteProducts(req.body.productIds);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { products },
+      new UpdateProductsVO(infos),
     );
   };
 
   public editProducts = async (req: IEditProductsReq) => {
     const editProductDto = new EditProductDTO(req);
-    const products = await this.productService.editProducts(editProductDto);
+    const infos = await this.productService.editProducts(editProductDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { products },
+      new UpdateProductsVO(infos),
     );
   };
 }
