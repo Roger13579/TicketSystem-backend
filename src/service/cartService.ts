@@ -36,18 +36,22 @@ export class CartService {
       case EditErrorType.INVALID_ADD:
         subStatus = CustomResponseType.INVALID_EDIT_CART;
         subMessage = CustomResponseType.INVALID_EDIT_CART_MESSAGE + '新增失敗';
+        break;
       case EditErrorType.INVALID_INC_DES:
         subStatus = CustomResponseType.INVALID_EDIT_CART;
         subMessage =
           CustomResponseType.INVALID_EDIT_CART_MESSAGE +
           '商品目前不存在於購物車，無法進行相對減少';
+        break;
       case EditErrorType.UNKNOWN:
         subStatus = CustomResponseType.INVALID_EDIT_CART;
         subMessage = CustomResponseType.INVALID_EDIT_CART_MESSAGE + '不明原因';
+        break;
       case EditErrorType.INVALID_DELETE:
         subStatus = CustomResponseType.INVALID_DELETE_CART;
         subMessage =
           CustomResponseType.INVALID_DELETE_CART_MESSAGE + '刪除失敗';
+        break;
       default:
         break;
     }
