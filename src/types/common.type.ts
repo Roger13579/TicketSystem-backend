@@ -1,5 +1,6 @@
 import { IUser } from '../models/user';
 import { Request } from 'express';
+import { CustomResponseType } from './customResponseType';
 
 export interface IUserReq extends Request {
   user?: IUser | Express.User;
@@ -26,4 +27,9 @@ export interface TCustomMongoDBError extends Error {
 
 export interface IThrowError extends Error {
   status?: string;
+}
+
+export interface ISubResponse {
+  subStatus: CustomResponseType;
+  subMessage: string;
 }

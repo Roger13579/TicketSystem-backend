@@ -10,12 +10,18 @@ import { OptionType, TCustomValidator } from '../index.type';
 import { SortOrder } from '../../types/common.type';
 
 export class GetGroupsPipe extends PipeBase {
-  private validateStartAt: TCustomValidator = (value, { req }) => {
+  private validateStartAt: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { endAt } = (req as IGetGroupsReq).query;
     return this.validatePeriod(value, endAt, (a, b) => a.isBefore(b));
   };
 
-  private validateEndAt: TCustomValidator = (value, { req }) => {
+  private validateEndAt: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { startAt } = (req as IGetGroupsReq).query;
     return this.validatePeriod(value, startAt, (a, b) => a.isAfter(b));
   };

@@ -159,6 +159,9 @@ export const enum CustomResponseType {
   INVALID_EDIT_CART = '6528',
   INVALID_EDIT_CART_MESSAGE = '無效的購物車編輯行為：',
 
+  INVALID_DELETE_CART = '6540',
+  INVALID_DELETE_CART_MESSAGE = '無效的購物車刪除行為：',
+
   INVALID_ADD_CART = '6529',
   INVALID_ADD_CART_MESSAGE = '無效的購物車新增行為：',
 
