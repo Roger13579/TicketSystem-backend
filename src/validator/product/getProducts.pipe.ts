@@ -14,27 +14,42 @@ import { SortOrder } from '../../types/common.type';
 // 管理者和使用者都可以使用的
 
 export class GetProductsPipe extends PipeBase {
-  private validateStartAtTo: TCustomValidator = (value, { req }) => {
+  private validateStartAtTo: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { startAtFrom } = (req as IGetProductsReq).query;
     return this.validatePeriod(value, startAtFrom, (a, b) => a.isAfter(b));
   };
 
-  private validateStartAtFrom: TCustomValidator = (value, { req }) => {
+  private validateStartAtFrom: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { startAtTo } = (req as IGetProductsReq).query;
     return this.validatePeriod(value, startAtTo, (a, b) => a.isBefore(b));
   };
 
-  private validateSellStartAtFrom: TCustomValidator = (value, { req }) => {
+  private validateSellStartAtFrom: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { sellStartAtTo } = (req as IGetProductsReq).query;
     return this.validatePeriod(value, sellStartAtTo, (a, b) => a.isBefore(b));
   };
 
-  private validateSellStartAtTo: TCustomValidator = (value, { req }) => {
+  private validateSellStartAtTo: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { sellStartAtFrom } = (req as IGetProductsReq).query;
     return this.validatePeriod(value, sellStartAtFrom, (a, b) => a.isAfter(b));
   };
 
-  private validatePriceRange: TCustomValidator = (_value, { req }) => {
+  private validatePriceRange: TCustomValidator<string | undefined> = (
+    _value,
+    { req },
+  ) => {
     const { priceMin, priceMax } = (req as IGetProductsReq).query;
 
     if (priceMax && priceMin) {

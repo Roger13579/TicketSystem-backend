@@ -13,12 +13,18 @@ import { SortOrder, Status } from '../../types/common.type';
  * @description 未登入者、使用者、管理者都可能使用
  */
 export class GetCommentsPipe extends PipeBase {
-  private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
+  private validateCreatedAtFrom: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { createdAtTo } = (req as IGetCommentsReq).query;
     return this.validatePeriod(value, createdAtTo, (a, b) => a.isAfter(b));
   };
 
-  private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
+  private validateCreatedAtTo: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { createdAtFrom } = (req as IGetCommentsReq).query;
     return this.validatePeriod(value, createdAtFrom, (a, b) => a.isBefore(b));
   };
