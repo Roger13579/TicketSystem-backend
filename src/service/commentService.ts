@@ -65,11 +65,7 @@ export class CommentService {
       return comment;
     });
 
-    const deletedComments = await Promise.all(promises).then(
-      (values) => values,
-    );
-
-    return deletedComments;
+    return await Promise.all(promises).then((values) => values);
   };
 
   public getComments = async (
@@ -89,10 +85,6 @@ export class CommentService {
       return updatedComment;
     });
 
-    const updatedComments = await Promise.all(promises).then(
-      (values) => values,
-    );
-
-    return updatedComments;
+    return await Promise.all(promises).then((values) => values);
   };
 }
