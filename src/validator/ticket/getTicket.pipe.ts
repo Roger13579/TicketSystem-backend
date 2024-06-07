@@ -10,12 +10,18 @@ import {
 import { SortOrder } from '../../types/common.type';
 
 export class GetTicketPipe extends PipeBase {
-  private validateExpiredAtFrom: TCustomValidator = (value, { req }) => {
+  private validateExpiredAtFrom: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { expiredAtTo } = (req as IGetTicketsReq).query;
     return this.validatePeriod(value, expiredAtTo, (a, b) => b.isAfter(a));
   };
 
-  private validateExpiredAtTo: TCustomValidator = (value, { req }) => {
+  private validateExpiredAtTo: TCustomValidator<string | undefined> = (
+    value,
+    { req },
+  ) => {
     const { expiredAtFrom } = (req as IGetTicketsReq).query;
     return this.validatePeriod(value, expiredAtFrom, (a, b) => a.isBefore(b));
   };

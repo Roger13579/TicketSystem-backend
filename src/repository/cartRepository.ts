@@ -1,11 +1,19 @@
 import { Types } from 'mongoose';
 import CartModel from '../models/cart';
-import { EditCartDTO } from '../dto/cart/editCartDto';
 import { updateOptions } from '../utils/constants';
-import { EditCartType } from '../types/cart.type';
+import { EditCartType, IEditCartItem } from '../types/cart.type';
 import { GetCartDTO } from '../dto/cart/getCartDto';
-import { DeleteItemDTO } from '../dto/cart/deleteItemDto';
 import { createGetCartPipeline } from '../utils/aggregate/cart/getCart.pipeline';
+
+interface IEditItemProps {
+  userId: Types.ObjectId;
+  item: IEditCartItem;
+}
+
+interface IDeleteItemProps {
+  userId: Types.ObjectId;
+  productId: Types.ObjectId;
+}
 
 export class CartRepository {
   public createCart = async (userId: Types.ObjectId) => {
@@ -25,8 +33,9 @@ export class CartRepository {
     return await CartModel.findOne({ userId });
   };
 
-  public addItem = async (editCartDto: EditCartDTO) => {
-    const { userId, productId, amount } = editCartDto;
+  public addItem = async ({ item, userId }: IEditItemProps) => {
+    const { productId, amount } = item;
+
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $ne: productId } },
       { $push: { items: { productId, amount } } },
@@ -34,10 +43,10 @@ export class CartRepository {
     );
   };
 
-  public deleteItem = async ({
-    userId,
-    productId,
-  }: DeleteItemDTO | EditCartDTO) => {
+  public clearCart = async (userId: Types.ObjectId) =>
+    await CartModel.findOneAndUpdate({ userId }, { items: [] });
+
+  public deleteItem = async ({ userId, productId }: IDeleteItemProps) => {
     return await CartModel.findOneAndUpdate(
       { userId, 'items.productId': { $eq: productId } },
       { $pull: { items: { productId } } },
@@ -45,23 +54,19 @@ export class CartRepository {
     );
   };
 
-  public editCart = async (editCartDto: EditCartDTO) => {
-    const { productId, userId, amount, type } = editCartDto;
-    return await CartModel.findOneAndUpdate(
-      { userId, 'items.productId': { $eq: productId } },
-      {
-        ...(type === EditCartType.set && {
-          $set: {
-            'items.$.amount': amount,
-          },
-        }),
-        ...(type === EditCartType.inc && {
-          $inc: {
-            'items.$.amount': amount,
-          },
-        }),
-      },
-      { new: true, runValidators: true, upsert: false },
-    );
+  public editItem = async ({ item, userId }: IEditItemProps) => {
+    const { productId, amount, type } = item;
+    const filter = { userId, 'items.productId': { $eq: productId } };
+    const updateAmountQuery = {
+      'items.$.amount': amount,
+    };
+    const update = {
+      ...(type === EditCartType.set && { $set: updateAmountQuery }),
+      ...(type === EditCartType.inc && { $inc: updateAmountQuery }),
+    };
+    return await CartModel.findOneAndUpdate(filter, update, {
+      ...updateOptions,
+      upsert: false,
+    });
   };
 }

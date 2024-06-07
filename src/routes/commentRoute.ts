@@ -201,7 +201,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/DeleteSuccess"
+              $ref: "#/definitions/DeleteCommentsSuccess"
             }
           }
        */
@@ -231,7 +231,7 @@ export class CommentRoute extends BaseRoute {
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/EditCommentsObj"
+              $ref: "#/definitions/EditCommentsSuccess"
             }
           }
        */
