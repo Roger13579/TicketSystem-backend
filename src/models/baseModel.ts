@@ -1,5 +1,6 @@
 import { Document, Schema, Types } from 'mongoose';
 import { ProductType, MovieGenre } from '../types/product.type';
+import { ITimestamp } from '../types/common.type';
 
 export enum ModelName {
   cart = 'Cart',
@@ -14,14 +15,16 @@ export enum ModelName {
   notify = 'Notify',
 }
 
-export interface BaseModel extends Document {
+export interface BaseModel extends Document, ITimestamp {
   id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface IUserId {
   userId: Types.ObjectId;
+}
+
+export interface ITagId {
+  tagId: Types.ObjectId;
 }
 
 export interface IProductId {

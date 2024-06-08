@@ -112,7 +112,7 @@ export class GetTicketsDto {
           createdAt: 1,
           updatedAt: 1,
           writeOffAt: 1,
-          writeOffStaff: 1,
+          writeOffStaffId: 1,
           product: 1,
         }
       : {
@@ -158,7 +158,7 @@ export class GetTicketsDto {
       req.user !== undefined
         ? (req.user as IUser).accountType === AccountType.admin
         : false;
-    this._status = status as TicketStatus;
+    this._status = status;
     this._ids = ids?.split(',');
     this._productName = productName;
     this._sort = {

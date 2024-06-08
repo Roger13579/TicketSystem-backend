@@ -1,6 +1,6 @@
 import { IUser } from '../../models/user';
-import { Request } from 'express';
 import { Types } from 'mongoose';
+import { IUserReq } from '../../types/common.type';
 
 export class LeaveGroupDto {
   private readonly _groupId: Types.ObjectId;
@@ -14,7 +14,7 @@ export class LeaveGroupDto {
     return this._userId;
   }
 
-  constructor(req: Request) {
+  constructor(req: IUserReq) {
     this._groupId = new Types.ObjectId(req.params['groupId']);
     this._userId = (req.user as IUser).id;
   }

@@ -1,8 +1,13 @@
-import { Meta } from 'express-validator';
+import { Meta, ValidationChain } from 'express-validator';
 
-export type TCustomValidator<T> = (value: T, meta: Meta) => boolean;
+export type TCustomValidator<V> = (value: V, { req }: Meta) => boolean;
 
 export enum OptionType {
   array,
   item,
 }
+
+export type TCustomValidation = (
+  chain: ValidationChain,
+  message: string,
+) => ValidationChain;

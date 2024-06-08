@@ -98,7 +98,7 @@ export class UserRoute extends BaseRoute {
       */
       /**
         #swagger.responses[200]={
-          description:'OK，若購物車內的商品不存在或 !isPublic，則 product 內僅包含 _id',
+          description:'OK，若收藏內的商品不存在或 !isPublic，則 product 內僅包含 _id',
           schema:{
             $ref:'#/definitions/GetFavoriteSuccess'
           }

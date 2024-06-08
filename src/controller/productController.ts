@@ -7,19 +7,18 @@ import {
   ICreateProductsReq,
   IGetProductsReq,
 } from '../types/product.type';
-import { NextFunction, Response } from 'express';
 import { EditProductDTO } from '../dto/product/editProductsDto';
 import { GetProductDTO } from '../dto/product/getProductDto';
 import { GetProductVo } from '../vo/product/getProductVo';
 import { CreateProductDTO } from '../dto/product/createProductDto';
-import { IUserReq } from '../types/common.type';
+import { TMethod } from '../types/common.type';
 import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
 import { UpdateProductsVO } from '../vo/product/updateProductsVo';
 
 class ProductController extends BaseController {
   private readonly productService = new ProductService();
 
-  public getProducts = async (req: IGetProductsReq) => {
+  public getProducts: TMethod<IGetProductsReq> = async (req) => {
     const getProductDto = new GetProductDTO(req);
     const info = await this.productService.findProducts(getProductDto);
     return this.formatResponse(
@@ -29,7 +28,7 @@ class ProductController extends BaseController {
     );
   };
 
-  public createProducts = async (req: ICreateProductsReq) => {
+  public createProducts: TMethod<ICreateProductsReq> = async (req) => {
     const createProductDto = new CreateProductDTO(req);
     const products = await this.productService.createProducts(createProductDto);
     return this.formatResponse(
@@ -39,16 +38,10 @@ class ProductController extends BaseController {
     );
   };
 
-  public getProductDetail = async (
-    req: IUserReq,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  public getProductDetail: TMethod = async (req) => {
     const getProductDetailDto = new GetProductDetailDTO(req);
-    const product = await this.productService.getProductDetail(
-      getProductDetailDto,
-      next,
-    );
+    const product =
+      await this.productService.getProductDetail(getProductDetailDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
@@ -56,7 +49,7 @@ class ProductController extends BaseController {
     );
   };
 
-  public deleteProducts = async (req: IDeleteProductsReq) => {
+  public deleteProducts: TMethod<IDeleteProductsReq> = async (req) => {
     const infos = await this.productService.deleteProducts(req.body.productIds);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
@@ -65,7 +58,7 @@ class ProductController extends BaseController {
     );
   };
 
-  public editProducts = async (req: IEditProductsReq) => {
+  public editProducts: TMethod<IEditProductsReq> = async (req) => {
     const editProductDto = new EditProductDTO(req);
     const infos = await this.productService.editProducts(editProductDto);
     return this.formatResponse(

@@ -1,6 +1,5 @@
 import { IProduct } from '../models/product';
-import { Request } from 'express';
-import { ISubResponse, IUserReq, SortOrder } from './common.type';
+import { ISubResponse, IUserReq, TPaginationQuery } from './common.type';
 import { Types } from 'mongoose';
 import { IProductId } from '../models/baseModel';
 
@@ -48,14 +47,14 @@ export type IPlan = {
   headCount: number; // 該方案包含幾張票
 };
 
-export interface ICreateProductsReq extends Request {
+export interface ICreateProductsReq extends IUserReq {
   body: {
     products: (Omit<IProduct, 'tags'> & { tagNames?: string[] })[];
   };
 }
 
 export interface IGetProductsReq extends IUserReq {
-  query: {
+  query: TPaginationQuery<ProductSortField> & {
     title?: string;
     types?: string;
     genres?: string;
@@ -71,10 +70,6 @@ export interface IGetProductsReq extends IUserReq {
     priceMax?: string;
     priceMin?: string;
     tags?: string;
-    page?: string;
-    limit?: string;
-    sortField?: ProductSortField;
-    sortOrder?: SortOrder;
   };
 }
 
@@ -92,7 +87,7 @@ export enum ProductSortField {
   recommendWeight = 'recommendWeight',
 }
 
-export interface IDeleteProductsReq extends Request {
+export interface IDeleteProductsReq extends IUserReq {
   body: {
     productIds: Types.ObjectId[];
   };
@@ -124,9 +119,15 @@ export interface IEditContent {
   certificates?: [string];
   brief?: string;
   tags?: { tagId: Types.ObjectId }[];
+  tagNames?: string[];
 }
 
-export interface IEditProductsReq extends Request {
+export interface IEditProduct {
+  id: Types.ObjectId;
+  content?: IEditContent;
+}
+
+export interface IEditProductsReq extends IUserReq {
   body: {
     products: (IEditContent & { id: Types.ObjectId })[];
   };

@@ -4,8 +4,7 @@ import { CartRepository } from '../repository/cartRepository';
 import {
   EditCartType,
   EditErrorType,
-  ICartPagination,
-  TCreateInvalidItemParam,
+  TInvalidItemParam,
   THandleExistedItemProp,
 } from '../types/cart.type';
 import { GetCartDTO } from '../dto/cart/getCartDto';
@@ -20,10 +19,7 @@ export class CartService {
   private readonly productRepository: ProductRepository =
     new ProductRepository();
 
-  private readonly createInvalidItem: TCreateInvalidItemParam = (
-    item,
-    type,
-  ) => {
+  private readonly invalidItem: TInvalidItemParam = (item, type) => {
     let subStatus: CustomResponseType = CustomResponseType.OK;
     let subMessage: string = CustomResponseType.OK_MESSAGE;
     switch (type) {
@@ -55,16 +51,11 @@ export class CartService {
       default:
         break;
     }
-    return {
-      item,
-      subStatus,
-      subMessage,
-    };
+    return { item, subStatus, subMessage };
   };
 
   public readonly getCart = async (getCartDto: GetCartDTO) => {
-    const existedCart: ICartPagination =
-      await this.cartRepository.getCart(getCartDto);
+    const existedCart = await this.cartRepository.getCart(getCartDto);
 
     if (existedCart) {
       return existedCart;
@@ -97,7 +88,7 @@ export class CartService {
 
       return (
         deletedItem ||
-        this.createInvalidItem({ productId }, EditErrorType.INVALID_DELETE)
+        this.invalidItem({ productId }, EditErrorType.INVALID_DELETE)
       );
     });
 
@@ -122,8 +113,7 @@ export class CartService {
       });
 
       return (
-        deletedItem ||
-        this.createInvalidItem(item, EditErrorType.INVALID_DELETE)
+        deletedItem || this.invalidItem(item, EditErrorType.INVALID_DELETE)
       );
     }
 
@@ -137,12 +127,10 @@ export class CartService {
         userId,
         item,
       });
-      return (
-        editedItem || this.createInvalidItem(item, EditErrorType.INVALID_ADD)
-      );
+      return editedItem || this.invalidItem(item, EditErrorType.INVALID_ADD);
     }
 
-    return this.createInvalidItem(item, EditErrorType.UNKNOWN);
+    return this.invalidItem(item, EditErrorType.UNKNOWN);
   };
 
   public readonly editCart = async (editCartDto: EditCartDTO) => {
@@ -171,7 +159,7 @@ export class CartService {
       // 2-2 商品不存在
 
       if (!existedProduct) {
-        return this.createInvalidItem(item, EditErrorType.INVALID_PRODUCT);
+        return this.invalidItem(item, EditErrorType.INVALID_PRODUCT);
       }
 
       // 3. 確認商品是否已在購物車中
@@ -191,16 +179,14 @@ export class CartService {
       if (amount > 0) {
         const addedItem = await this.cartRepository.addItem({ item, userId });
 
-        return (
-          addedItem || this.createInvalidItem(item, EditErrorType.INVALID_ADD)
-        );
+        return addedItem || this.invalidItem(item, EditErrorType.INVALID_ADD);
       }
 
       if (amount < 1) {
-        return this.createInvalidItem(item, EditErrorType.INVALID_INC_DES);
+        return this.invalidItem(item, EditErrorType.INVALID_INC_DES);
       }
 
-      return this.createInvalidItem(item, EditErrorType.UNKNOWN);
+      return this.invalidItem(item, EditErrorType.UNKNOWN);
     });
 
     return await Promise.all(promises).then((values) => values);

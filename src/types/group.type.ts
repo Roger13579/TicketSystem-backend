@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IUserReq, SortOrder } from './common.type';
+import { IUserReq, TPaginationQuery } from './common.type';
 
 export enum GroupStatus {
   ongoing = 'ongoing', // 正在揪團
@@ -30,7 +30,7 @@ export interface TUpdateGroupReq extends IUserReq {
 }
 
 export interface IGetGroupsReq extends IUserReq {
-  query: {
+  query: TPaginationQuery<GroupSortField> & {
     title?: string;
     movieTitle?: string;
     theater?: string;
@@ -39,10 +39,6 @@ export interface IGetGroupsReq extends IUserReq {
     haveTicket?: string;
     startAt?: string;
     endAt?: string;
-    page?: string;
-    limit?: string;
-    sortField?: string;
-    sortOrder?: SortOrder;
   };
 }
 

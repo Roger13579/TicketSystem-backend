@@ -5,10 +5,7 @@ import { throwError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { Types } from 'mongoose';
-import {
-  IGetCommentsPagination,
-  TCreateInvalidCommentParam,
-} from '../types/comment.type';
+import { TCreateInvalidCommentParam } from '../types/comment.type';
 import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 
 export class CommentService {
@@ -27,15 +24,10 @@ export class CommentService {
       case CustomResponseType.EDIT_COMMENT_ERROR:
         subMessage = CustomResponseType.EDIT_COMMENT_ERROR_MESSAGE;
         break;
-
       default:
         break;
     }
-    return {
-      comment,
-      subStatus: status,
-      subMessage,
-    };
+    return { comment, subStatus: status, subMessage };
   };
 
   public commentProduct = async (
@@ -68,9 +60,7 @@ export class CommentService {
     return await Promise.all(promises).then((values) => values);
   };
 
-  public getComments = async (
-    getCommentsDto: GetCommentsDTO,
-  ): Promise<IGetCommentsPagination> =>
+  public getComments = async (getCommentsDto: GetCommentsDTO) =>
     await this.commentRepository.findComments(getCommentsDto);
 
   public editComments = async ({ comments }: EditCommentsDTO) => {

@@ -1,9 +1,7 @@
-import { NextFunction } from 'express';
 import { ProductRepository } from '../repository/productRepository';
 import { CustomResponseType } from '../types/customResponseType';
 import { areTimesInOrder } from '../utils/common';
-import { AppError } from '../utils/errorHandler';
-import { HttpStatus } from '../types/responseType';
+import { throwError } from '../utils/errorHandler';
 import { CommentRepository } from '../repository/commentRepository';
 import { EditProductDTO } from '../dto/product/editProductsDto';
 import { GetProductDTO } from '../dto/product/getProductDto';
@@ -30,8 +28,7 @@ export class ProductService {
     subMessage: CustomResponseType.PRODUCT_NOT_FOUND_MESSAGE,
   });
 
-  public createProducts = async (createProductDto: CreateProductDTO) => {
-    const { products, tagNames } = createProductDto;
+  public createProducts = async ({ products, tagNames }: CreateProductDTO) => {
     // 直接用 csv 新增的方式
     if (!!tagNames) {
       // 1. 把目前商品要新增卻其實不存在的標籤，先 create tag
@@ -84,18 +81,14 @@ export class ProductService {
 
   public getProductDetail = async (
     getProductDetailDto: GetProductDetailDTO,
-    next: NextFunction,
   ) => {
     const product =
       await this.productRepository.findProductDetail(getProductDetailDto);
 
     if (!product) {
-      return next(
-        new AppError(
-          CustomResponseType.PRODUCT_NOT_FOUND,
-          HttpStatus.BAD_REQUEST,
-          CustomResponseType.PRODUCT_NOT_FOUND_MESSAGE,
-        ),
+      throwError(
+        CustomResponseType.PRODUCT_NOT_FOUND_MESSAGE,
+        CustomResponseType.PRODUCT_NOT_FOUND,
       );
     }
     return product;
@@ -132,20 +125,16 @@ export class ProductService {
   public editProducts = async ({ products }: EditProductDTO) => {
     const promises = products.map(async (product) => {
       const { id, content } = product;
-      const updatedProduct = await this.productRepository.updateProduct(
+      const updatedProduct = await this.productRepository.updateProduct({
         id,
         content,
-      );
+      });
       if (!updatedProduct) {
         return this.createInvalidProduct(product);
       }
       return updatedProduct;
     });
 
-    const updatedProducts = await Promise.all(promises).then(
-      (values) => values,
-    );
-
-    return updatedProducts;
+    return await Promise.all(promises).then((values) => values);
   };
 }

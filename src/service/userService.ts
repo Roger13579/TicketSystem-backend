@@ -8,13 +8,13 @@ import { IUser } from '../models/user';
 import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
 import { ResetPwdDto } from '../dto/user/resetPwdDto';
-import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
-import { IGetFavoritePagination, TGoogleUser } from '../types/user.type';
+import { TGoogleUser, ThirdPartyType } from '../types/user.type';
 import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { ProductRepository } from '../repository/productRepository';
+import { IUserReq, TMethod } from '../types/common.type';
 
 const logger = log4js.getLogger(`UserService`);
 
@@ -24,13 +24,7 @@ export class UserService {
   private readonly productRepository: ProductRepository =
     new ProductRepository();
 
-  public async createUser(
-    account: string,
-    email: string,
-    pwd: string,
-    confirmPwd: string,
-  ): Promise<IUser | void> {
-    this.pwdValidate(pwd, confirmPwd);
+  public async createUser(account: string, email: string, pwd: string) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
     const findByEmail = await this.userRepository.findByEmail(email);
     const findByAccount = await this.userRepository.findByAccount(account);
@@ -56,9 +50,7 @@ export class UserService {
       });
   }
 
-  public async updateUserDetail(
-    userDetailDto: UserDetailDto,
-  ): Promise<IUser | null | void> {
+  public async updateUserDetail(userDetailDto: UserDetailDto) {
     return this.userRepository.updateUserDetail(userDetailDto).catch((err) => {
       logger.error('update user detail error', err);
       throwError(
@@ -71,10 +63,8 @@ export class UserService {
   public async updateUserFromGoogle(
     account: string,
     pwd: string,
-    confirmPwd: string,
     thirdPartyId: string,
-  ): Promise<IUser | null | void> {
-    this.pwdValidate(pwd, confirmPwd);
+  ) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
     return this.userRepository
       .updateUserFromGoogle(account, hashPwd, thirdPartyId)
@@ -87,8 +77,8 @@ export class UserService {
       });
   }
 
-  public async findByAccount(account: string): Promise<unknown> {
-    const user = await this.userRepository.findByAccount(account);
+  public async findByAccount(account: string) {
+    const user = (await this.userRepository.findByAccount(account)) as IUser;
     if (!user) {
       throwError(
         CustomResponseType.UNREGISTERED_USER_MESSAGE,
@@ -98,7 +88,7 @@ export class UserService {
     return user;
   }
 
-  public async findByEmail(email: string): Promise<unknown> {
+  public async findByEmail(email: string) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throwError(
@@ -123,7 +113,7 @@ export class UserService {
       );
     }
   }
-  public async refreshToken(token: string): Promise<string | undefined> {
+  public async refreshToken(token: string) {
     let payload: jwt.JwtPayload;
     try {
       payload = jwt.verify(token, process.env.JWT_SECRETS) as JwtPayload;
@@ -145,7 +135,7 @@ export class UserService {
     }
   }
 
-  public async resetPwd(resetPwdDto: ResetPwdDto): Promise<unknown> {
+  public async resetPwd(resetPwdDto: ResetPwdDto) {
     const user = await this.userRepository.findById(resetPwdDto.getId);
     if (!user) {
       throwError(
@@ -170,7 +160,6 @@ export class UserService {
           CustomResponseType.CAN_NOT_USE_OLD_PASSWORD,
         );
       }
-      this.pwdValidate(resetPwdDto.getPwd, resetPwdDto.getConfirmPwd);
       const newPwd = bcrypt.hashSync(resetPwdDto.getPwd, 10);
       return await this.userRepository
         .updatePwd(resetPwdDto.getId, newPwd)
@@ -220,7 +209,7 @@ export class UserService {
     );
   }
 
-  public async generateForgotPasswordJWT(userId: string): Promise<string> {
+  public async generateForgotPasswordJWT(userId: string) {
     const privateKey = process.env.JWT_SECRETS;
     const defaultOptions: object = {
       expiresIn: process.env.JWT_EMAIL_EXPIRES,
@@ -228,15 +217,15 @@ export class UserService {
     return jwt.sign({ id: userId }, privateKey, Object.assign(defaultOptions));
   }
 
-  public async googleAuth(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<IUser | void> {
+  public googleAuth: TMethod<IUserReq, Promise<IUser | void>> = async (
+    req,
+    res,
+    next,
+  ) => {
     const authenticate = (): Promise<GoogleProfileDto> =>
       new Promise((resolve) => {
         passport.authenticate(
-          'google',
+          ThirdPartyType.google,
           { session: false },
           (error: Error, user: TGoogleUser) => {
             if (error || !user) {
@@ -264,11 +253,9 @@ export class UserService {
     } else {
       return user;
     }
-  }
+  };
 
-  public getFavorite = async (
-    getUserFavoriteDto: GetUserFavoriteDTO,
-  ): Promise<IGetFavoritePagination> =>
+  public getFavorite = async (getUserFavoriteDto: GetUserFavoriteDTO) =>
     await this.userRepository.findFavoriteByUserId(getUserFavoriteDto);
 
   public addFavorite = async (editFavoriteDto: EditFavoriteDTO) => {
@@ -311,13 +298,4 @@ export class UserService {
     }
     return favorite;
   };
-
-  private pwdValidate(pwd: string, confirmPwd: string): void {
-    if (pwd !== confirmPwd) {
-      throwError(
-        CustomResponseType.PWD_CONFIRMED_NOT_THE_SAME_MESSAGE,
-        CustomResponseType.PWD_CONFIRMED_NOT_THE_SAME,
-      );
-    }
-  }
 }

@@ -11,6 +11,7 @@ import { schemaOption } from '../utils/constants';
 import moment from 'moment';
 import {
   BaseModel,
+  ITagId,
   ModelName,
   productSnapshotSchemaDef,
   schemaDef,
@@ -27,7 +28,7 @@ export interface IProduct extends BaseModel, IProductSnapshot {
   amount: number; // 票券總量
   isPublic: boolean;
   isLaunched: boolean;
-  tags?: { tagId: Types.ObjectId }[];
+  tags?: ITagId[];
   photoPath: string;
   notifications?: [string];
   highlights?: [string];

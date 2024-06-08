@@ -8,6 +8,7 @@ import {
   IEditCartReq,
   IGetCartReq,
 } from '../types/cart.type';
+import { TMethod } from '../types/common.type';
 import { CustomResponseType } from '../types/customResponseType';
 import { EditCartVo } from '../vo/cart/editCartVo';
 import { GetCartVO } from '../vo/cart/getCartVo';
@@ -16,7 +17,7 @@ import { BaseController } from './baseController';
 export class CartController extends BaseController {
   private readonly cartService = new CartService();
 
-  public readonly getCart = async (req: IGetCartReq) => {
+  public readonly getCart: TMethod<IGetCartReq> = async (req) => {
     const getCartDto = new GetCartDTO(req);
     const { limit, page } = getCartDto;
     const cart = await this.cartService.getCart(getCartDto);
@@ -27,7 +28,7 @@ export class CartController extends BaseController {
     );
   };
 
-  public readonly deleteItem = async (req: IDeleteCartReq) => {
+  public readonly deleteItem: TMethod<IDeleteCartReq> = async (req) => {
     const deleteItemDto = new DeleteItemDTO(req);
 
     const { type, userId } = deleteItemDto;
@@ -50,7 +51,7 @@ export class CartController extends BaseController {
     );
   };
 
-  public readonly editCart = async (req: IEditCartReq) => {
+  public readonly editCart: TMethod<IEditCartReq> = async (req) => {
     const editCartDto = new EditCartDTO(req);
     const carts = await this.cartService.editCart(editCartDto);
     return this.formatResponse(

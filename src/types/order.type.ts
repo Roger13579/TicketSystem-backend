@@ -1,9 +1,8 @@
-import { IUserReq, SortOrder } from './common.type';
+import { IUserReq, TPaginationQuery } from './common.type';
 import { IPlan } from './product.type';
 import { IProductId } from '../models/baseModel';
 import { IOrderProduct } from '../models/order';
 import { IProduct } from '../models/product';
-import { Request } from 'express';
 import { Types } from 'mongoose';
 
 export enum PaymentMethod {
@@ -64,7 +63,7 @@ export type NewebpayResponse = {
   };
 };
 export interface IGetOrdersReq extends IUserReq {
-  query: {
+  query: TPaginationQuery<OrderSortField> & {
     status?: PaymentStatus;
     ids?: string;
     thirdPartyPaymentIds?: string;
@@ -75,10 +74,6 @@ export interface IGetOrdersReq extends IUserReq {
     phones?: string;
     paidAtFrom?: string;
     paidAtTo?: string;
-    page?: string;
-    limit?: string;
-    sortField?: OrderSortField;
-    sortOrder?: SortOrder;
   };
 }
 
@@ -92,7 +87,7 @@ export interface IValidatePrice {
   totalPrice: number;
 }
 
-export interface ILinePayConfirmReq extends Request {
+export interface ILinePayConfirmReq extends IUserReq {
   query: {
     transactionId?: string;
     orderId?: string;
@@ -104,4 +99,8 @@ export interface IUpdateOrderParam {
   thirdPartyPaymentId: string;
   paymentStatus: PaymentStatus;
   paidAt?: Date;
+}
+
+export interface INewebPayCheckOrderReq extends IUserReq {
+  body: { TradeInfo: string; TradeSha: unknown };
 }

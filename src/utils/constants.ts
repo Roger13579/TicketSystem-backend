@@ -11,6 +11,8 @@ export const updateOptions: QueryOptions = {
   returnDocument: 'after',
 };
 
+export const booleanStrings = ['true', 'false'];
+
 /**
  * default 的 virtuals 相關 option 設定
  * @description 如果 model 中有額外進行 toJSON 或 toObject 的操作的話，這段就會無效

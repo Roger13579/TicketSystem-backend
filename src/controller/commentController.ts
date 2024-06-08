@@ -1,4 +1,3 @@
-import { NextFunction, Response } from 'express';
 import { NewCommentDTO } from '../dto/comment/newCommentDto';
 import { CommentService } from '../service/commentService';
 import {
@@ -13,14 +12,15 @@ import { GetCommentsDTO } from '../dto/comment/getCommentsDto';
 import { GetCommentsVo } from '../vo/comment/getCommentsVo';
 import { EditCommentsDTO } from '../dto/comment/editCommentsDto';
 import { UpdateCommentsVo } from '../vo/comment/updateCommentsVo';
+import { TMethod } from '../types/common.type';
 
 export class CommentController extends BaseController {
   private readonly commentService = new CommentService();
 
-  public readonly commentProduct = async (
-    req: ICommentProductReq,
-    _res: Response,
-    next: NextFunction,
+  public readonly commentProduct: TMethod<ICommentProductReq> = async (
+    req,
+    _res,
+    next,
   ) => {
     const newCommentDto = new NewCommentDTO(req);
     const comment = await this.commentService.commentProduct(
@@ -34,9 +34,9 @@ export class CommentController extends BaseController {
     );
   };
 
-  public readonly deleteComments = async ({
+  public readonly deleteComments: TMethod<IDeleteCommentsReq> = async ({
     body: { commentIds },
-  }: IDeleteCommentsReq) => {
+  }) => {
     const infos = await this.commentService.deleteComments(commentIds);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
@@ -45,7 +45,7 @@ export class CommentController extends BaseController {
     );
   };
 
-  public readonly getComments = async (req: IGetCommentsReq) => {
+  public readonly getComments: TMethod<IGetCommentsReq> = async (req) => {
     const getCommentsDto = new GetCommentsDTO(req);
     const { page, limit } = getCommentsDto;
     const info = await this.commentService.getComments(getCommentsDto);
@@ -56,7 +56,7 @@ export class CommentController extends BaseController {
     );
   };
 
-  public readonly editComments = async (req: IEditCommentsReq) => {
+  public readonly editComments: TMethod<IEditCommentsReq> = async (req) => {
     const editCommentDto = new EditCommentsDTO(req);
     const infos = await this.commentService.editComments(editCommentDto);
     return this.formatResponse(
