@@ -197,4 +197,7 @@ export const enum CustomResponseType {
 
   INVALID_VERIFIED_TICKET = '6541',
   INVALID_VERIFIED_TICKET_MESSAGE = '無效的票券核銷：',
+
+  INVALID_EDIT_TICKET = '6542',
+  INVALID_EDIT_TICKET_MESSAGE = '無效的票券編輯：',
 }

@@ -4,6 +4,14 @@ import { CustomResponseType } from '../../types/customResponseType';
 import { MovieGenre, ProductType } from '../../types/product.type';
 
 export class CreateProductsPipe extends PipeBase {
+  /**
+   * @description tags 和 tagNames 不能同時使用
+   */
+  private validateTag = this.validateExclusiveQuery({
+    propNames: ['tagNames', 'tags'],
+    select: 1,
+  });
+
   public transform() {
     return [
       body('products')
@@ -22,7 +30,7 @@ export class CreateProductsPipe extends PipeBase {
         ),
       body('products.*.tags')
         .optional()
-        .custom(this.validateExclusiveProps('tagNames', 'tags'))
+        .custom(this.validateTag)
         .withMessage(
           CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
             'tagIds 和 tagNames 不可以同時使用',
@@ -35,7 +43,7 @@ export class CreateProductsPipe extends PipeBase {
         ),
       body('products.*.tagNames')
         .optional()
-        .custom(this.validateExclusiveProps('tagNames', 'tags'))
+        .custom(this.validateTag)
         .withMessage(
           CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
             'tagIds 和 tagNames 不可以同時使用',

@@ -13,7 +13,7 @@ import {
   IResetPwdReq,
   ISignUpReq,
 } from '../types/user.type';
-import { IUserReq, TMethod } from '../types/common.type';
+import { TMethod } from '../types/common.type';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
@@ -86,7 +86,7 @@ class IndexController extends BaseController {
     );
   };
 
-  public googleCallback: TMethod<IUserReq> = async (req, res, next) => {
+  public googleCallback: TMethod = async (req, res, next) => {
     const authUser = await this.userService.googleAuth(req, res, next);
     if (authUser) {
       const { accessToken, refreshToken } = this.userService.generateJWT(

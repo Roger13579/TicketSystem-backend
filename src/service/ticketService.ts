@@ -8,6 +8,7 @@ import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { GetTicketsDto } from '../dto/ticket/getTicketsDto';
 import { SortOrder } from '../types/common.type';
 import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
+import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
 
 const logger = log4js.getLogger(`TicketService`);
 
@@ -62,4 +63,7 @@ export class TicketService {
 
   public verifyTickets = async (verifyTicketsDto: VerifyTicketsDTO) =>
     await this.ticketRepository.verifyTickets(verifyTicketsDto);
+
+  public editTickets = async (editTicketsDto: EditTicketsDTO) =>
+    await this.ticketRepository.editTickets(editTicketsDto);
 }
