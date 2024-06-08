@@ -8,7 +8,12 @@ import {
   IResetPwdReq,
   ISignUpReq,
 } from '../types/user.type';
-import { OptionType, TCustomValidation, TCustomValidator } from './index.type';
+import {
+  IValidateExclusiveQueryParams,
+  OptionType,
+  TCustomValidation,
+  TCustomValidator,
+} from './index.type';
 import moment from 'moment';
 import { IUserReq, TMethod } from '../types/common.type';
 
@@ -98,10 +103,7 @@ export abstract class PipeBase {
    * @description 驗證為 valid 選項
    */
   protected validateOption =
-    (
-      type: OptionType,
-      reference: object,
-    ): TCustomValidator<string | undefined> =>
+    (type: OptionType, reference: object): TCustomValidator =>
     (value) => {
       if (!value) {
         return true;
@@ -155,20 +157,20 @@ export abstract class PipeBase {
    * 驗證：多個屬性不可同時存在
    * @param propNames - 需要檢查的屬性名稱數組
    */
-  protected validateExclusiveProps =
-    (...propNames: string[]): TCustomValidator<unknown> =>
+  protected validateExclusiveQuery =
+    (params: IValidateExclusiveQueryParams): TCustomValidator<unknown> =>
     (_value, { req: { query } }) => {
       if (!query) {
         return true;
       }
+      const { propNames, select = 1, isAcceptEmpty = true } = params;
 
       const values = propNames.map((name) => query[name]).filter(Boolean);
 
-      // 如何處理兩個都沒有的情況
-      return values.length < 2;
+      return values.length === select || (isAcceptEmpty && values.length === 0);
     };
 
-  protected validateConfirmPwd: TCustomValidator<string> = (value, { req }) => {
+  protected validateConfirmPwd: TCustomValidator = (value, { req }) => {
     const { pwd } = (req as ISignUpReq | IGoogleSignUpReq | IResetPwdReq).body;
     return pwd === value;
   };

@@ -11,18 +11,12 @@ import { SortOrder } from '../../types/common.type';
 import { booleanStrings } from '../../utils/constants';
 
 export class GetGroupsPipe extends PipeBase {
-  private validateStartAt: TCustomValidator<string | undefined> = (
-    value,
-    { req },
-  ) => {
+  private validateStartAt: TCustomValidator = (value, { req }) => {
     const { endAt } = (req as IGetGroupsReq).query;
     return this.validatePeriod(value, endAt, (a, b) => a.isBefore(b));
   };
 
-  private validateEndAt: TCustomValidator<string | undefined> = (
-    value,
-    { req },
-  ) => {
+  private validateEndAt: TCustomValidator = (value, { req }) => {
     const { startAt } = (req as IGetGroupsReq).query;
     return this.validatePeriod(value, startAt, (a, b) => a.isAfter(b));
   };

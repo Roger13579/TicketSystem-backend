@@ -6,8 +6,12 @@ import { Types, startSession } from 'mongoose';
 import { updateOptions } from '../utils/constants';
 import { CustomResponseType } from '../types/customResponseType';
 import { throwError } from '../utils/errorHandler';
-import { IGetTicketsRes, TicketStatus } from '../types/ticket.type';
-import moment from 'moment';
+import {
+  IUpdateTicket,
+  IGetTicketsRes,
+  UpdateAction,
+} from '../types/ticket.type';
+import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
@@ -80,40 +84,29 @@ export class TicketRepository {
   };
 
   /**
-   * @description 驗證多張票券時，一定要所有票券皆 valid 才可通過
+   * @description 編輯多張票券時，一定要所有票券皆 valid 才可通過
    */
-  public verifyTickets = async ({ tickets, staffId }: VerifyTicketsDTO) => {
+  private updateTickets = async (
+    tickets: IUpdateTicket[],
+    action: UpdateAction,
+  ) => {
     const session = await startSession();
-
     session.startTransaction();
-
     try {
       const promises = tickets.map(
-        async ({ productId, userId, amount, ticketId }) =>
-          await TicketModel.findOneAndUpdate(
-            {
-              productId,
-              userId,
-              amount,
-              _id: ticketId,
-              status: TicketStatus.unverified,
-              expiredAt: { $gt: moment().toDate() },
-            },
-            {
-              writeOffStaffId: staffId,
-              status: TicketStatus.verified,
-              writeOffAt: moment().toDate(),
-            },
-            { ...updateOptions, session },
-          ),
+        async ({ filter, update }) =>
+          await TicketModel.findOneAndUpdate(filter, update, {
+            ...updateOptions,
+            session,
+          }),
       );
 
-      const verifiedTickets = await Promise.all(promises).then(
+      const updatedTickets = await Promise.all(promises).then(
         (values) => values,
       );
 
       const invalidTickets = tickets.filter(({ ticketId }) => {
-        const existedTicket = verifiedTickets.find((ticket) => {
+        const existedTicket = updatedTickets.find((ticket) => {
           if (!ticket) {
             return false;
           }
@@ -124,22 +117,32 @@ export class TicketRepository {
       });
 
       if (invalidTickets.length > 0) {
+        const message =
+          action === UpdateAction.verify
+            ? CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE
+            : CustomResponseType.INVALID_EDIT_TICKET_MESSAGE;
         const idsStr = invalidTickets.map(({ ticketId }) => ticketId).join(',');
-        throw new Error(
-          CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE + idsStr,
-        );
+        // 前端可以用 "//" 抓到 哪些 id 有錯誤
+        throw new Error(`${message}//${idsStr}//`);
       }
 
       await session.commitTransaction();
-      return verifiedTickets;
+      return updatedTickets;
     } catch (error) {
       await session.abortTransaction();
-      throwError(
-        (error as Error).message,
-        CustomResponseType.INVALID_VERIFIED_TICKET,
-      );
+      const code =
+        action === UpdateAction.verify
+          ? CustomResponseType.INVALID_VERIFIED_TICKET
+          : CustomResponseType.INVALID_EDIT_TICKET;
+      throwError((error as Error).message, code);
     } finally {
       session.endSession();
     }
   };
+
+  public verifyTickets = async ({ tickets }: VerifyTicketsDTO) =>
+    await this.updateTickets(tickets, UpdateAction.verify);
+
+  public editTickets = async ({ tickets }: EditTicketsDTO) =>
+    await this.updateTickets(tickets, UpdateAction.edit);
 }

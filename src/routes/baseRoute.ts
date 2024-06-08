@@ -8,7 +8,7 @@ import { BaseController } from '../controller/baseController';
 const logger = log4js.getLogger(`BaseRoute`);
 
 type TResponseHandler = (
-  method: TMethod<IUserReq>,
+  method: TMethod,
   controller?: BaseController,
 ) => TMethod<IUserReq, void>;
 

@@ -13,21 +13,23 @@ import { SortOrder, Status } from '../../types/common.type';
  * @description 未登入者、使用者、管理者都可能使用
  */
 export class GetCommentsPipe extends PipeBase {
-  private validateCreatedAtFrom: TCustomValidator<string | undefined> = (
-    value,
-    { req },
-  ) => {
+  private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
     const { createdAtTo } = (req as IGetCommentsReq).query;
     return this.validatePeriod(value, createdAtTo, (a, b) => a.isAfter(b));
   };
 
-  private validateCreatedAtTo: TCustomValidator<string | undefined> = (
-    value,
-    { req },
-  ) => {
+  private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
     const { createdAtFrom } = (req as IGetCommentsReq).query;
     return this.validatePeriod(value, createdAtFrom, (a, b) => a.isBefore(b));
   };
+
+  /**
+   * @description productIds 和 productName 不可同時使用
+   */
+  private validateProductFilter = this.validateExclusiveQuery({
+    propNames: ['productIds', 'productName'],
+    select: 1,
+  });
 
   public transform = () => [
     this.limitValidation(
@@ -80,8 +82,7 @@ export class GetCommentsPipe extends PipeBase {
           CustomResponseType.PERMISSION_DENIED_MESSAGE +
           'productName',
       )
-      .custom(this.validateExclusiveProps('productIds', 'productName'))
-      // productIds 和 productName 不可以同時使用
+      .custom(this.validateProductFilter)
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
           'productIds 和 productName 不可以同時使用',
@@ -91,7 +92,7 @@ export class GetCommentsPipe extends PipeBase {
       .withMessage(
         `${CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE}productIds (${CustomResponseType.NOT_LOGIN_MESSAGE})`,
       )
-      .custom(this.validateExclusiveProps('productIds', 'productName')) // productIds 和 productName 不可以同時使用
+      .custom(this.validateProductFilter)
       .withMessage(
         CustomResponseType.INVALID_COMMENT_FILTER_MESSAGE +
           'productIds 和 productName 不可以同時使用',
