@@ -1,9 +1,8 @@
-import { Response, NextFunction } from 'express';
 import { AppError } from '../utils/errorHandler';
 import { CustomResponseType } from '../types/customResponseType';
 import jwt, { TokenExpiredError, JwtPayload } from 'jsonwebtoken';
 import { UserRepository } from '../repository/userRepository';
-import { IUserReq } from '../types/common.type';
+import { IUserReq, TMethod } from '../types/common.type';
 import { HttpStatus } from '../types/responseType';
 
 const verifyTokenAndFindUser = async (authorization?: string) => {
@@ -20,11 +19,7 @@ const verifyTokenAndFindUser = async (authorization?: string) => {
 /**
  * @description 只取得身分，不限制行為
  */
-export const UserCheck = async (
-  req: IUserReq,
-  res: Response,
-  next: NextFunction,
-) => {
+export const UserCheck: TMethod<IUserReq, void> = async (req, res, next) => {
   try {
     const user = await verifyTokenAndFindUser(req.headers.authorization);
     if (user) {
@@ -40,11 +35,7 @@ interface ICustomExpiredError extends Error {
   status?: string;
 }
 
-export const UserVerify = async (
-  req: IUserReq,
-  res: Response,
-  next: NextFunction,
-) => {
+export const UserVerify: TMethod<IUserReq, void> = async (req, res, next) => {
   const authorization = req.headers.authorization;
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return next(

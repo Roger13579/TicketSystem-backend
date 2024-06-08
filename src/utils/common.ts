@@ -3,13 +3,14 @@ import { CustomResponseType } from '../types/customResponseType';
 import moment from 'moment';
 import { SortOrder } from '../types/common.type';
 
-export const areTimesInOrder = (
-  times: {
-    value?: Date;
-    name: string;
-  }[],
-  order: SortOrder,
-): boolean => {
+interface ITime {
+  value?: Date;
+  name: string;
+}
+
+type TParams = (times: ITime[], order: SortOrder) => boolean;
+
+export const areTimesInOrder: TParams = (times, order) => {
   const isOrdered = (
     currentTime: moment.Moment,
     previousTime: moment.Moment,

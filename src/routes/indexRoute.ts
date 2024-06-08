@@ -9,6 +9,7 @@ import { ForgetPwdPipe } from '../validator/user/forgetPwd.pipe';
 import { ResetPwdPipe } from '../validator/user/resetPwd.pipe';
 import { GoogleUpdatePipe } from '../validator/user/googleUpdate.pipe';
 import { RefreshTokenPipe } from '../validator/user/refreshToken.pipe';
+import { ThirdPartyType } from '../types/user.type';
 export class IndexRoute extends BaseRoute {
   protected controller!: IndexController;
 
@@ -164,7 +165,7 @@ export class IndexRoute extends BaseRoute {
             }
          */
       PassportInit,
-      passport.authenticate('google', {
+      passport.authenticate(ThirdPartyType.google, {
         scope: ['email', 'profile'],
       }),
     );

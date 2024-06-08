@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { BaseController } from './baseController';
 import { CustomResponseType } from '../types/customResponseType';
 import { OrderService } from '../service/orderService';
@@ -6,6 +5,7 @@ import {
   ICreateOrderReq,
   IGetOrdersReq,
   ILinePayConfirmReq,
+  INewebPayCheckOrderReq,
   PaymentMethod,
 } from '../types/order.type';
 import { CreateOrderDto } from '../dto/order/createOrderDto';
@@ -13,11 +13,12 @@ import { OrderFilterDto } from '../dto/order/orderFilterDto';
 import { GetOrderVo } from '../vo/order/getOrderVo';
 import { throwError } from '../utils/errorHandler';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
+import { TMethod } from '../types/common.type';
 
 class OrderController extends BaseController {
   private readonly orderService = new OrderService();
 
-  public createOrder = async (req: ICreateOrderReq) => {
+  public createOrder: TMethod<ICreateOrderReq> = async (req) => {
     const createOrderDto = new CreateOrderDto(req);
     const order = await this.orderService.createOrder(createOrderDto);
     switch (order.paymentMethod) {
@@ -43,7 +44,7 @@ class OrderController extends BaseController {
     }
   };
 
-  public newebpayNotify = async (req: Request) => {
+  public newebpayNotify: TMethod<INewebPayCheckOrderReq> = async (req) => {
     const order = await this.orderService.newebPayCheckOrder(req);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
@@ -52,7 +53,7 @@ class OrderController extends BaseController {
     );
   };
 
-  public linePayConfirmNotify = async (req: ILinePayConfirmReq) => {
+  public linePayConfirmNotify: TMethod<ILinePayConfirmReq> = async (req) => {
     const linePayConfirmDto = new LinePayConfirmDTO(req);
     const order =
       await this.orderService.linePayConfirmOrder(linePayConfirmDto);
@@ -75,7 +76,7 @@ class OrderController extends BaseController {
 
   // 退款
 
-  public getOrders = async (req: IGetOrdersReq) => {
+  public getOrders: TMethod<IGetOrdersReq> = async (req) => {
     const orderFilterDto = new OrderFilterDto(req);
     const info = await this.orderService.findOrders(orderFilterDto);
     return this.formatResponse(

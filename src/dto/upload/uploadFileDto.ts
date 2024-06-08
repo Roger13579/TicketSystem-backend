@@ -1,6 +1,6 @@
-import { IUser } from '../models/user';
-import { IUploadFileReq } from '../types/upload.type';
 import path from 'path';
+import { IUser } from '../../models/user';
+import { IUploadFileReq } from '../../types/upload.type';
 
 export class UploadFileDTO {
   private readonly _file: Express.Multer.File;

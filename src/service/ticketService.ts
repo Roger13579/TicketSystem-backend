@@ -7,16 +7,14 @@ import { TicketRepository } from '../repository/ticketRepository';
 import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { GetTicketsDto } from '../dto/ticket/getTicketsDto';
 import { SortOrder } from '../types/common.type';
-import { IGetTicketsRes } from '../types/ticket.type';
+import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
 
 const logger = log4js.getLogger(`TicketService`);
 
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
 
-  public findTickets = async (
-    ticketFilterDto: GetTicketsDto,
-  ): Promise<IGetTicketsRes[]> => {
+  public findTickets = async (ticketFilterDto: GetTicketsDto) => {
     const { expiredAtFrom, expiredAtTo } = ticketFilterDto;
 
     // 確認時間順序
@@ -31,7 +29,7 @@ export class TicketService {
     return await this.ticketRepository.findTickets(ticketFilterDto);
   };
 
-  public async createTickets(order: IOrder): Promise<void> {
+  public async createTickets(order: IOrder) {
     const orderProducts = order.products.reduce(
       (acc: IOrderProduct[], item: IOrderProduct) => {
         const repeatedItems: IOrderProduct[] = Array.from(
@@ -61,4 +59,7 @@ export class TicketService {
       );
     }
   }
+
+  public verifyTickets = async (verifyTicketsDto: VerifyTicketsDTO) =>
+    await this.ticketRepository.verifyTickets(verifyTicketsDto);
 }

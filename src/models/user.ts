@@ -16,7 +16,7 @@ export interface IUser extends BaseModel {
   pwd: string;
   email: string;
   name: string;
-  gender: string;
+  gender: Gender;
   avatarPath: string;
   phone: string;
   birthDate: Date;

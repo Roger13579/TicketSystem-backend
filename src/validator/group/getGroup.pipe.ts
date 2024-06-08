@@ -1,4 +1,4 @@
-import { PipeBase, booleanStrings } from '../pipe.base';
+import { PipeBase } from '../pipe.base';
 import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../types/group.type';
 import { OptionType, TCustomValidator } from '../index.type';
 import { SortOrder } from '../../types/common.type';
+import { booleanStrings } from '../../utils/constants';
 
 export class GetGroupsPipe extends PipeBase {
   private validateStartAt: TCustomValidator<string | undefined> = (

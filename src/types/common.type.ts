@@ -1,6 +1,7 @@
 import { IUser } from '../models/user';
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { CustomResponseType } from './customResponseType';
+import { ResponseObject } from '../utils/responseObject';
 
 export interface IUserReq extends Request {
   user?: IUser | Express.User;
@@ -16,15 +17,6 @@ export enum SortOrder {
   asc = 'asc',
 }
 
-// TODO: 未定的假設 Type for Error
-export interface ICustomMongooseError extends Error {
-  errors: string[];
-}
-
-export interface TCustomMongoDBError extends Error {
-  writeErrors: { err: { errmsg: string } }[];
-}
-
 export interface IThrowError extends Error {
   status?: string;
 }
@@ -32,4 +24,21 @@ export interface IThrowError extends Error {
 export interface ISubResponse {
   subStatus: CustomResponseType;
   subMessage: string;
+}
+
+export type TMethod<
+  ReqType = IUserReq,
+  ReturnType = Promise<ResponseObject>,
+> = (req: ReqType, res: Response, next: NextFunction) => ReturnType;
+
+export type TPaginationQuery<T = undefined> = {
+  limit?: string;
+  page?: string;
+  sortOrder?: SortOrder;
+  sortField?: T;
+};
+
+export interface ITimestamp {
+  createdAt: Date;
+  updatedAt: Date;
 }

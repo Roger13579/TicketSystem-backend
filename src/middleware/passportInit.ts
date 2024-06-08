@@ -1,15 +1,11 @@
 import passport, { Profile } from 'passport';
-import { NextFunction, Response, Request } from 'express';
 import {
   Strategy as GoogleStrategy,
   VerifyCallback,
 } from 'passport-google-oauth20';
+import { IUserReq, TMethod } from '../types/common.type';
 
-export const PassportInit = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const PassportInit: TMethod<IUserReq, void> = async (req, res, next) => {
   passport.use(
     new GoogleStrategy(
       {

@@ -1,12 +1,8 @@
-import { Types } from 'mongoose';
-import { IEditContent, IEditProductsReq } from '../../types/product.type';
+import { IEditProduct, IEditProductsReq } from '../../types/product.type';
 import { pickBy } from 'lodash';
 
 export class EditProductDTO {
-  private readonly _products: {
-    id: Types.ObjectId;
-    content?: IEditContent;
-  }[] = [];
+  private readonly _products: IEditProduct[];
 
   get products() {
     return this._products;
