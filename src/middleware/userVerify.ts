@@ -10,8 +10,7 @@ const verifyTokenAndFindUser = async (authorization?: string) => {
     const token = authorization.split(' ')[1];
     const payload = jwt.verify(token, process.env.JWT_SECRETS) as JwtPayload;
     const userRepository = new UserRepository();
-    const user = await userRepository.findById(payload.id);
-    return user;
+    return await userRepository.findById(payload.id);
   }
   return null;
 };
@@ -51,10 +50,12 @@ export const UserVerify: TMethod<IUserReq, void> = async (req, res, next) => {
     if (user) {
       req.user = user;
     } else {
-      throw new AppError(
-        CustomResponseType.UNREGISTERED_USER,
-        HttpStatus.UNAUTHORIZED,
-        CustomResponseType.UNREGISTERED_USER_MESSAGE,
+      return next(
+        new AppError(
+          CustomResponseType.UNREGISTERED_USER,
+          HttpStatus.UNAUTHORIZED,
+          CustomResponseType.UNREGISTERED_USER_MESSAGE,
+        ),
       );
     }
     return next();

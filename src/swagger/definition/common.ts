@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { CustomResponseType } from '../../types/customResponseType';
 import { HttpStatus } from '../../types/responseType';
 import { SortOrder, Status } from '../../types/common.type';
@@ -75,7 +74,7 @@ export const UserDetail = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     name: 'roger',
-    createdAt: moment().toDate(),
+    createdAt: new Date().toISOString(),
     birthDate: null,
     email: 'roger@gmail.com',
     gender: 'none',
@@ -130,10 +129,10 @@ export const CustomSortOrderQuery = {
 };
 
 export const CustomTimeAtFromQuery = {
-  example: moment().toDate(),
+  example: new Date().toISOString(),
 };
 export const CustomTimeAtToQuery = {
-  example: moment().toDate(),
+  example: new Date().toISOString(),
 };
 
 export const CustomStatusQuery = {

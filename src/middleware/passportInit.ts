@@ -18,9 +18,7 @@ export const PassportInit: TMethod<IUserReq, void> = async (req, res, next) => {
         _refreshToken: string,
         profile: Profile,
         cb: VerifyCallback,
-      ) => {
-        return cb(null, profile);
-      },
+      ) => cb(null, profile),
     ),
   );
   return next();

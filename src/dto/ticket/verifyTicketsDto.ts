@@ -16,23 +16,20 @@ export class VerifyTicketsDTO {
 
   constructor(req: IVerifyTicketsReq) {
     const { body, user } = req;
-    this._tickets = body.tickets.map(
-      ({ productId, userId, ticketId, amount }) => ({
-        update: {
-          writeOffStaffId: (user as IUser)._id,
-          status: TicketStatus.verified,
-          writeOffAt: moment().toDate(),
-        },
-        filter: {
-          productId: new Types.ObjectId(productId),
-          userId: new Types.ObjectId(userId),
-          amount,
-          _id: new Types.ObjectId(ticketId),
-          status: TicketStatus.unverified,
-          expiredAt: { $gt: moment().toDate() },
-        },
-        ticketId: new Types.ObjectId(ticketId),
-      }),
-    );
+    this._tickets = body.tickets.map(({ productId, userId, ticketId }) => ({
+      update: {
+        writeOffStaffId: (user as IUser)._id,
+        status: TicketStatus.verified,
+        writeOffAt: moment().toDate(),
+      },
+      filter: {
+        productId: new Types.ObjectId(productId),
+        userId: new Types.ObjectId(userId),
+        _id: new Types.ObjectId(ticketId),
+        status: TicketStatus.unverified,
+        expiredAt: { $gt: moment().toDate() },
+      },
+      ticketId: new Types.ObjectId(ticketId),
+    }));
   }
 }

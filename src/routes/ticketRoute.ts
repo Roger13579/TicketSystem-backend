@@ -5,6 +5,8 @@ import { GetTicketPipe } from '../validator/ticket/getTicket.pipe';
 import { IsAdmin } from '../middleware/isAdmin';
 import { VerifyTicketsPipe } from '../validator/ticket/verifyTickets.pipe';
 import { EditTicketsPipe } from '../validator/ticket/editTickets.pipe';
+import { TransferTicketPipe } from '../validator/ticket/TransferTicket.pipe';
+import { ClaimTransferTicketPipe } from '../validator/ticket/claimTransferTicket.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -144,7 +146,7 @@ export class TicketRoute extends BaseRoute {
     this.router.patch(
       '/v1/ticket',
       /**
-       * #swagger.tags = ['Ticket']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '批次編輯票券'
        * #swagger.security=[{"Bearer": []}]
        */
@@ -174,7 +176,7 @@ export class TicketRoute extends BaseRoute {
     this.router.patch(
       '/v1/ticket/verify',
       /**
-       * #swagger.tags = ['Ticket']
+       * #swagger.tags = ['Admin']
        * #swagger.summary = '批次核銷票券'
        * #swagger.security=[{"Bearer": []}]
        */
@@ -199,6 +201,64 @@ export class TicketRoute extends BaseRoute {
       IsAdmin,
       this.usePipe(VerifyTicketsPipe),
       this.responseHandler(this.controller.verifyTickets),
+    );
+
+    this.router.patch(
+      '/v1/ticket/transfer/createCode',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '產生分票驗證碼'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'要產生分票驗證碼的票券資料',
+          schema:{
+            $ref:"#/definitions/CustomCreateShareCodeObj"
+          }
+        } 
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK',
+          schema:{
+            $ref:'#/definitions/TransferTicketSuccess'
+          }
+        }
+       */
+      UserVerify,
+      this.usePipe(TransferTicketPipe),
+      this.responseHandler(this.controller.createShareCode),
+    );
+
+    this.router.patch(
+      '/v1/ticket/transfer/claim',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '使用驗證碼取得分票'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'要使用的分票驗證碼',
+          schema:{
+            $ref:"#/definitions/CustomClaimTicketObj"
+          }
+        } 
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK',
+          schema:{
+            $ref:'#/definitions/TransferTicketSuccess'
+          }
+        }
+       */
+      UserVerify,
+      this.usePipe(ClaimTransferTicketPipe),
+      this.responseHandler(this.controller.transferTicket),
     );
   }
 }

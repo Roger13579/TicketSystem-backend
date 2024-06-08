@@ -21,6 +21,6 @@ export const CreateTagSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
-    $tag: customTag,
+    ...customTag,
   },
 };

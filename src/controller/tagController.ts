@@ -25,7 +25,7 @@ export class TagController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { tag },
+      tag,
     );
   };
 
@@ -35,7 +35,7 @@ export class TagController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { tag },
+      tag,
     );
   };
 
@@ -44,7 +44,7 @@ export class TagController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { tag },
+      tag,
     );
   };
 }

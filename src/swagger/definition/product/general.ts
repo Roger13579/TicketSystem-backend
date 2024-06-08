@@ -1,7 +1,7 @@
-import moment from 'moment';
 import { MovieGenre, ProductType } from '../../../types/product.type';
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaginationSuccess } from '../common';
+import moment from 'moment';
 
 /**
  * @description swagger autogen fit 的商品方案
@@ -70,24 +70,22 @@ export const GetProductDetailSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
-    $product: {
-      $_id: 'asdfasdfasd',
-      $title: '這是一個商品名稱',
-      $type: ProductType.premier,
-      $genre: MovieGenre.action,
-      $theater: '信義威秀',
-      $price: 1100,
-      $amount: 100,
-      $soldAmount: 0,
-      $isLaunched: false,
-      $sellEndAt: moment().add(2, 'day').add(2, 'hour').toISOString(),
-      $sellStartAt: moment().add(2, 'days').toISOString(),
-      $endAt: moment().add(2, 'day').add(6, 'hour').toISOString(),
-      $startAt: moment().add(2, 'day').add(4, 'hour').toISOString(),
-      $tags: [{ tagId: '123' }, { tagId: '123' }],
-      $photoPath: '',
-      ...ProductDetailItem,
-    },
+    $_id: 'asdfasdfasd',
+    $title: '這是一個商品名稱',
+    $type: ProductType.premier,
+    $genre: MovieGenre.action,
+    $theater: '信義威秀',
+    $price: 1100,
+    $amount: 100,
+    $soldAmount: 0,
+    $isLaunched: false,
+    $sellEndAt: moment().add(2, 'day').add(2, 'hour').toISOString(),
+    $sellStartAt: moment().add(2, 'days').toISOString(),
+    $endAt: moment().add(2, 'day').add(6, 'hour').toISOString(),
+    $startAt: moment().add(2, 'day').add(4, 'hour').toISOString(),
+    $tags: [{ tagId: '123' }, { tagId: '123' }],
+    $photoPath: '',
+    ...ProductDetailItem,
   },
 };
 

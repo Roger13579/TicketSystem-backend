@@ -30,7 +30,7 @@ export class CommentController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { comment },
+      comment,
     );
   };
 
