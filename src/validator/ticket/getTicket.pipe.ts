@@ -11,18 +11,12 @@ import { SortOrder } from '../../types/common.type';
 import { booleanStrings } from '../../utils/constants';
 
 export class GetTicketPipe extends PipeBase {
-  private validateExpiredAtFrom: TCustomValidator<string | undefined> = (
-    value,
-    { req },
-  ) => {
+  private validateExpiredAtFrom: TCustomValidator = (value, { req }) => {
     const { expiredAtTo } = (req as IGetTicketsReq).query;
     return this.validatePeriod(value, expiredAtTo, (a, b) => b.isAfter(a));
   };
 
-  private validateExpiredAtTo: TCustomValidator<string | undefined> = (
-    value,
-    { req },
-  ) => {
+  private validateExpiredAtTo: TCustomValidator = (value, { req }) => {
     const { expiredAtFrom } = (req as IGetTicketsReq).query;
     return this.validatePeriod(value, expiredAtFrom, (a, b) => a.isBefore(b));
   };

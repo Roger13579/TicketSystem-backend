@@ -1,11 +1,15 @@
 import { IProduct } from '../models/product';
+import { ITicket } from '../models/ticket';
 import { ITimestamp, IUserReq, TPaginationQuery } from './common.type';
-import { Types } from 'mongoose';
+import { FilterQuery, Types, UpdateQuery } from 'mongoose';
 
 export enum TicketStatus {
-  verified = 'verified', // 已核銷
-  unverified = 'unverified', // 未核銷
-  refunded = 'refunded', // 已退款
+  verified = 'verified', // 已核銷使用
+  unverified = 'unverified', // 未核銷使用
+  refunded = 'refunded', // 已取消且有退款
+  expired = 'expired', // 已過期
+  cancelled = 'cancelled', // 已取消且無退款
+  pending = 'pending', // 發生問題的票券，暫時先卡住不給用
 }
 
 export interface IGetTicketsReq extends IUserReq {
@@ -67,9 +71,24 @@ export interface IVerifyTicketsReq extends IUserReq {
   };
 }
 
-export interface IVerifyTicket {
-  productId: Types.ObjectId;
-  userId: Types.ObjectId;
+export interface IEditTicketsReq extends IUserReq {
+  body: {
+    tickets: {
+      ticketId: string;
+      status?: TicketStatus;
+      isPublished?: boolean;
+      expiredAt?: Date;
+    }[];
+  };
+}
+
+export interface IUpdateTicket {
   ticketId: Types.ObjectId;
-  amount: number;
+  filter: FilterQuery<ITicket>;
+  update: UpdateQuery<ITicket>;
+}
+
+export enum UpdateAction {
+  edit,
+  verify,
 }

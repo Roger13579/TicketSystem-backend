@@ -1,14 +1,14 @@
 import { Types } from 'mongoose';
-import { IVerifyTicket, IVerifyTicketsReq } from '../../types/ticket.type';
+import {
+  IUpdateTicket,
+  IVerifyTicketsReq,
+  TicketStatus,
+} from '../../types/ticket.type';
 import { IUser } from '../../models/user';
+import moment from 'moment';
 
 export class VerifyTicketsDTO {
-  private readonly _tickets: IVerifyTicket[];
-  private readonly _staffId: Types.ObjectId;
-
-  get staffId() {
-    return this._staffId;
-  }
+  private readonly _tickets: IUpdateTicket[];
 
   get tickets() {
     return this._tickets;
@@ -16,14 +16,22 @@ export class VerifyTicketsDTO {
 
   constructor(req: IVerifyTicketsReq) {
     const { body, user } = req;
-
-    this._staffId = (user as IUser)._id;
     this._tickets = body.tickets.map(
       ({ productId, userId, ticketId, amount }) => ({
-        productId: new Types.ObjectId(productId),
-        userId: new Types.ObjectId(userId),
+        update: {
+          writeOffStaffId: (user as IUser)._id,
+          status: TicketStatus.verified,
+          writeOffAt: moment().toDate(),
+        },
+        filter: {
+          productId: new Types.ObjectId(productId),
+          userId: new Types.ObjectId(userId),
+          amount,
+          _id: new Types.ObjectId(ticketId),
+          status: TicketStatus.unverified,
+          expiredAt: { $gt: moment().toDate() },
+        },
         ticketId: new Types.ObjectId(ticketId),
-        amount,
       }),
     );
   }

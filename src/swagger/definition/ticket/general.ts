@@ -43,7 +43,7 @@ export const GetTicketsSuccess = {
   },
 };
 
-export const VerifyTicketsSuccess = {
+export const EditTicketsSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {

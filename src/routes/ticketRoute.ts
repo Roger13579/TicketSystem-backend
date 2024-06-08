@@ -4,6 +4,7 @@ import { UserCheck, UserVerify } from '../middleware/userVerify';
 import { GetTicketPipe } from '../validator/ticket/getTicket.pipe';
 import { IsAdmin } from '../middleware/isAdmin';
 import { VerifyTicketsPipe } from '../validator/ticket/verifyTickets.pipe';
+import { EditTicketsPipe } from '../validator/ticket/editTickets.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -144,6 +145,36 @@ export class TicketRoute extends BaseRoute {
       '/v1/ticket',
       /**
        * #swagger.tags = ['Ticket']
+       * #swagger.summary = '批次編輯票券'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'欲編輯的票券列表',
+          schema:{
+            $ref:"#/definitions/CustomEditTicketsObj"
+          }
+        } 
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK，要全部票券通過才會真正核銷',
+          schema:{
+            $ref:'#/definitions/EditTicketsSuccess'
+          }
+        }
+       */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(EditTicketsPipe),
+      this.responseHandler(this.controller.editTickets),
+    );
+
+    this.router.patch(
+      '/v1/ticket/verify',
+      /**
+       * #swagger.tags = ['Ticket']
        * #swagger.summary = '批次核銷票券'
        * #swagger.security=[{"Bearer": []}]
        */
@@ -160,7 +191,7 @@ export class TicketRoute extends BaseRoute {
         #swagger.responses[200]={
           description:'OK，要全部票券通過才會真正核銷',
           schema:{
-            $ref:'#/definitions/VerifyTicketsSuccess'
+            $ref:'#/definitions/EditTicketsSuccess'
           }
         }
        */
