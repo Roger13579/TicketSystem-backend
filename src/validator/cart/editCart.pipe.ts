@@ -1,7 +1,11 @@
 import { body } from 'express-validator';
 import { PipeBase } from '../pipe.base';
 import { CustomResponseType } from '../../types/customResponseType';
-import { EditCartType, IEditCartPrevItem } from '../../types/cart.type';
+import {
+  EditCartType,
+  IEditCartPrevItem,
+  IEditCartReq,
+} from '../../types/cart.type';
 import { TCustomValidator } from '../index.type';
 import { uniq } from 'lodash';
 
@@ -10,8 +14,8 @@ export class EditCartPipe extends PipeBase {
     const matchPath = path.match(/\d+/);
 
     if (matchPath) {
-      const productIndex = matchPath[0];
-      const type = req.body.products[productIndex].type;
+      const index = Number(matchPath[0]);
+      const { type } = (req as IEditCartReq).body.products[index];
       const isSetNegativeAmount = type === EditCartType.set && value < 1;
       const isNonIncAmount = type === EditCartType.inc && value === 0;
       const isInvalid = isSetNegativeAmount || isNonIncAmount;

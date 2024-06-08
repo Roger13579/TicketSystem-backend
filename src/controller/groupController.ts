@@ -16,7 +16,7 @@ import { GroupFilterDto } from '../dto/group/groupFilterDto';
 import { GetGroupVo } from '../vo/group/getGroupVo';
 import { Types } from 'mongoose';
 import { IUser } from '../models/user';
-import { IUserReq, TMethod } from '../types/common.type';
+import { TMethod } from '../types/common.type';
 
 export class GroupController extends BaseController {
   private readonly groupService = new GroupService();
@@ -51,7 +51,7 @@ export class GroupController extends BaseController {
       {},
     );
   };
-  public leaveGroup: TMethod<IUserReq> = async (req) => {
+  public leaveGroup: TMethod = async (req) => {
     const leaveGroupDto = new LeaveGroupDto(req);
     await this.groupService.leaveGroup(leaveGroupDto);
     return this.formatResponse(
@@ -60,7 +60,7 @@ export class GroupController extends BaseController {
       {},
     );
   };
-  public deleteGroup: TMethod<IUserReq> = async (req) => {
+  public deleteGroup: TMethod = async (req) => {
     const userId = (req.user as IUser)._id;
     const groupId = new Types.ObjectId(req.params['groupId']);
     await this.groupService.deleteGroup(userId, groupId);
