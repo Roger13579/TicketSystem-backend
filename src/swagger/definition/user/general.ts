@@ -1,4 +1,3 @@
-
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaginationSuccess } from '../common';
 

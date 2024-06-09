@@ -14,10 +14,11 @@ import { IOrder } from '../models/order';
 import { OrderRepository } from '../repository/orderRepository';
 import { GetTicketVo } from '../vo/ticket/getTicketVo';
 import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
-import { TMethod } from '../types/common.type';
+import { IUserReq, TMethod } from '../types/common.type';
 import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
 import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
+import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 
 export class TicketController extends BaseController {
   private readonly ticketService = new TicketService();
@@ -42,6 +43,16 @@ export class TicketController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       new GetTicketVo(info, page, limit),
+    );
+  };
+
+  public getTicketDetail = async (req: IUserReq) => {
+    const getTicketsDto = new GetTicketDetailDto(req);
+    const ticket = await this.ticketService.getTicketDetail(getTicketsDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      ticket[0],
     );
   };
 
