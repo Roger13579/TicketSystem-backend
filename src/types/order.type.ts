@@ -1,6 +1,5 @@
 import { IUserReq, TPaginationQuery } from './common.type';
-import { IPlan } from './product.type';
-import { IProductId } from '../models/baseModel';
+import { IPlan, IProductId } from './product.type';
 import { IOrderProduct } from '../models/order';
 import { IProduct } from '../models/product';
 import { Types } from 'mongoose';
@@ -24,6 +23,10 @@ export enum OrderSortField {
   paidAt = 'paidAt',
   status = 'status',
   thirdPartyPaymentId = 'thirdPartyPaymentId',
+}
+
+export interface IOrderId {
+  orderId: Types.ObjectId;
 }
 
 export interface IDeliveryInfo {
@@ -94,8 +97,7 @@ export interface ILinePayConfirmReq extends IUserReq {
   };
 }
 
-export interface IUpdateOrderParam {
-  orderId: Types.ObjectId;
+export interface IUpdateOrderParam extends IOrderId {
   thirdPartyPaymentId: string;
   paymentStatus: PaymentStatus;
   paidAt?: Date;

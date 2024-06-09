@@ -8,6 +8,7 @@ import {
   IEditTicketsReq,
   ITransferTicketReq,
   IClaimShareTicketReq,
+  IDeleteTicketsReq,
 } from '../types/ticket.type';
 import { IOrder } from '../models/order';
 import { OrderRepository } from '../repository/orderRepository';
@@ -81,6 +82,15 @@ export class TicketController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       ticket,
+    );
+  };
+
+  public deleteTickets: TMethod<IDeleteTicketsReq> = async (req) => {
+    const tickets = await this.ticketService.deleteTickets(req.body.ticketIds);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { tickets },
     );
   };
 }

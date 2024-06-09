@@ -206,4 +206,7 @@ export const enum CustomResponseType {
 
   TICKET_NOT_FOUND = '6545',
   TICKET_NOT_FOUND_MESSAGE = '票券不存在',
+
+  INVALID_TICKET_DELETE = '6546',
+  INVALID_TICKET_DELETE_MESSAGE = '無效的票券刪除行為',
 }

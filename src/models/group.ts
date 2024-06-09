@@ -1,8 +1,9 @@
 import { Schema, model, PaginateModel } from 'mongoose';
 import { schemaOption } from '../utils/constants';
 import { GroupStatus, IParticipant } from '../types/group.type';
-import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
 import paginate from 'mongoose-paginate-v2';
+import { IUserId } from '../types/user.type';
 
 export interface IGroup extends BaseModel, IUserId {
   title: string;

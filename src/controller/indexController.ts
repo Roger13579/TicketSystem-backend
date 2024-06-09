@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import { LoginVo } from '../vo/loginVo';
 import { UserService } from '../service/userService';
 import { ResetPwdDto } from '../dto/user/resetPwdDto';
-import { IUser } from '../models/user';
 import {
   IForgetPwdReq,
   IGoogleSignUpReq,
@@ -14,22 +13,23 @@ import {
   ISignUpReq,
 } from '../types/user.type';
 import { TMethod } from '../types/common.type';
+import { SignUpDTO } from '../dto/user/signUpDto';
+import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
 
   public signUp: TMethod<ISignUpReq> = async (req) => {
-    const { email, account, pwd } = req.body;
-    await this.userService.createUser(account, email, pwd);
+    const signUpDto = new SignUpDTO(req);
+    await this.userService.createUser(signUpDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
     );
   };
   public googleSignUp: TMethod<IGoogleSignUpReq> = async (req) => {
-    const { account, pwd } = req.body;
-    const thirdPartyId = (req.user as IUser).thirdPartyId as string;
-    await this.userService.updateUserFromGoogle(account, pwd, thirdPartyId);
+    const googleSignUpDto = new GoogleSignUpDTO(req);
+    await this.userService.updateUserFromGoogle(googleSignUpDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,

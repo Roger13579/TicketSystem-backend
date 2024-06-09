@@ -1,12 +1,8 @@
 import { Schema, model } from 'mongoose';
 import { schemaOption, virtualSchemaOption } from '../utils/constants';
-import {
-  BaseModel,
-  IProductId,
-  IUserId,
-  ModelName,
-  schemaDef,
-} from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
+import { IProductId } from '../types/product.type';
+import { IUserId } from '../types/user.type';
 
 const { userId, productId } = schemaDef;
 

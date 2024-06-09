@@ -8,16 +8,14 @@ import {
 } from '../types/cart.type';
 import { GetCartDTO } from '../dto/cart/getCartDto';
 import { createGetCartPipeline } from '../utils/aggregate/cart/getCart.pipeline';
+import { IUserId } from '../types/user.type';
+import { IProductId } from '../types/product.type';
 
-interface IEditItemProps {
-  userId: Types.ObjectId;
+interface IEditItemProps extends IUserId {
   item: IEditCartItem;
 }
 
-interface IDeleteItemProps {
-  userId: Types.ObjectId;
-  productId: Types.ObjectId;
-}
+interface IDeleteItemProps extends IUserId, IProductId {}
 
 export class CartRepository {
   public createCart = async (userId: Types.ObjectId) =>

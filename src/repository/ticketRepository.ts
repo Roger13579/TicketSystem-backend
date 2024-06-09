@@ -1,4 +1,4 @@
-import { TicketModel } from '../models/ticket';
+import { ITicket, TicketModel } from '../models/ticket';
 import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { GetTicketsDto } from '../dto/ticket/getTicketsDto';
 import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
@@ -7,15 +7,16 @@ import { updateOptions } from '../utils/constants';
 import { CustomResponseType } from '../types/customResponseType';
 import { throwError } from '../utils/errorHandler';
 import {
-  IUpdateTicket,
   IGetTicketsRes,
-  UpdateAction,
+  ITicketId,
+  TicketProcess,
   TicketStatus,
 } from '../types/ticket.type';
 import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
 import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import moment from 'moment';
+import { createGetTicketPipeline } from '../utils/aggregate/ticket/getTickets.pipeline';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
@@ -25,130 +26,105 @@ export class TicketRepository {
   public findTickets = async (
     ticketFilterDto: GetTicketsDto,
   ): Promise<IGetTicketsRes> => {
-    const productNameFilter = ticketFilterDto.productNameRegex
-      ? {
-          'product.title': { $regex: ticketFilterDto.productNameRegex },
-        }
-      : undefined;
-
-    const results = await TicketModel.aggregate([
-      {
-        $match: {
-          ...ticketFilterDto.filter,
-        },
-      },
-      {
-        $lookup: {
-          localField: 'productId',
-          from: 'products',
-          foreignField: '_id',
-          as: 'product',
-          pipeline: [
-            {
-              $project: ticketFilterDto.options.productSelect,
-            },
-          ],
-        },
-      },
-      { $unwind: '$product' },
-      {
-        $match: {
-          ...(ticketFilterDto.productNameRegex && productNameFilter),
-        },
-      },
-      {
-        $facet: {
-          metadata: [{ $count: 'totalCount' }],
-          tickets: [
-            { $sort: ticketFilterDto.sort },
-            { $skip: (ticketFilterDto.page - 1) * ticketFilterDto.limit },
-            {
-              $limit: ticketFilterDto.limit,
-            },
-            { $project: ticketFilterDto.options.ticketSelect },
-          ],
-        },
-      },
-      {
-        $set: {
-          metadata: [
-            {
-              $cond: {
-                if: { $eq: [{ $size: '$metadata' }, 0] },
-                then: [{ totalCount: 0 }],
-                else: '$metadata',
-              },
-            },
-          ],
-        },
-      },
-      { $unwind: '$metadata' },
-    ]);
+    const pipeline = createGetTicketPipeline(ticketFilterDto);
+    const results = await TicketModel.aggregate(pipeline);
     return results[0];
   };
 
-  /**
-   * @description 編輯多張票券時，一定要所有票券皆 valid 才可通過
-   */
-  private updateTickets = async (
-    tickets: IUpdateTicket[],
-    action: UpdateAction,
-  ) => {
+  public deleteTickets = async (tickets: ITicketId[]) => {
     const session = await startSession();
-    session.startTransaction();
     try {
-      const promises = tickets.map(
-        async ({ filter, update }) =>
-          await TicketModel.findOneAndUpdate(filter, update, {
-            ...updateOptions,
-            session,
-          }),
-      );
+      const result = await session.withTransaction(async () => {
+        const promises = tickets.map(
+          async (id) =>
+            await TicketModel.findOneAndDelete(
+              { _id: id },
+              { ...updateOptions, session },
+            ),
+        );
+        const deletedTickets = await Promise.all(promises).then(
+          (values) => values,
+        );
 
-      const updatedTickets = await Promise.all(promises).then(
-        (values) => values,
-      );
+        this.checkInvalidTicket(tickets, deletedTickets, TicketProcess.delete);
 
-      const invalidTickets = tickets.filter(({ ticketId }) => {
-        const existedTicket = updatedTickets.find((ticket) => {
-          if (!ticket) {
-            return false;
-          }
-          const existedTicketId = new Types.ObjectId(ticket._id as string);
-          return existedTicketId.equals(ticketId);
-        });
-        return !existedTicket;
+        return deletedTickets;
       });
 
-      if (invalidTickets.length > 0) {
-        const message =
-          action === UpdateAction.verify
-            ? CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE
-            : CustomResponseType.INVALID_EDIT_TICKET_MESSAGE;
-        const idsStr = invalidTickets.map(({ ticketId }) => ticketId).join(',');
-        // 前端可以用 "//" 抓到 哪些 id 有錯誤
-        throw new Error(`${message}//${idsStr}//`);
-      }
-
-      await session.commitTransaction();
-      return updatedTickets;
+      return result;
     } catch (error) {
-      await session.abortTransaction();
-      const code =
-        action === UpdateAction.verify
-          ? CustomResponseType.INVALID_VERIFIED_TICKET
-          : CustomResponseType.INVALID_EDIT_TICKET;
-      throwError((error as Error).message, code);
+      throwError(
+        (error as Error).message,
+        CustomResponseType.INVALID_TICKET_DELETE,
+      );
     } finally {
       session.endSession();
     }
   };
 
-  public verifyTickets = async ({ tickets }: VerifyTicketsDTO) =>
-    await this.updateTickets(tickets, UpdateAction.verify);
+  public verifyTickets = async ({ tickets }: VerifyTicketsDTO) => {
+    const session = await startSession();
 
-  public editTickets = async ({ tickets }: EditTicketsDTO) =>
-    await this.updateTickets(tickets, UpdateAction.edit);
+    try {
+      const result = await session.withTransaction(async () => {
+        const promises = tickets.map(
+          async ({ filter, update }) =>
+            await TicketModel.findOneAndUpdate(filter, update, {
+              ...updateOptions,
+              session,
+            }),
+        );
+
+        const updatedTickets = await Promise.all(promises).then(
+          (values) => values,
+        );
+
+        this.checkInvalidTicket(tickets, updatedTickets, TicketProcess.verify);
+
+        return updatedTickets;
+      });
+      return result;
+    } catch (error) {
+      throwError(
+        (error as Error).message,
+        CustomResponseType.INVALID_VERIFIED_TICKET,
+      );
+    } finally {
+      session.endSession();
+    }
+  };
+
+  public editTickets = async ({ tickets }: EditTicketsDTO) => {
+    const session = await startSession();
+
+    try {
+      const result = await session.withTransaction(async () => {
+        const promises = tickets.map(
+          async ({ filter, update }) =>
+            await TicketModel.findOneAndUpdate(filter, update, {
+              ...updateOptions,
+              session,
+            }),
+        );
+
+        const updatedTickets = await Promise.all(promises).then(
+          (values) => values,
+        );
+
+        this.checkInvalidTicket(tickets, updatedTickets, TicketProcess.edit);
+
+        return updatedTickets;
+      });
+      return result;
+    } catch (error) {
+      throwError(
+        (error as Error).message,
+        CustomResponseType.INVALID_EDIT_TICKET,
+      );
+    } finally {
+      session.endSession();
+    }
+  };
 
   public updateShareCode = async ({
     shareCode,
@@ -194,5 +170,38 @@ export class TicketRepository {
     };
 
     return await TicketModel.findOneAndUpdate(filter, update, updateOptions);
+  };
+
+  private checkInvalidTicket = (
+    tickets: ITicketId[],
+    dbTickets: (ITicket | null)[],
+    process: TicketProcess,
+  ) => {
+    const invalidTickets = tickets.filter(({ ticketId }) => {
+      const existedTicket = dbTickets.find((ticket) => {
+        if (!ticket) {
+          return false;
+        }
+        const existedTicketId = new Types.ObjectId(ticket._id as string);
+        return existedTicketId.equals(ticketId);
+      });
+
+      return !existedTicket;
+    });
+    if (invalidTickets.length > 0) {
+      const idsStr = invalidTickets.map(({ ticketId }) => ticketId).join(',');
+      const error = new Error();
+      if (process === TicketProcess.delete) {
+        error.message = `${CustomResponseType.INVALID_TICKET_DELETE_MESSAGE}//${idsStr}//`;
+      }
+      if (process === TicketProcess.edit) {
+        error.message = `${CustomResponseType.INVALID_EDIT_TICKET_MESSAGE}//${idsStr}//`;
+      }
+      if (process === TicketProcess.verify) {
+        error.message = `${CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE}//${idsStr}//`;
+      }
+
+      throw error;
+    }
   };
 }

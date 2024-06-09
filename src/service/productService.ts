@@ -12,6 +12,7 @@ import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
 import { SortOrder } from '../types/common.type';
 import { IProduct } from '../models/product';
 import { TCreateInvalidProductParam } from '../types/product.type';
+import { ITagId } from '../types/tag.type';
 
 export class ProductService {
   private readonly productRepository: ProductRepository =
@@ -38,7 +39,7 @@ export class ProductService {
       const tags = await Promise.all(tagPromises).then((values) => values);
       // 2. 連結新增的商品與他們的標籤
       const productList = products.map((product) => {
-        const tagList: { tagId: Types.ObjectId }[] = [];
+        const tagList: ITagId[] = [];
 
         product.tagNames?.forEach((tagName) => {
           const existedTag = tags.find(({ name }) => name === tagName);
