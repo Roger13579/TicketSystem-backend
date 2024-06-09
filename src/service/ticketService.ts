@@ -13,6 +13,7 @@ import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
 import { Types } from 'mongoose';
 import * as crypto from 'node:crypto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
+import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 
 const logger = log4js.getLogger(`TicketService`);
 
@@ -63,6 +64,9 @@ export class TicketService {
       );
     }
   }
+  public getTicketDetail = async (getTicketDetailDto: GetTicketDetailDto) => {
+    return await this.ticketRepository.getTicketDetail(getTicketDetailDto);
+  };
 
   public verifyTickets = async (verifyTicketsDto: VerifyTicketsDTO) =>
     await this.ticketRepository.verifyTickets(verifyTicketsDto);

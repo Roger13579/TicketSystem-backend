@@ -8,6 +8,7 @@ import { EditTicketsPipe } from '../validator/ticket/editTickets.pipe';
 import { TransferTicketPipe } from '../validator/ticket/TransferTicket.pipe';
 import { ClaimTransferTicketPipe } from '../validator/ticket/claimTransferTicket.pipe';
 import { DeleteTicketsPipe } from '../validator/ticket/deleteTickets.pipe';
+import { GetTicketDetailPipe } from '../validator/ticket/getTicketDetail.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -144,6 +145,32 @@ export class TicketRoute extends BaseRoute {
       this.responseHandler(this.controller.getTickets),
     );
 
+    this.router.get(
+      '/v1/ticket/:id',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '取得票券詳細資料'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+        #swagger.parameters['id'] = {
+          in: 'path',
+          description: '票券 id',
+          example: 'abcdefg123124',
+        }
+      */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/GetTicketDetailSuccess"
+            }
+          }
+      */
+      UserVerify,
+      this.usePipe(GetTicketDetailPipe),
+      this.responseHandler(this.controller.getTicketDetail),
+    );
     this.router.patch(
       '/v1/ticket',
       /**

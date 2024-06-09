@@ -1,6 +1,7 @@
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaginationSuccess } from '../common';
 import { TicketStatus } from '../../../types/ticket.type';
+import moment from 'moment';
 
 const TicketProductDetail = {
   _id: '66570169343ccb01f586dfed',
@@ -49,6 +50,26 @@ export const GetTicketsSuccess = {
   },
 };
 
+export const GetTicketDetailSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $_id: '23h4iuh2iu5hih1ui4hi',
+    $userId: 'userIdddisieowofen',
+    $orderId: '$orderIdwgefiowehpfuuew',
+    $productId: 'productIdoiwjnfpewfuioed',
+    $status: TicketStatus.unverified,
+    $isPublished: false,
+    $title: 'testproduct',
+    $photoPath: 'testproduct',
+    $theater: 'testproduct',
+    $price: 2000,
+    $expiredAt: moment().add(2, 'day').add(2, 'hour').toISOString(),
+    $startAt: moment().add(2, 'day').add(4, 'hour').toISOString(),
+    $purchaseAt: moment().add(2, 'days').toISOString(),
+    $purchaseAmount: 11,
+  },
+};
 export const EditTicketsSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
