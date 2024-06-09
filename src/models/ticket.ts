@@ -1,4 +1,4 @@
-import { Schema, model, PaginateModel } from 'mongoose';
+import { Schema, model, PaginateModel, Types } from 'mongoose';
 import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import { TicketStatus } from '../types/ticket.type';
 import {
@@ -11,29 +11,27 @@ import {
 } from './baseModel';
 import paginate from 'mongoose-paginate-v2';
 
+const { productId, userId, orderId } = schemaDef;
+
 export interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
-  amount: number;
   status: TicketStatus;
   isPublished: boolean;
   chatRoomId: string;
   expiredAt?: Date;
   writeOffAt?: Date;
-  writeOffStaffId?: IUserId;
+  writeOffStaffId?: Types.ObjectId;
   shareCode?: string;
+  giverId?: Types.ObjectId;
 }
-
-const { productId, userId, orderId } = schemaDef;
 
 const schema = new Schema<ITicket>(
   {
     productId,
-    userId,
+    userId, // 目前票券的擁有者
     orderId,
-    // 如果是多人套票的話，這個數字就不是 1
-    // 每張票在核銷時，一定都只一次把所有 amount 的票券核銷完，不能一張一張核銷
-    amount: {
-      type: Number,
-      required: true,
+    giverId: {
+      type: Schema.Types.ObjectId,
+      ref: ModelName.product,
     },
     status: {
       type: String,
@@ -48,17 +46,13 @@ const schema = new Schema<ITicket>(
       type: Date,
       required: true,
     },
-    chatRoomId: {
-      type: String,
-    },
+    chatRoomId: { type: String },
     writeOffAt: {
       type: Date,
       select: true,
     },
     writeOffStaffId: userId,
-    shareCode: {
-      type: String,
-    },
+    shareCode: { type: String },
   },
   { ...schemaOption, ...virtualSchemaOption },
 ).plugin(paginate);

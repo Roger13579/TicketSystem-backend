@@ -1,4 +1,4 @@
-import moment from 'moment';
+
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaginationSuccess } from '../common';
 
@@ -13,8 +13,8 @@ const favorite = {
     amount: 100,
     isLaunched: true,
     photoPath: 'https://images.unsplash.com/photo-1554080353-a576cf803bda',
-    sellStartAt: moment().toDate(),
-    sellEndAt: moment().toDate(),
+    sellStartAt: new Date().toISOString(),
+    sellEndAt: new Date().toISOString(),
   },
 };
 

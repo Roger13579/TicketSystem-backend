@@ -32,9 +32,7 @@ const { userId, productId, plan } = schemaDef;
 
 const schema = new Schema<IOrder>(
   {
-    thirdPartyPaymentId: {
-      type: String,
-    },
+    thirdPartyPaymentId: { type: String },
     userId,
     products: {
       type: [

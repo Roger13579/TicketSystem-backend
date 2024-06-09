@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { CustomResponseType } from '../../../types/customResponseType';
 import { MovieGenre, ProductType } from '../../../types/product.type';
 import { PaginationSuccess } from '../common';
@@ -12,8 +11,8 @@ export const defaultItem = {
 const defaultCart = {
   $_id: '665b553acbea41c4b7a8dcdf',
   $userId: '6656fdfaea3c0ab9e916788e',
-  $createdAt: moment().toDate(),
-  $updatedAt: moment().toDate(),
+  $createdAt: new Date().toISOString(),
+  $updatedAt: new Date().toISOString(),
 };
 
 const detailItem = {
@@ -27,8 +26,8 @@ const detailItem = {
     amount: 100,
     isLaunched: true,
     photoPath: 'https://images.unsplash.com/abc',
-    sellStartAt: moment().toDate(),
-    sellEndAt: moment().toDate(),
+    sellStartAt: new Date().toISOString(),
+    sellEndAt: new Date().toISOString(),
   },
   $amount: defaultItem.$amount,
 };

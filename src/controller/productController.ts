@@ -45,7 +45,7 @@ class ProductController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { product },
+      product,
     );
   };
 
