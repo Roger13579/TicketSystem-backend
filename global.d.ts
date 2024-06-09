@@ -36,6 +36,7 @@ declare global {
       LINEPAY_RETURN_CANCEL_URL: string;
       LINEPAY_CHANNEL_SECRET_KEY: string;
       LINEPAY_SITE: string;
+      SHARE_CODE_SECRET_KEY: string;
     }
   }
 }

@@ -10,6 +10,7 @@ export enum TicketStatus {
   expired = 'expired', // 已過期
   cancelled = 'cancelled', // 已取消且無退款
   pending = 'pending', // 發生問題的票券，暫時先卡住不給用
+  transfer = 'transfer', // 正在分票，等待被別人取票，無法被任何人使用
 }
 
 export interface IGetTicketsReq extends IUserReq {
@@ -35,7 +36,6 @@ export interface IGetTicket extends ITimestamp {
   productId: Types.ObjectId;
   userId: Types.ObjectId;
   orderId: Types.ObjectId;
-  amount: number;
   status: TicketStatus;
   isPublished: boolean;
   expiredAt: Date;
@@ -66,7 +66,6 @@ export interface IVerifyTicketsReq extends IUserReq {
       ticketId: string;
       userId: string;
       productId: string;
-      amount: number;
     }[];
   };
 }
@@ -91,4 +90,16 @@ export interface IUpdateTicket {
 export enum UpdateAction {
   edit,
   verify,
+}
+
+export interface ITransferTicketReq extends IUserReq {
+  body: {
+    ticketId: string;
+  };
+}
+
+export interface IClaimShareTicketReq extends IUserReq {
+  body: {
+    shareCode: string;
+  };
 }

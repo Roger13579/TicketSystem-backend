@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { TicketStatus } from '../../../types/ticket.type';
 import { validEditStatus } from '../../../utils/ticket.constants';
 
@@ -19,20 +18,21 @@ const propName = {
   productId: '商品 id',
   userId: '擁有者 id',
   ticketId: '票券 id',
-  amount: '票券數量',
   status: '票券狀態',
   isPublished: '票券是否上架',
   expiredAt: '票券過期時間',
+  shareCode: '分票驗證碼',
 };
 
 const ticket = {
   productId: '665b00748f529f5f17923acd',
   userId: '665b00748f529f5f17923acd',
   ticketId: '665b00748f529f5f17923acd',
-  amount: 2,
   status: TicketStatus.unverified,
   isPublished: true,
-  expiredAt: moment().toDate(),
+  expiredAt: new Date().toISOString(),
+  shareCode:
+    'nyKsMFxIGHx1KQDPwihn8g==:NetZ7IrEnMEVDqgStoAvsBTBw0dpQYg8ElXK94+uMoc=',
 };
 
 const property = {
@@ -40,6 +40,11 @@ const property = {
     type: 'string',
     description: propName.productId,
     example: ticket.productId,
+  },
+  shareCode: {
+    type: 'string',
+    description: propName.shareCode,
+    example: ticket.shareCode,
   },
   userId: {
     type: 'string',
@@ -50,11 +55,6 @@ const property = {
     type: 'string',
     description: propName.ticketId,
     example: ticket.ticketId,
-  },
-  amount: {
-    type: 'number',
-    description: propName.amount + '如果是多人套票，該值就會大於 1',
-    example: ticket.amount,
   },
   status: {
     type: 'string',
@@ -84,12 +84,11 @@ export const CustomVerifyTicketsObj = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['ticketId', 'userId', 'productId', 'amount'],
+        required: ['ticketId', 'userId', 'productId'],
         properties: {
           productId: property.productId,
           userId: property.userId,
           ticketId: property.ticketId,
-          amount: property.amount,
         },
       },
     },
@@ -113,5 +112,21 @@ export const CustomEditTicketsObj = {
         },
       },
     },
+  },
+};
+
+export const CustomCreateShareCodeObj = {
+  type: 'object',
+  required: ['ticketId'],
+  properties: {
+    ticketId: property.ticketId,
+  },
+};
+
+export const CustomClaimTicketObj = {
+  type: 'object',
+  required: ['shareCode'],
+  properties: {
+    shareCode: property.shareCode,
   },
 };

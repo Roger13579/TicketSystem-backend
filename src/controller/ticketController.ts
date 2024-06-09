@@ -6,6 +6,8 @@ import {
   IGetTicketsReq,
   IVerifyTicketsReq,
   IEditTicketsReq,
+  ITransferTicketReq,
+  IClaimShareTicketReq,
 } from '../types/ticket.type';
 import { IOrder } from '../models/order';
 import { OrderRepository } from '../repository/orderRepository';
@@ -13,6 +15,8 @@ import { GetTicketVo } from '../vo/ticket/getTicketVo';
 import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
 import { TMethod } from '../types/common.type';
 import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
+import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
+import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 
 export class TicketController extends BaseController {
   private readonly ticketService = new TicketService();
@@ -57,6 +61,26 @@ export class TicketController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       { tickets },
+    );
+  };
+
+  public createShareCode: TMethod<ITransferTicketReq> = async (req) => {
+    const createShareCodeDto = new CreateShareCodeDTO(req);
+    const ticket = await this.ticketService.updateShareCode(createShareCodeDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      ticket,
+    );
+  };
+
+  public transferTicket: TMethod<IClaimShareTicketReq> = async (req) => {
+    const transferTicketDto = new TransferTicketDTO(req);
+    const ticket = await this.ticketService.transferTicket(transferTicketDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      ticket,
     );
   };
 }

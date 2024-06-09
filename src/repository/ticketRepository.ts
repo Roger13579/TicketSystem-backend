@@ -10,8 +10,12 @@ import {
   IUpdateTicket,
   IGetTicketsRes,
   UpdateAction,
+  TicketStatus,
 } from '../types/ticket.type';
 import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
+import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
+import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
+import moment from 'moment';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
@@ -145,4 +149,50 @@ export class TicketRepository {
 
   public editTickets = async ({ tickets }: EditTicketsDTO) =>
     await this.updateTickets(tickets, UpdateAction.edit);
+
+  public updateShareCode = async ({
+    shareCode,
+    ticketId,
+    userId,
+  }: CreateShareCodeDTO) => {
+    const filter = {
+      _id: ticketId,
+      userId,
+      status: TicketStatus.unverified,
+      expiredAt: { $gt: moment().toDate() },
+    };
+    const update = {
+      shareCode,
+      status: TicketStatus.transfer,
+    };
+    return await TicketModel.findOneAndUpdate(filter, update, updateOptions);
+  };
+
+  public transferTicket = async (
+    { shareCode, userId }: TransferTicketDTO,
+    ticketId: Types.ObjectId,
+  ) => {
+    const filter = {
+      _id: ticketId,
+      status: TicketStatus.transfer,
+      expiredAt: { $gt: moment().toDate() },
+      shareCode,
+      giverId: { $exists: false },
+    };
+
+    const ticket = await TicketModel.findOne(filter);
+
+    if (!ticket) {
+      return null;
+    }
+
+    const update = {
+      userId,
+      status: TicketStatus.unverified,
+      giverId: ticket.userId,
+      writeOffAt: moment().toDate(),
+    };
+
+    return await TicketModel.findOneAndUpdate(filter, update, updateOptions);
+  };
 }

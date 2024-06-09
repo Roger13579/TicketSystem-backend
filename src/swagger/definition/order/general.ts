@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaymentMethod, PaymentStatus } from '../../../types/order.type';
 import { MovieGenre, ProductType } from '../../../types/product.type';
@@ -30,8 +29,8 @@ export const OrderItem = {
   paymentMethod: PaymentMethod.linePay,
   $price: 300,
   status: PaymentStatus.pending,
-  $createdAt: moment().toDate(),
-  paidAt: moment().toDate(),
+  $createdAt: new Date().toISOString(),
+  paidAt: new Date().toISOString(),
 };
 
 /**

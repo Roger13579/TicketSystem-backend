@@ -17,7 +17,7 @@ export interface IGroup extends BaseModel, IUserId {
   participant?: [IParticipant];
 }
 
-const { userId } = schemaDef;
+const { userId, photoPath } = schemaDef;
 
 const schema = new Schema<IGroup>(
   {
@@ -26,10 +26,7 @@ const schema = new Schema<IGroup>(
       type: String,
       required: true,
     },
-    placeholderImg: {
-      type: String,
-      required: true,
-    },
+    placeholderImg: photoPath,
     theater: {
       type: String,
       required: true,

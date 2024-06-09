@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { CustomResponseType } from '../../../types/customResponseType';
 import { PaginationSuccess } from '../common';
 import { Status } from '../../../types/common.type';
@@ -8,19 +7,17 @@ const Comment = {
   $rating: 5,
   $content: '宇宙讚讚 A',
   $status: Status.disabled,
-  $createdAt: moment().toDate(),
-  $updatedAt: moment().toDate(),
+  $createdAt: new Date().toISOString(),
+  $updatedAt: new Date().toISOString(),
 };
 
 export const CreateCommentSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
-    $comment: {
-      ...Comment,
-      $productId: '664637559f1b5efbad4c8b16',
-      $userId: '66423369996f95232548cb91',
-    },
+    ...Comment,
+    $productId: '664637559f1b5efbad4c8b16',
+    $userId: '66423369996f95232548cb91',
   },
 };
 

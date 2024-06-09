@@ -9,6 +9,10 @@ import { GetTicketsDto } from '../dto/ticket/getTicketsDto';
 import { SortOrder } from '../types/common.type';
 import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
 import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
+import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
+import { Types } from 'mongoose';
+import * as crypto from 'node:crypto';
+import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 
 const logger = log4js.getLogger(`TicketService`);
 
@@ -39,7 +43,6 @@ export class TicketService {
             ...item,
             productId: item.productId,
             startAt: item.startAt,
-            amount: 1,
           }),
         );
         return acc.concat(repeatedItems);
@@ -66,4 +69,68 @@ export class TicketService {
 
   public editTickets = async (editTicketsDto: EditTicketsDTO) =>
     await this.ticketRepository.editTickets(editTicketsDto);
+
+  private encryptTicketId = (ticketId: Types.ObjectId) => {
+    // 確保密鑰是 32 字節長度 (AES-256)
+    const key = crypto
+      .createHash('sha256')
+      .update(process.env.SHARE_CODE_SECRET_KEY)
+      .digest();
+    // 初始化向量
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    // 加密
+    let encrypted = cipher.update(ticketId.toString(), 'utf8', 'base64');
+    encrypted += cipher.final('base64');
+    // 返回加密後的 ticket_id 及 iv，兩者用 ':' 分隔
+    return `${iv.toString('base64')}:${encrypted}`;
+  };
+
+  private decryptShareCode = (shareCode: string) => {
+    const parts = shareCode.split(':');
+    const iv = Buffer.from(parts[0], 'base64');
+    const encrypted = parts[1];
+    const key = crypto
+      .createHash('sha256')
+      .update(process.env.SHARE_CODE_SECRET_KEY)
+      .digest();
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    let decrypted = decipher.update(encrypted, 'base64', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  };
+
+  public updateShareCode = async (createShareCodeDto: CreateShareCodeDTO) => {
+    const { ticketId } = createShareCodeDto;
+    const shareCode = this.encryptTicketId(ticketId);
+    createShareCodeDto.shareCode = shareCode;
+    const ticket =
+      await this.ticketRepository.updateShareCode(createShareCodeDto);
+
+    if (!ticket) {
+      throwError(
+        CustomResponseType.TRANSFER_TICKET_CREATE_ERROR_MESSAGE +
+          '無法進行分票的票券',
+        CustomResponseType.TRANSFER_TICKET_CREATE_ERROR,
+      );
+    }
+    return ticket;
+  };
+
+  public transferTicket = async (transferTicketDto: TransferTicketDTO) => {
+    const { shareCode } = transferTicketDto;
+    const ticketId = this.decryptShareCode(shareCode);
+    const ticket = await this.ticketRepository.transferTicket(
+      transferTicketDto,
+      new Types.ObjectId(ticketId),
+    );
+
+    if (!ticket) {
+      throwError(
+        CustomResponseType.TRANSFER_TICKET_ERROR_MESSAGE + '無效的分票驗證碼',
+        CustomResponseType.TRANSFER_TICKET_ERROR,
+      );
+    }
+    return ticket;
+  };
 }

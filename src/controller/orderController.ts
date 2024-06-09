@@ -49,7 +49,7 @@ class OrderController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { order },
+      order,
     );
   };
 
@@ -68,7 +68,7 @@ class OrderController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      { order },
+      order,
     );
   };
 

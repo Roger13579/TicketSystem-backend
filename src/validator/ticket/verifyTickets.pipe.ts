@@ -22,10 +22,6 @@ export class VerifyTicketsPipe extends PipeBase {
       body('tickets.*.ticketId'),
       CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE + 'ticketId',
     ),
-    this.positiveIntValidation(
-      body('tickets.*.amount'),
-      CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE + 'amount',
-    ),
     this.validationHandler,
   ];
   constructor() {
