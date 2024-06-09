@@ -17,6 +17,8 @@ import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import moment from 'moment';
 import { createGetTicketPipeline } from '../utils/aggregate/ticket/getTickets.pipeline';
+import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
+import { createGetTicketDetailPipeline } from '../utils/aggregate/ticket/getTicketDetail.pipeline';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
@@ -29,6 +31,11 @@ export class TicketRepository {
     const pipeline = createGetTicketPipeline(ticketFilterDto);
     const results = await TicketModel.aggregate(pipeline);
     return results[0];
+  };
+
+  public getTicketDetail = async (getTicketDetailDto: GetTicketDetailDto) => {
+    const pipeline = createGetTicketDetailPipeline(getTicketDetailDto);
+    return TicketModel.aggregate(pipeline);
   };
 
   public deleteTickets = async (tickets: ITicketId[]) => {
