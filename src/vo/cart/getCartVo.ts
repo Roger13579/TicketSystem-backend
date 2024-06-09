@@ -1,7 +1,6 @@
 import { Types } from 'mongoose';
 import { ICart } from '../../models/cart';
 import { ICartPagination } from '../../types/cart.type';
-import { Document } from 'mongoose';
 
 export class GetCartVO {
   public readonly _id: Types.ObjectId;
@@ -13,16 +12,7 @@ export class GetCartVO {
   public readonly createdAt: Date;
   public readonly updatedAt: Date;
 
-  constructor(
-    cart:
-      | ICartPagination
-      | (Document<unknown, Record<string, never>, ICart> &
-          ICart & {
-            _id: Types.ObjectId;
-          }),
-    page: number,
-    limit: number,
-  ) {
+  constructor(cart: ICartPagination | ICart, page: number, limit: number) {
     this.createdAt = cart.createdAt;
     this.updatedAt = cart.updatedAt;
     this._id = cart._id;

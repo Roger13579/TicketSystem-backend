@@ -17,6 +17,10 @@ export enum ThirdPartyType {
   google = 'google',
 }
 
+export interface IUserId {
+  userId: Types.ObjectId;
+}
+
 export type TGoogleUser = {
   _json: {
     sub: string;

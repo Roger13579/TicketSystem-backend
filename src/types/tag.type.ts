@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { IUserReq, TPaginationQuery } from './common.type';
 
 export interface IGetTagsReq extends IUserReq {
@@ -15,4 +16,8 @@ export interface ICreateTagReq extends IUserReq {
 export enum TagSortField {
   createdAt = 'createdAt',
   name = 'name',
+}
+
+export interface ITagId {
+  tagId: Types.ObjectId;
 }

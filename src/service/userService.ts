@@ -15,6 +15,8 @@ import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { ProductRepository } from '../repository/productRepository';
 import { IUserReq, TMethod } from '../types/common.type';
+import { SignUpDTO } from '../dto/user/signUpDto';
+import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
 
 const logger = log4js.getLogger(`UserService`);
 
@@ -24,7 +26,7 @@ export class UserService {
   private readonly productRepository: ProductRepository =
     new ProductRepository();
 
-  public async createUser(account: string, email: string, pwd: string) {
+  public async createUser({ pwd, email, account }: SignUpDTO) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
     const findByEmail = await this.userRepository.findByEmail(email);
     const findByAccount = await this.userRepository.findByAccount(account);
@@ -60,11 +62,11 @@ export class UserService {
     });
   }
 
-  public async updateUserFromGoogle(
-    account: string,
-    pwd: string,
-    thirdPartyId: string,
-  ) {
+  public async updateUserFromGoogle({
+    pwd,
+    account,
+    thirdPartyId,
+  }: GoogleSignUpDTO) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
     return this.userRepository
       .updateUserFromGoogle(account, hashPwd, thirdPartyId)

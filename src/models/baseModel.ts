@@ -19,30 +19,6 @@ export interface BaseModel extends Document, ITimestamp {
   id: Types.ObjectId;
 }
 
-export interface IUserId {
-  userId: Types.ObjectId;
-}
-
-export interface ITagId {
-  tagId: Types.ObjectId;
-}
-
-export interface IProductId {
-  productId: Types.ObjectId;
-}
-
-export interface IOrderId {
-  orderId: Types.ObjectId;
-}
-
-export interface IGroupId {
-  groupId: Types.ObjectId;
-}
-
-export interface ITicketId {
-  ticketId: Types.ObjectId;
-}
-
 export const schemaDef = {
   groupId: {
     type: Schema.Types.ObjectId,

@@ -1,13 +1,9 @@
 import { PaginateModel, PopulateOptions, Query, Schema, model } from 'mongoose';
 import { Status } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
-import {
-  BaseModel,
-  IProductId,
-  IUserId,
-  ModelName,
-  schemaDef,
-} from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
+import { IProductId } from '../types/product.type';
+import { IUserId } from '../types/user.type';
 
 export interface IComment extends BaseModel, IProductId, IUserId {
   rating: number;

@@ -2,6 +2,9 @@ import { IProduct } from '../models/product';
 import { ITicket } from '../models/ticket';
 import { ITimestamp, IUserReq, TPaginationQuery } from './common.type';
 import { FilterQuery, Types, UpdateQuery } from 'mongoose';
+import { IUserId } from './user.type';
+import { IProductId } from './product.type';
+import { IOrderId } from './order.type';
 
 export enum TicketStatus {
   verified = 'verified', // 已核銷使用
@@ -11,6 +14,10 @@ export enum TicketStatus {
   cancelled = 'cancelled', // 已取消且無退款
   pending = 'pending', // 發生問題的票券，暫時先卡住不給用
   transfer = 'transfer', // 正在分票，等待被別人取票，無法被任何人使用
+}
+
+export interface ITicketId {
+  ticketId: Types.ObjectId;
 }
 
 export interface IGetTicketsReq extends IUserReq {
@@ -31,11 +38,8 @@ export interface IGetTicketsRes {
   ];
   tickets: IGetTicket[];
 }
-export interface IGetTicket extends ITimestamp {
+export interface IGetTicket extends ITimestamp, IUserId, IProductId, IOrderId {
   _id: Types.ObjectId;
-  productId: Types.ObjectId;
-  userId: Types.ObjectId;
-  orderId: Types.ObjectId;
   status: TicketStatus;
   isPublished: boolean;
   expiredAt: Date;
@@ -81,15 +85,15 @@ export interface IEditTicketsReq extends IUserReq {
   };
 }
 
-export interface IUpdateTicket {
-  ticketId: Types.ObjectId;
+export interface IUpdateTicket extends ITicketId {
   filter: FilterQuery<ITicket>;
   update: UpdateQuery<ITicket>;
 }
 
-export enum UpdateAction {
+export enum TicketProcess {
   edit,
   verify,
+  delete,
 }
 
 export interface ITransferTicketReq extends IUserReq {
@@ -101,5 +105,11 @@ export interface ITransferTicketReq extends IUserReq {
 export interface IClaimShareTicketReq extends IUserReq {
   body: {
     shareCode: string;
+  };
+}
+
+export interface IDeleteTicketsReq extends IUserReq {
+  body: {
+    ticketIds: string[];
   };
 }

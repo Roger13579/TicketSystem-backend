@@ -133,4 +133,11 @@ export class TicketService {
     }
     return ticket;
   };
+
+  public deleteTickets = async (ids: string[]) => {
+    const tickets = ids.map((id) => ({
+      ticketId: new Types.ObjectId(id),
+    }));
+    return await this.ticketRepository.deleteTickets(tickets);
+  };
 }

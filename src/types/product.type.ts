@@ -1,7 +1,7 @@
 import { IProduct } from '../models/product';
 import { ISubResponse, IUserReq, TPaginationQuery } from './common.type';
 import { Types } from 'mongoose';
-import { IProductId } from '../models/baseModel';
+import { ITagId } from './tag.type';
 
 export enum ProductType {
   premier = 'premier',
@@ -40,6 +40,10 @@ export const RecommendWeightRange = {
   4: 4,
   5: 5,
 };
+
+export interface IProductId {
+  productId: Types.ObjectId;
+}
 
 export type IPlan = {
   name: string; // 方案名稱
@@ -118,7 +122,7 @@ export interface IEditContent {
   cancelPolicies?: [string];
   certificates?: [string];
   brief?: string;
-  tags?: { tagId: Types.ObjectId }[];
+  tags?: ITagId[];
   tagNames?: string[];
 }
 

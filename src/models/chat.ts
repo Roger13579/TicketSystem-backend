@@ -1,6 +1,7 @@
 import { Schema, model, Types } from 'mongoose';
 import { schemaOption } from '../utils/constants';
-import { BaseModel, IUserId, ModelName, schemaDef } from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
+import { IUserId } from '../types/user.type';
 
 interface IChat extends BaseModel, IUserId {
   ticketId?: Types.ObjectId;

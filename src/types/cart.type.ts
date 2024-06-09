@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import {
   ISubResponse,
   ITimestamp,
@@ -7,6 +6,7 @@ import {
 } from './common.type';
 import { IProduct } from '../models/product';
 import { ICart, IItem } from '../models/cart';
+import { IUserId } from './user.type';
 
 export enum EditCartType {
   inc = 'inc',
@@ -54,9 +54,8 @@ export interface ICartPagination
 
 export type THandleExistedItemProp = {
   existedItem: IItem;
-  userId: Types.ObjectId;
   item: IEditCartItem;
-};
+} & IUserId;
 
 export enum DeleteCartType {
   all = 'all',
