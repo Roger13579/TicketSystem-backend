@@ -130,3 +130,16 @@ export const CustomClaimTicketObj = {
     shareCode: property.shareCode,
   },
 };
+
+export const CustomDeleteTicketsObj = {
+  type: 'object',
+  required: ['ticketIds'],
+  properties: {
+    ticketIds: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
+  },
+};

@@ -1,6 +1,8 @@
-import { Types } from 'mongoose';
-import { ITransferTicketReq } from '../../types/ticket.type';
+import { FilterQuery, Types } from 'mongoose';
+import { ITransferTicketReq, TicketStatus } from '../../types/ticket.type';
 import { IUser } from '../../models/user';
+import { ITicket } from '../../models/ticket';
+import moment from 'moment';
 
 export class CreateShareCodeDTO {
   private readonly _userId: Types.ObjectId;
@@ -21,6 +23,15 @@ export class CreateShareCodeDTO {
 
   get ticketId() {
     return this._ticketId;
+  }
+
+  get availableFilter(): FilterQuery<ITicket> {
+    return {
+      _id: this._ticketId,
+      userId: this._userId,
+      status: TicketStatus.unverified,
+      expiredAt: { $gt: moment().toDate() },
+    };
   }
 
   constructor(req: ITransferTicketReq) {

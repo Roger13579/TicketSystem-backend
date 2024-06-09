@@ -8,6 +8,7 @@ import {
 import { CustomResponseType } from './customResponseType';
 import { IUser } from '../models/user';
 import { IComment } from '../models/comment';
+import { IProductId } from './product.type';
 
 export enum CommentSortField {
   rating = 'rating',
@@ -17,8 +18,11 @@ export enum CommentSortField {
   productId = 'productId',
 }
 
+export interface ICommentId {
+  commentId: Types.ObjectId;
+}
 export interface ICommentProductReq extends IUserReq {
-  body: Pick<IComment, 'rating' | 'content'> & { productId: Types.ObjectId };
+  body: Pick<IComment, 'rating' | 'content'> & IProductId;
 }
 
 export interface IDeleteCommentsReq extends IUserReq {

@@ -1,7 +1,7 @@
 import { uniq } from 'lodash';
 import { IProduct } from '../../models/product';
 import { ICreateProductsReq } from '../../types/product.type';
-import { ITagId } from '../../models/baseModel';
+import { ITagId } from '../../types/tag.type';
 
 export class CreateProductDTO {
   private readonly _products: (Omit<IProduct, 'tags'> & {

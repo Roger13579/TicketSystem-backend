@@ -1,15 +1,11 @@
 import { Schema, model, PaginateModel, Types } from 'mongoose';
 import { schemaOption, virtualSchemaOption } from '../utils/constants';
 import { TicketStatus } from '../types/ticket.type';
-import {
-  BaseModel,
-  IOrderId,
-  IProductId,
-  IUserId,
-  ModelName,
-  schemaDef,
-} from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
 import paginate from 'mongoose-paginate-v2';
+import { IOrderId } from '../types/order.type';
+import { IProductId } from '../types/product.type';
+import { IUserId } from '../types/user.type';
 
 const { productId, userId, orderId } = schemaDef;
 

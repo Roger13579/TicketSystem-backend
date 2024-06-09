@@ -2,14 +2,10 @@ import { Schema, model } from 'mongoose';
 import { Status } from '../types/common.type';
 import { schemaOption } from '../utils/constants';
 import { AccountType, Gender } from '../types/user.type';
-import {
-  BaseModel,
-  IGroupId,
-  IProductId,
-  ITicketId,
-  ModelName,
-  schemaDef,
-} from './baseModel';
+import { BaseModel, ModelName, schemaDef } from './baseModel';
+import { ITicketId } from '../types/ticket.type';
+import { IGroupId } from '../types/group.type';
+import { IProductId } from '../types/product.type';
 
 export interface IUser extends BaseModel {
   account: string;

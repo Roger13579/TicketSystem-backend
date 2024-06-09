@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { IUserReq, TPaginationQuery } from './common.type';
+import { IUserId } from './user.type';
 
 export enum GroupStatus {
   ongoing = 'ongoing', // 正在揪團
@@ -7,9 +8,12 @@ export enum GroupStatus {
   completed = 'completed', // 完成揪團
 }
 
+export interface IGroupId {
+  groupId: Types.ObjectId;
+}
+
 export interface TCreateGroupReq extends IUserReq {
   body: {
-    userId: Types.ObjectId;
     title: string;
     placeholderImg: string;
     theater: string;
@@ -19,7 +23,7 @@ export interface TCreateGroupReq extends IUserReq {
     haveTicket: boolean;
     content?: string;
     participant: IParticipant;
-  };
+  } & IUserId;
 }
 
 export interface TUpdateGroupReq extends IUserReq {
@@ -46,8 +50,7 @@ export interface TJoinGroupReq extends IUserReq {
   body: IParticipant;
 }
 
-export interface IParticipant {
-  userId: Types.ObjectId;
+export interface IParticipant extends IUserId {
   phone: string;
   name: string;
   nickname: string;

@@ -7,6 +7,7 @@ import { VerifyTicketsPipe } from '../validator/ticket/verifyTickets.pipe';
 import { EditTicketsPipe } from '../validator/ticket/editTickets.pipe';
 import { TransferTicketPipe } from '../validator/ticket/TransferTicket.pipe';
 import { ClaimTransferTicketPipe } from '../validator/ticket/claimTransferTicket.pipe';
+import { DeleteTicketsPipe } from '../validator/ticket/deleteTickets.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -259,6 +260,36 @@ export class TicketRoute extends BaseRoute {
       UserVerify,
       this.usePipe(ClaimTransferTicketPipe),
       this.responseHandler(this.controller.transferTicket),
+    );
+
+    this.router.delete(
+      '/v1/ticket',
+      /**
+       * #swagger.tags = ['Admin']
+       * #swagger.summary = '批次刪除票券'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'欲核銷的票券列表',
+          schema:{
+            $ref:"#/definitions/CustomDeleteTicketsObj"
+          }
+        } 
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK，要全部票券通過才會真正核銷',
+          schema:{
+            $ref:'#/definitions/EditTicketsSuccess'
+          }
+        }
+       */
+      UserVerify,
+      IsAdmin,
+      this.usePipe(DeleteTicketsPipe),
+      this.responseHandler(this.controller.deleteTickets),
     );
   }
 }

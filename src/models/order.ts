@@ -8,13 +8,13 @@ import {
 } from '../types/order.type';
 import {
   BaseModel,
-  IUserId,
   ModelName,
   productSnapshotSchemaDef,
   schemaDef,
 } from './baseModel';
 import { IProductSnapshot } from '../types/product.type';
 import paginate from 'mongoose-paginate-v2';
+import { IUserId } from '../types/user.type';
 
 export interface IOrderProduct extends IProductSnapshot, IOrderItem {}
 

@@ -11,12 +11,13 @@ import { schemaOption } from '../utils/constants';
 import moment from 'moment';
 import {
   BaseModel,
-  ITagId,
   ModelName,
   productSnapshotSchemaDef,
   schemaDef,
 } from './baseModel';
 import paginate from 'mongoose-paginate-v2';
+import { ITagId } from '../types/tag.type';
+import { ICommentId } from '../types/comment.type';
 
 export interface IProduct extends BaseModel, IProductSnapshot {
   plans?: IPlan[];
@@ -37,7 +38,7 @@ export interface IProduct extends BaseModel, IProductSnapshot {
   confirmations?: [string];
   cancelPolicies?: [string];
   certificates?: [string];
-  comments?: { commentId: Types.ObjectId }[];
+  comments?: ICommentId[];
   soldAmount: number;
   brief: string;
 }
