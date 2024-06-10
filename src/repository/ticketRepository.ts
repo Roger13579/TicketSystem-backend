@@ -19,6 +19,7 @@ import moment from 'moment';
 import { createGetTicketPipeline } from '../utils/aggregate/ticket/getTickets.pipeline';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 import { createGetTicketDetailPipeline } from '../utils/aggregate/ticket/getTicketDetail.pipeline';
+import { SellTicketDto } from '../dto/ticket/sellTicketDto';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
@@ -31,6 +32,19 @@ export class TicketRepository {
     const pipeline = createGetTicketPipeline(ticketFilterDto);
     const results = await TicketModel.aggregate(pipeline);
     return results[0];
+  };
+
+  public findTransferableTicketByOrderIdAndProductId = async (
+    sellTicketDto: SellTicketDto,
+  ) => {
+    return TicketModel.find({
+      userId: sellTicketDto.userId,
+      orderId: sellTicketDto.orderId,
+      productId: sellTicketDto.productId,
+      isPublished: false,
+      status: TicketStatus.unverified,
+      expiredAt: { $gte: new Date() },
+    });
   };
 
   public findTransferableTicket = async (userId: string) => {
@@ -50,7 +64,7 @@ export class TicketRepository {
   public deleteTickets = async (tickets: ITicketId[]) => {
     const session = await startSession();
     try {
-      const result = await session.withTransaction(async () => {
+      return await session.withTransaction(async () => {
         const promises = tickets.map(
           async (id) =>
             await TicketModel.findOneAndDelete(
@@ -66,8 +80,6 @@ export class TicketRepository {
 
         return deletedTickets;
       });
-
-      return result;
     } catch (error) {
       throwError(
         (error as Error).message,
@@ -82,7 +94,7 @@ export class TicketRepository {
     const session = await startSession();
 
     try {
-      const result = await session.withTransaction(async () => {
+      return await session.withTransaction(async () => {
         const promises = tickets.map(
           async ({ filter, update }) =>
             await TicketModel.findOneAndUpdate(filter, update, {
@@ -99,7 +111,6 @@ export class TicketRepository {
 
         return updatedTickets;
       });
-      return result;
     } catch (error) {
       throwError(
         (error as Error).message,
@@ -114,7 +125,7 @@ export class TicketRepository {
     const session = await startSession();
 
     try {
-      const result = await session.withTransaction(async () => {
+      return await session.withTransaction(async () => {
         const promises = tickets.map(
           async ({ filter, update }) =>
             await TicketModel.findOneAndUpdate(filter, update, {
@@ -131,7 +142,6 @@ export class TicketRepository {
 
         return updatedTickets;
       });
-      return result;
     } catch (error) {
       throwError(
         (error as Error).message,
@@ -139,6 +149,44 @@ export class TicketRepository {
       );
     } finally {
       session.endSession();
+    }
+  };
+
+  public updateSellTickets = async (tickets: ITicket[]) => {
+    const session = await startSession();
+    try {
+      return await session.withTransaction(async () => {
+        const promises = tickets.map(
+          async (ticket) =>
+            await TicketModel.findOneAndUpdate(
+              { _id: ticket._id },
+              { isPublished: true },
+              {
+                session,
+                ...updateOptions,
+              },
+            ),
+        );
+
+        const updatedTickets = await Promise.all(promises).then(
+          (values) => values,
+        );
+
+        const ticketIds: ITicketId[] = tickets.map(({ _id }) => ({
+          ticketId: _id,
+        }));
+
+        this.checkInvalidTicket(ticketIds, updatedTickets, TicketProcess.edit);
+
+        return updatedTickets;
+      });
+    } catch (error) {
+      throwError(
+        (error as Error).message,
+        CustomResponseType.INVALID_EDIT_TICKET,
+      );
+    } finally {
+      await session.endSession();
     }
   };
 
@@ -157,7 +205,7 @@ export class TicketRepository {
       shareCode,
       status: TicketStatus.transfer,
     };
-    return await TicketModel.findOneAndUpdate(filter, update, updateOptions);
+    return TicketModel.findOneAndUpdate(filter, update, updateOptions);
   };
 
   public transferTicket = async (

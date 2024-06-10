@@ -101,6 +101,13 @@ export interface ITransferTicketReq extends IUserReq {
     ticketId: string;
   };
 }
+export interface ISellTicketReq extends IUserReq {
+  body: {
+    orderId: string;
+    productId: string;
+    amount: number;
+  };
+}
 
 export interface IClaimShareTicketReq extends IUserReq {
   body: {

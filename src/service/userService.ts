@@ -17,11 +17,12 @@ import { ProductRepository } from '../repository/productRepository';
 import { IUserReq, TMethod } from '../types/common.type';
 import { SignUpDTO } from '../dto/user/signUpDto';
 import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
+import { SellTicketDto } from '../dto/ticket/sellTicketDto';
+import { TicketRepository } from '../repository/ticketRepository';
 import { ITicket } from '../models/ticket';
 import { Types } from 'mongoose';
 import { IProduct } from '../models/product';
 import { GetTransferableTicketVo } from '../vo/ticket/getTransferableTicketVo';
-import { TicketRepository } from '../repository/ticketRepository';
 
 const logger = log4js.getLogger(`UserService`);
 
@@ -306,6 +307,28 @@ export class UserService {
       return null;
     }
     return favorite;
+  };
+
+  public sellTicket = async (sellTicketDto: SellTicketDto) => {
+    const tickets =
+      await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
+        sellTicketDto,
+      );
+    if (!tickets) {
+      throwError(
+        CustomResponseType.TICKET_NOT_FOUND_MESSAGE,
+        CustomResponseType.TICKET_NOT_FOUND,
+      );
+    }
+    if (tickets.length < sellTicketDto.sellAmount) {
+      throwError(
+        CustomResponseType.TICKET_NOT_ENOUGH_MESSAGE,
+        CustomResponseType.TICKET_NOT_ENOUGH,
+      );
+    }
+    return await this.ticketRepository.updateSellTickets(
+      tickets.splice(0, sellTicketDto.sellAmount),
+    );
   };
   public getTransferableTicket = async (userId: string) => {
     const tickets = await this.ticketRepository.findTransferableTicket(userId);
