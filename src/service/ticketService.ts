@@ -68,11 +68,33 @@ export class TicketService {
     return await this.ticketRepository.getTicketDetail(getTicketDetailDto);
   };
 
-  public verifyTickets = async (verifyTicketsDto: VerifyTicketsDTO) =>
-    await this.ticketRepository.verifyTickets(verifyTicketsDto);
+  public verifyTickets = async (verifyTicketsDto: VerifyTicketsDTO) => {
+    const tickets = await this.ticketRepository.verifyTickets(verifyTicketsDto);
 
-  public editTickets = async (editTicketsDto: EditTicketsDTO) =>
-    await this.ticketRepository.editTickets(editTicketsDto);
+    if (!tickets) {
+      throwError(
+        CustomResponseType.INVALID_VERIFIED_TICKET_MESSAGE,
+        CustomResponseType.INVALID_VERIFIED_TICKET,
+      );
+      return [];
+    }
+
+    return tickets;
+  };
+
+  public editTickets = async (editTicketsDto: EditTicketsDTO) => {
+    const tickets = await this.ticketRepository.editTickets(editTicketsDto);
+
+    if (!tickets) {
+      throwError(
+        CustomResponseType.INVALID_EDIT_TICKET_MESSAGE,
+        CustomResponseType.INVALID_EDIT_TICKET,
+      );
+      return [];
+    }
+
+    return tickets;
+  };
 
   private encryptTicketId = (ticketId: Types.ObjectId) => {
     // 確保密鑰是 32 字節長度 (AES-256)
@@ -142,6 +164,17 @@ export class TicketService {
     const tickets = ids.map((id) => ({
       ticketId: new Types.ObjectId(id),
     }));
-    return await this.ticketRepository.deleteTickets(tickets);
+
+    const deletedTickets = await this.ticketRepository.deleteTickets(tickets);
+
+    if (!deletedTickets) {
+      throwError(
+        CustomResponseType.INVALID_TICKET_DELETE_MESSAGE,
+        CustomResponseType.INVALID_TICKET_DELETE,
+      );
+      return [];
+    }
+
+    return deletedTickets;
   };
 }
