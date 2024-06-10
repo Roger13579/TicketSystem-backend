@@ -307,7 +307,10 @@ export class UserService {
 
   public sellTicket = async (sellTicketDto: SellTicketDto) => {
     const tickets =
-      await this.ticketRepository.findByOrderIdAndProductId(sellTicketDto);
+      await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
+        sellTicketDto,
+      );
+    logger.info(tickets);
     if (!tickets) {
       throwError(
         CustomResponseType.TICKET_NOT_FOUND_MESSAGE,
@@ -320,6 +323,8 @@ export class UserService {
         CustomResponseType.TICKET_NOT_ENOUGH,
       );
     }
-    return await this.ticketRepository.updateSellTickets(tickets);
+    return await this.ticketRepository.updateSellTickets(
+      tickets.splice(0, sellTicketDto.sellAmount),
+    );
   };
 }

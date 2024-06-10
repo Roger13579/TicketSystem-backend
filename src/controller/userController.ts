@@ -70,7 +70,7 @@ class UserController extends BaseController {
 
   public sellTicket: TMethod = async (req: ISellTicketReq) => {
     const editFavoriteDto = new SellTicketDto(req);
-    const info = await this.userService.sellTicket(editFavoriteDto);
+    await this.userService.sellTicket(editFavoriteDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,

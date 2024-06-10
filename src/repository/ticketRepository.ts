@@ -34,11 +34,16 @@ export class TicketRepository {
     return results[0];
   };
 
-  public findByOrderIdAndProductId = async (sellTicketDto: SellTicketDto) => {
+  public findTransferableTicketByOrderIdAndProductId = async (
+    sellTicketDto: SellTicketDto,
+  ) => {
     return TicketModel.find({
       userId: sellTicketDto.userId,
       orderId: sellTicketDto.orderId,
       productId: sellTicketDto.productId,
+      isPublished: false,
+      status: TicketStatus.unverified,
+      expiredAt: { $gte: new Date() },
     });
   };
 

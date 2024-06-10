@@ -211,5 +211,5 @@ export const enum CustomResponseType {
   INVALID_TICKET_DELETE_MESSAGE = '無效的票券刪除行為',
 
   TICKET_NOT_ENOUGH = '6547',
-  TICKET_NOT_ENOUGH_MESSAGE = '欲票券之票券數量不足',
+  TICKET_NOT_ENOUGH_MESSAGE = '欲分票之票券數量不足',
 }
