@@ -4,7 +4,7 @@ import { UserService } from '../service/userService';
 import { JWTPayloadDTO } from '../dto/user/jwtPayloadDto';
 import { UserDetailVo } from '../vo/userDetailVo';
 import { UserDetailDto } from '../dto/user/userDetailDto';
-import { TMethod } from '../types/common.type';
+import { IUserReq, TMethod } from '../types/common.type';
 import { IUser } from '../models/user';
 import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { IGetUserFavoriteReq, IUpdateUserDetailReq } from '../types/user.type';
@@ -63,6 +63,16 @@ class UserController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       { favorites: info?.favorites || [] },
+    );
+  };
+  public getTransferableTicket = async (req: IUserReq) => {
+    const tickets = await this.userService.getTransferableTicket(
+      (req.user as IUser)._id,
+    );
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      tickets,
     );
   };
 }

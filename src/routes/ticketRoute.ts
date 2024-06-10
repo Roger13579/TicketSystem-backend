@@ -171,6 +171,7 @@ export class TicketRoute extends BaseRoute {
       this.usePipe(GetTicketDetailPipe),
       this.responseHandler(this.controller.getTicketDetail),
     );
+
     this.router.patch(
       '/v1/ticket',
       /**

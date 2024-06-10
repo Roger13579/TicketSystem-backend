@@ -14,11 +14,14 @@ import { Types } from 'mongoose';
 import * as crypto from 'node:crypto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
+import { ProductRepository } from '../repository/productRepository';
 
 const logger = log4js.getLogger(`TicketService`);
 
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
+  private readonly productRepository: ProductRepository =
+    new ProductRepository();
 
   public findTickets = async (ticketFilterDto: GetTicketsDto) => {
     const { expiredAtFrom, expiredAtTo } = ticketFilterDto;
