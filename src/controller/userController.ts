@@ -10,6 +10,8 @@ import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { IGetUserFavoriteReq, IUpdateUserDetailReq } from '../types/user.type';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { GetFavoriteVO } from '../vo/user/getFavoriteVo';
+import { SellTicketDto } from '../dto/ticket/sellTicketDto';
+import { ISellTicketReq } from '../types/ticket.type';
 
 class UserController extends BaseController {
   private readonly userService = new UserService();
@@ -63,6 +65,16 @@ class UserController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       { favorites: info?.favorites || [] },
+    );
+  };
+
+  public sellTicket: TMethod = async (req: ISellTicketReq) => {
+    const editFavoriteDto = new SellTicketDto(req);
+    await this.userService.sellTicket(editFavoriteDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      {},
     );
   };
   public getTransferableTicket = async (req: IUserReq) => {
