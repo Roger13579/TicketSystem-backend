@@ -47,6 +47,15 @@ export class TicketRepository {
     });
   };
 
+  public findTransferableTicket = async (userId: string) => {
+    return TicketModel.find({
+      userId: userId,
+      isPublished: false,
+      status: TicketStatus.unverified,
+      expiredAt: { $gte: new Date() },
+    });
+  };
+
   public getTicketDetail = async (getTicketDetailDto: GetTicketDetailDto) => {
     const pipeline = createGetTicketDetailPipeline(getTicketDetailDto);
     return TicketModel.aggregate(pipeline);

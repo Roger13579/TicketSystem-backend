@@ -205,5 +205,23 @@ export class UserRoute extends BaseRoute {
       UserVerify,
       this.responseHandler(this.controller.sellTicket),
     );
+    this.router.get(
+      '/v1/user/share-tickets',
+      /**
+       * #swagger.tags = ['User']
+       * #swagger.summary = '取得用戶可分票'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /**
+       #swagger.responses[200]={
+       description:'OK',
+       schema:{
+       $ref:'#/definitions/GetTransferTicketSuccess'
+       }
+       }
+       */
+      UserVerify,
+      this.responseHandler(this.controller.getTransferableTicket),
+    );
   }
 }
