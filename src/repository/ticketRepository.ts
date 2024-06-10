@@ -64,7 +64,7 @@ export class TicketRepository {
   public deleteTickets = async (tickets: ITicketId[]) => {
     const session = await startSession();
     try {
-      const result = await session.withTransaction(async () => {
+      return await session.withTransaction(async () => {
         const promises = tickets.map(
           async (id) =>
             await TicketModel.findOneAndDelete(
@@ -80,8 +80,6 @@ export class TicketRepository {
 
         return deletedTickets;
       });
-
-      return result;
     } catch (error) {
       throwError(
         (error as Error).message,
@@ -96,7 +94,7 @@ export class TicketRepository {
     const session = await startSession();
 
     try {
-      const result = await session.withTransaction(async () => {
+      return await session.withTransaction(async () => {
         const promises = tickets.map(
           async ({ filter, update }) =>
             await TicketModel.findOneAndUpdate(filter, update, {
@@ -113,7 +111,6 @@ export class TicketRepository {
 
         return updatedTickets;
       });
-      return result;
     } catch (error) {
       throwError(
         (error as Error).message,
@@ -128,7 +125,7 @@ export class TicketRepository {
     const session = await startSession();
 
     try {
-      const result = await session.withTransaction(async () => {
+      return await session.withTransaction(async () => {
         const promises = tickets.map(
           async ({ filter, update }) =>
             await TicketModel.findOneAndUpdate(filter, update, {
@@ -137,9 +134,14 @@ export class TicketRepository {
             }),
         );
 
-        return await Promise.all(promises).then((values) => values);
+        const updatedTickets = await Promise.all(promises).then(
+          (values) => values,
+        );
+
+        this.checkInvalidTicket(tickets, updatedTickets, TicketProcess.edit);
+
+        return updatedTickets;
       });
-      return result;
     } catch (error) {
       throwError(
         (error as Error).message,
@@ -149,6 +151,7 @@ export class TicketRepository {
       session.endSession();
     }
   };
+
   public updateSellTickets = async (tickets: ITicket[]) => {
     const session = await startSession();
     try {
@@ -160,10 +163,22 @@ export class TicketRepository {
               { isPublished: true },
               {
                 session,
+                ...updateOptions,
               },
             ),
         );
-        return await Promise.all(promises).then((values) => values);
+
+        const updatedTickets = await Promise.all(promises).then(
+          (values) => values,
+        );
+
+        const ticketIds: ITicketId[] = tickets.map(({ _id }) => ({
+          ticketId: _id,
+        }));
+
+        this.checkInvalidTicket(ticketIds, updatedTickets, TicketProcess.edit);
+
+        return updatedTickets;
       });
     } catch (error) {
       throwError(
