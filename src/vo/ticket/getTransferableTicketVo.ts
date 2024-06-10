@@ -3,6 +3,7 @@ import { IProduct } from '../../models/product';
 
 export class GetTransferableTicketVo {
   private orderId: string;
+  private productId: string;
   private productName: string;
   private photoPath: string;
   private theater: string;
@@ -11,6 +12,7 @@ export class GetTransferableTicketVo {
 
   constructor(group: ITicket[], product: IProduct) {
     this.orderId = group[0].orderId.toString();
+    this.productId = product._id.toString();
     this.productName = product.title;
     this.photoPath = product.photoPath;
     this.theater = product.theater;
