@@ -2,7 +2,7 @@ import { ITicket, TicketModel } from '../models/ticket';
 import { CreateTicketDto } from '../dto/ticket/createTicketDto';
 import { GetTicketsDto } from '../dto/ticket/getTicketsDto';
 import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
-import { Types, startSession } from 'mongoose';
+import { startSession, Types } from 'mongoose';
 import { updateOptions } from '../utils/constants';
 import { CustomResponseType } from '../types/customResponseType';
 import { throwError } from '../utils/errorHandler';
@@ -31,6 +31,15 @@ export class TicketRepository {
     const pipeline = createGetTicketPipeline(ticketFilterDto);
     const results = await TicketModel.aggregate(pipeline);
     return results[0];
+  };
+
+  public findTransferableTicket = async (userId: string) => {
+    return TicketModel.find({
+      userId: userId,
+      isPublished: false,
+      status: TicketStatus.unverified,
+      expiredAt: { $gte: new Date() },
+    });
   };
 
   public getTicketDetail = async (getTicketDetailDto: GetTicketDetailDto) => {

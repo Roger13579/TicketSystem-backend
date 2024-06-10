@@ -31,6 +31,18 @@ export const Ticket = {
   writeOffStaffId: 'rrr',
   giverId: 'iiddidididi',
 };
+/**
+ * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
+ */
+export const TransferableTicket = {
+  $orderId: 'iiddidididi',
+  $productName: 'testproduct',
+  $photoPath:
+    'https://thumb.ac-illust.com/0c/0c3c64e631df8b99256cf6de8fa8f12f_t.jpeg',
+  $theater: '秀秀',
+  $startAt: new Date().toISOString(),
+  $amount: 7,
+};
 
 /**
  * @description swagger autogen fit，取得票券列表的 response
@@ -85,4 +97,9 @@ export const TransferTicketSuccess = {
     ...Ticket,
     $shareCode: '112315641231',
   },
+};
+export const GetTransferTicketSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: [TransferableTicket],
 };

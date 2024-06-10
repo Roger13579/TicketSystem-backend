@@ -17,6 +17,11 @@ import { ProductRepository } from '../repository/productRepository';
 import { IUserReq, TMethod } from '../types/common.type';
 import { SignUpDTO } from '../dto/user/signUpDto';
 import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
+import { ITicket } from '../models/ticket';
+import { Types } from 'mongoose';
+import { IProduct } from '../models/product';
+import { GetTransferableTicketVo } from '../vo/ticket/getTransferableTicketVo';
+import { TicketRepository } from '../repository/ticketRepository';
 
 const logger = log4js.getLogger(`UserService`);
 
@@ -25,6 +30,8 @@ export class UserService {
 
   private readonly productRepository: ProductRepository =
     new ProductRepository();
+
+  private readonly ticketRepository: TicketRepository = new TicketRepository();
 
   public async createUser({ pwd, email, account }: SignUpDTO) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
@@ -299,5 +306,32 @@ export class UserService {
       return null;
     }
     return favorite;
+  };
+  public getTransferableTicket = async (userId: string) => {
+    const tickets = await this.ticketRepository.findTransferableTicket(userId);
+    // 查出的ticket依orderId和productId分組
+    const grouped = tickets.reduce(
+      (acc, ticket) => {
+        const key = `${ticket.orderId}-${ticket.productId}`;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(ticket);
+        return acc;
+      },
+      {} as { [key: string]: ITicket[] },
+    );
+    // 去除只剩一張的票
+    const validGroups = Object.values(grouped).filter(
+      (group) => group.length > 1,
+    );
+    // 依productId查出商品資訊
+    const map = Object.values(validGroups).map(async (group) => {
+      const product = (await this.productRepository.findById(
+        new Types.ObjectId(group[0].productId),
+      )) as IProduct;
+      return new GetTransferableTicketVo(group, product);
+    });
+    return Promise.all(map);
   };
 }
