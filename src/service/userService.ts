@@ -17,6 +17,8 @@ import { ProductRepository } from '../repository/productRepository';
 import { IUserReq, TMethod } from '../types/common.type';
 import { SignUpDTO } from '../dto/user/signUpDto';
 import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
+import { SellTicketDto } from '../dto/ticket/sellTicketDto';
+import { TicketRepository } from '../repository/ticketRepository';
 
 const logger = log4js.getLogger(`UserService`);
 
@@ -25,6 +27,8 @@ export class UserService {
 
   private readonly productRepository: ProductRepository =
     new ProductRepository();
+
+  private readonly ticketRepository: TicketRepository = new TicketRepository();
 
   public async createUser({ pwd, email, account }: SignUpDTO) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
@@ -299,5 +303,23 @@ export class UserService {
       return null;
     }
     return favorite;
+  };
+
+  public sellTicket = async (sellTicketDto: SellTicketDto) => {
+    const tickets =
+      await this.ticketRepository.findByOrderIdAndProductId(sellTicketDto);
+    if (!tickets) {
+      throwError(
+        CustomResponseType.TICKET_NOT_FOUND_MESSAGE,
+        CustomResponseType.TICKET_NOT_FOUND,
+      );
+    }
+    if (tickets.length < sellTicketDto.sellAmount) {
+      throwError(
+        CustomResponseType.TICKET_NOT_ENOUGH_MESSAGE,
+        CustomResponseType.TICKET_NOT_ENOUGH,
+      );
+    }
+    return await this.ticketRepository.updateSellTickets(tickets);
   };
 }

@@ -162,5 +162,48 @@ export class UserRoute extends BaseRoute {
       UserVerify,
       this.responseHandler(this.controller.deleteFavorite),
     );
+
+    this.router.post(
+      '/v1/user/sell-ticket',
+      /**
+       * #swagger.tags = ['User']
+       * #swagger.summary = '上架分票'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['orderId'] ={
+          in:'path',
+          description:'訂單 ID',
+          required: true,
+          type: 'string'
+       }
+       */
+      /*
+        #swagger.parameters['productId'] ={
+          in:'path',
+          description:'商品 ID',
+          required: true,
+          type: 'string'
+       }
+       */
+      /*
+        #swagger.parameters['amount'] ={
+          in:'path',
+          description:'上架數量',
+          required: true,
+          type: 'number'
+       }
+       */
+      /**
+        #swagger.responses[200]={
+          description:'OK',
+          schema:{
+            $ref:'#/definitions/Success'
+          }
+        }
+       */
+      UserVerify,
+      this.responseHandler(this.controller.sellTicket),
+    );
   }
 }
