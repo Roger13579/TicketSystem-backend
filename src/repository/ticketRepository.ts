@@ -142,7 +142,6 @@ export class TicketRepository {
   };
   public updateSellTickets = async (tickets: ITicket[]) => {
     const session = await startSession();
-
     try {
       return await session.withTransaction(async () => {
         const promises = tickets.map(
@@ -182,7 +181,7 @@ export class TicketRepository {
       shareCode,
       status: TicketStatus.transfer,
     };
-    return await TicketModel.findOneAndUpdate(filter, update, updateOptions);
+    return TicketModel.findOneAndUpdate(filter, update, updateOptions);
   };
 
   public transferTicket = async (

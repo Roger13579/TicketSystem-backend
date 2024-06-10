@@ -310,7 +310,6 @@ export class UserService {
       await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
         sellTicketDto,
       );
-    logger.info(tickets);
     if (!tickets) {
       throwError(
         CustomResponseType.TICKET_NOT_FOUND_MESSAGE,
