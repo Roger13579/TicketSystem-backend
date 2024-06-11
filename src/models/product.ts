@@ -18,9 +18,10 @@ import {
 import paginate from 'mongoose-paginate-v2';
 import { ITagId } from '../types/tag.type';
 import { ICommentId } from '../types/comment.type';
+import { uniqBy, isEqual } from 'lodash';
 
 export interface IProduct extends BaseModel, IProductSnapshot {
-  plans?: IPlan[];
+  plans: [IPlan];
   startAt: Date;
   endAt: Date;
   sellStartAt: Date;
@@ -45,6 +46,18 @@ export interface IProduct extends BaseModel, IProductSnapshot {
 
 const { commentId, tagId, photoPath, plan } = schemaDef;
 
+const validateUniqPlans = (plans: IPlan[]) => {
+  const uniqueNames = uniqBy(plans, 'name');
+  const uniqueDiscounts = uniqBy(plans, 'discount');
+  const uniqueHeadCounts = uniqBy(plans, 'headCount');
+
+  return (
+    isEqual(plans, uniqueNames) &&
+    isEqual(plans, uniqueDiscounts) &&
+    isEqual(plans, uniqueHeadCounts)
+  );
+};
+
 const schema = new Schema<IProduct>(
   {
     ...productSnapshotSchemaDef,
@@ -56,9 +69,10 @@ const schema = new Schema<IProduct>(
         validator: function (amount: number) {
           // TODO: 找到正確的 access 方式，不要 as unknown as IProduct
           const { plans } = this as unknown as IProduct;
-          return !!plans
-            ? amount > Math.max(...plans.map(({ headCount }) => headCount))
-            : true;
+          const counts = plans.map(({ headCount }) => headCount);
+
+          const sum = counts.reduce((acc, count) => acc + count, 0);
+          return amount > sum;
         },
         message: '總數量錯誤，請確認 plans 內部數量',
       },
@@ -69,6 +83,11 @@ const schema = new Schema<IProduct>(
     },
     plans: {
       type: [plan],
+      required: true,
+      validate: {
+        validator: validateUniqPlans,
+        message: '方案名稱、折扣與人數不可重複',
+      },
     },
     startAt: {
       type: Date,
@@ -96,9 +115,8 @@ const schema = new Schema<IProduct>(
       type: Date,
       required: true,
       validate: {
-        validator: (sellStartAt: Date) => {
-          return moment().isBefore(moment(sellStartAt), 'day');
-        },
+        validator: (sellStartAt: Date) =>
+          moment().isBefore(moment(sellStartAt), 'day'),
         message: '販賣開始時間必須晚於現在時間至少一天',
       },
     },

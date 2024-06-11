@@ -4,7 +4,7 @@ import { PaginationSuccess } from '../common';
 import { EditCartType } from '../../../types/cart.type';
 
 export const defaultItem = {
-  $amount: 2200,
+  $amount: 10,
   $_id: '665323ce2cff52b99ea393c8',
 };
 
@@ -28,6 +28,11 @@ const detailItem = {
     photoPath: 'https://images.unsplash.com/abc',
     sellStartAt: new Date().toISOString(),
     sellEndAt: new Date().toISOString(),
+  },
+  plan: {
+    $name: '兩人同行',
+    $discount: 0.8,
+    $headCount: 2,
   },
   $amount: defaultItem.$amount,
 };

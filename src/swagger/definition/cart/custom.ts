@@ -8,6 +8,35 @@ const propName = {
   productId: '商品 id',
 };
 
+const properties = {
+  plan: {
+    type: 'object',
+    required: ['name', 'headCount', 'discount'],
+    properties: {
+      name: {
+        type: 'string',
+        description: '方案名稱',
+        example: '雙人同行',
+      },
+      discount: {
+        type: 'number',
+        description: '方案折扣 (0.95-0.1)',
+        example: 0.8,
+      },
+      headCount: {
+        type: 'number',
+        description: '方案人數',
+        example: 1,
+      },
+    },
+  },
+  productId: {
+    type: 'string',
+    description: propName.productId,
+    example: defaultItem.$_id,
+  },
+};
+
 export const CustomDeleteCartObj = {
   type: 'object',
   required: ['type'],
@@ -19,13 +48,16 @@ export const CustomDeleteCartObj = {
       example: DeleteCartType.all,
       enum: Object.keys(DeleteCartType),
     },
-    productIds: {
-      descriptions: '要刪除的商品 id 列表',
+    products: {
+      descriptions: '要刪除的購物車商品列表',
       type: 'array',
       items: {
-        type: 'string',
-        example: 'thisIsAnId',
-        description: propName.productId,
+        type: 'object',
+        required: ['productId', 'plan'],
+        properties: {
+          productId: properties.productId,
+          plan: properties.plan,
+        },
       },
     },
   },
@@ -39,13 +71,10 @@ export const CustomEditCartObj = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['productId', 'amount', 'type'],
+        required: ['productId', 'amount', 'type', 'plan'],
         properties: {
-          productId: {
-            type: 'string',
-            description: propName.productId,
-            example: '665b00748f529f5f17923acd',
-          },
+          productId: properties.productId,
+          plan: properties.plan,
           type: {
             type: 'string',
             enum: Object.values(EditCartType),
