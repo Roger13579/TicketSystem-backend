@@ -13,9 +13,15 @@ export enum EditCartType {
   set = 'set',
 }
 
-export interface IEditCartPrevItem extends Pick<IItem, 'amount'> {
+export enum DeleteCartType {
+  all = 'all',
+  items = 'items',
+}
+
+export interface ICartProduct extends Pick<IItem, 'productId' | 'plan'> {}
+
+export interface IEditCartPrevItem extends ICartProduct, Pick<IItem, 'amount'> {
   type: EditCartType;
-  productId: string;
 }
 
 export interface IEditCartReq extends IUserReq {
@@ -52,24 +58,26 @@ export interface ICartPagination
   items: ICartPaginationItem[];
 }
 
-export type THandleExistedItemProp = {
-  existedItem: IItem;
+export interface IEditItemParams extends IUserId {
   item: IEditCartItem;
-} & IUserId;
+}
 
-export enum DeleteCartType {
-  all = 'all',
-  items = 'items',
+export interface IHandleExistedItemParams extends IEditItemParams {
+  existedItem: IItem;
+}
+
+export interface IDeleteItemParams extends IUserId {
+  item: ICartProduct;
 }
 
 export interface IDeleteCartReq extends IUserReq {
   body: {
     type: DeleteCartType;
-    productIds?: string[];
+    products: ICartProduct[];
   };
 }
 
-export interface IEditCartItem extends Pick<IItem, 'amount' | 'productId'> {
+export interface IEditCartItem extends Pick<IItem, 'amount'>, ICartProduct {
   type: EditCartType;
 }
 

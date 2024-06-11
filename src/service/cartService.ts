@@ -4,8 +4,8 @@ import { CartRepository } from '../repository/cartRepository';
 import {
   EditCartType,
   EditErrorType,
+  IHandleExistedItemParams,
   TInvalidItemParam,
-  THandleExistedItemProp,
 } from '../types/cart.type';
 import { GetCartDTO } from '../dto/cart/getCartDto';
 import { DeleteItemDTO } from '../dto/cart/deleteItemDto';
@@ -76,19 +76,19 @@ export class CartService {
     return clearCart;
   };
 
-  public readonly deleteItem = async ({
-    productIds,
-    userId,
-  }: DeleteItemDTO) => {
-    const promises = (productIds || []).map(async (productId) => {
+  public readonly deleteItem = async ({ items, userId }: DeleteItemDTO) => {
+    const promises = (items || []).map(async (item) => {
       const deletedItem = await this.cartRepository.deleteItem({
         userId,
-        productId,
+        item,
       });
 
       return (
         deletedItem ||
-        this.invalidItem({ productId }, EditErrorType.INVALID_DELETE)
+        this.invalidItem(
+          { productId: item.productId },
+          EditErrorType.INVALID_DELETE,
+        )
       );
     });
 
@@ -99,8 +99,8 @@ export class CartService {
     existedItem,
     item,
     userId,
-  }: THandleExistedItemProp) => {
-    const { type, amount, productId } = item;
+  }: IHandleExistedItemParams) => {
+    const { type, amount } = item;
     const isDeletable =
       type === EditCartType.inc &&
       amount < 0 &&
@@ -109,7 +109,7 @@ export class CartService {
     if (isDeletable) {
       const deletedItem = await this.cartRepository.deleteItem({
         userId,
-        productId,
+        item,
       });
 
       return (
@@ -127,6 +127,7 @@ export class CartService {
         userId,
         item,
       });
+
       return editedItem || this.invalidItem(item, EditErrorType.INVALID_ADD);
     }
 
@@ -150,10 +151,13 @@ export class CartService {
 
     const promises = products.map(async (item) => {
       // 2-1 確認商品是否存在且可被購買
-      const { productId, amount } = item;
+      const { productId, amount, plan } = item;
       const existedProduct = this.productRepository.findProduct({
         _id: item.productId,
         isPublic: true,
+        'plans.name': plan.name,
+        'plans.discount': plan.discount,
+        'plans.headCount': plan.headCount,
       });
 
       // 2-2 商品不存在
@@ -163,9 +167,15 @@ export class CartService {
       }
 
       // 3. 確認商品是否已在購物車中
-      const existedItem = cart.items.find((item) =>
-        item.productId?.equals(new Types.ObjectId(productId)),
-      );
+      const existedItem = cart.items.find((item) => {
+        const isEqualId = item.productId?.equals(new Types.ObjectId(productId));
+        const isEqualPlan =
+          item.plan.discount === plan.discount &&
+          item.plan.headCount === plan.headCount &&
+          item.plan.name === plan.name;
+        return isEqualId && isEqualPlan;
+      });
+
       // 3-1 已存在
       if (!!existedItem) {
         return await this.handleExistedItem({

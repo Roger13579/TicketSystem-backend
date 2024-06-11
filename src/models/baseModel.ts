@@ -61,15 +61,21 @@ export const schemaDef = {
     required: true,
   },
   plan: {
-    name: String,
+    name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     discount: {
       type: Number,
-      max: 1,
+      max: 0.95,
       min: 0.1,
+      required: true,
     },
     headCount: {
       type: Number,
       min: 2,
+      required: true,
     },
   },
 };
@@ -118,5 +124,6 @@ export const productSnapshotSchemaDef = {
   },
   startAt: {
     type: Date,
+    required: true,
   },
 };
