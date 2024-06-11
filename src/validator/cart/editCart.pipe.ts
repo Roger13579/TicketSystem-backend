@@ -51,6 +51,25 @@ export class EditCartPipe extends PipeBase {
       .withMessage(CustomResponseType.INVALID_ADD_CART_MESSAGE + 'type')
       .isIn(Object.keys(EditCartType))
       .withMessage(CustomResponseType.INVALID_ADD_CART_MESSAGE + 'type'),
+    body('products.*.plan.headCount')
+      .if(body('products.*.plan').exists())
+      .isInt({ min: 2 })
+      .withMessage(
+        CustomResponseType.INVALID_ADD_CART_MESSAGE + 'plan.headCount',
+      ),
+    body('products.*.plan.name')
+      .if(body('products.*.plan').exists())
+      .exists()
+      .withMessage(CustomResponseType.INVALID_ADD_CART_MESSAGE + 'plan.name')
+      .trim()
+      .isString()
+      .withMessage(CustomResponseType.INVALID_ADD_CART_MESSAGE + 'plan.name'),
+    body('products.*.plan.discount')
+      .if(body('products.*.plan').exists())
+      .isFloat({ min: 0.1, max: 0.95 })
+      .withMessage(
+        CustomResponseType.INVALID_ADD_CART_MESSAGE + 'plan.discount',
+      ),
     body('products.*.amount')
       .exists()
       .custom(this.validateAmount)

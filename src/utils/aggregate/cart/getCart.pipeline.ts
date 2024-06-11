@@ -17,6 +17,7 @@ const productFields = (isPublic: boolean) => ({
       sellEndAt: '$product.sellEndAt',
     }),
   },
+  plan: '$items.plan',
   amount: '$items.amount',
   createdAt: '$items.createdAt',
   updatedAt: '$items.updatedAt',
