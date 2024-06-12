@@ -7,6 +7,8 @@ import {
 import { IProduct } from '../models/product';
 import { ICart, IItem } from '../models/cart';
 import { IUserId } from './user.type';
+import { Types } from 'mongoose';
+import { IPlan } from './product.type';
 
 export enum EditCartType {
   inc = 'inc',
@@ -47,7 +49,6 @@ interface ICartPaginationItem extends ITimestamp {
     | 'isLaunched'
     | 'photoPath'
     | 'sellEndAt'
-    | 'sellEndAt'
   >;
   amount: number;
 }
@@ -75,6 +76,11 @@ export interface IDeleteCartReq extends IUserReq {
     type: DeleteCartType;
     products: ICartProduct[];
   };
+}
+
+export interface IDeleteCartItem extends ICartProduct {
+  productId: Types.ObjectId;
+  plan: IPlan;
 }
 
 export interface IEditCartItem extends Pick<IItem, 'amount'>, ICartProduct {
