@@ -48,6 +48,7 @@ interface ICartPaginationItem extends ITimestamp {
     | 'amount'
     | 'isLaunched'
     | 'photoPath'
+    | 'sellStartAt'
     | 'sellEndAt'
   >;
   amount: number;

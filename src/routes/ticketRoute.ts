@@ -44,6 +44,7 @@ export class TicketRoute extends BaseRoute {
             required: false,
             description: '精準搜尋：票券狀態',
             type: 'string',
+            enum: ["verified", "unverified", "refunded", "expired", "cancelled", "pending", "transfer"],
             schema:{
               $ref:"#/definitions/CustomGetTicketStatusQuery"
             }

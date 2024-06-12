@@ -11,7 +11,10 @@ import { TagRepository } from '../repository/tagRepository';
 import { GetProductDetailDTO } from '../dto/product/getProductDetailDto';
 import { SortOrder } from '../types/common.type';
 import { IProduct } from '../models/product';
-import { TCreateInvalidProductParam } from '../types/product.type';
+import {
+  ProductDocumentWithFavorite,
+  TCreateInvalidProductParam,
+} from '../types/product.type';
 import { ITagId } from '../types/tag.type';
 
 export class ProductService {
@@ -62,7 +65,7 @@ export class ProductService {
   };
 
   public findProducts = async (getProductDto: GetProductDTO) => {
-    const { sellStartAtFrom, sellStartAtTo, startAtFrom, startAtTo } =
+    const { sellStartAtFrom, sellStartAtTo, startAtFrom, startAtTo, user } =
       getProductDto;
 
     // 確認時間順序
@@ -76,15 +79,37 @@ export class ProductService {
       ],
       SortOrder.asc,
     );
+    const result = await this.productRepository.findProducts(getProductDto);
 
-    return await this.productRepository.findProducts(getProductDto);
+    let favoriteProductIds: string[];
+    if (user && user.favorites) {
+      favoriteProductIds = user.favorites.map((favorite) =>
+        favorite.productId.toString(),
+      );
+    }
+    result.docs = await Promise.all(
+      result.docs.map(async (doc) => {
+        let isFavorite = false;
+        if (user) {
+          if (favoriteProductIds.includes(doc._id.toString())) {
+            isFavorite = true;
+          }
+        }
+        return {
+          ...doc.toObject(),
+          isFavorite: isFavorite,
+        } as ProductDocumentWithFavorite;
+      }),
+    );
+    return result;
   };
 
   public getProductDetail = async (
     getProductDetailDto: GetProductDetailDTO,
   ) => {
-    const product =
-      await this.productRepository.findProductDetail(getProductDetailDto);
+    const product = (await this.productRepository.findProductDetail(
+      getProductDetailDto,
+    )) as ProductDocumentWithFavorite;
 
     if (!product) {
       throwError(
@@ -92,7 +117,17 @@ export class ProductService {
         CustomResponseType.PRODUCT_NOT_FOUND,
       );
     }
-    return product;
+    let favoriteProductIds: string[] = [];
+    if (getProductDetailDto.user && getProductDetailDto.user.favorites) {
+      favoriteProductIds = getProductDetailDto.user.favorites.map((favorite) =>
+        favorite.productId.toString(),
+      );
+    }
+
+    return {
+      ...product.toObject(),
+      isFavorite: favoriteProductIds.includes(product._id.toString()),
+    };
   };
 
   public deleteProducts = async (ids: Types.ObjectId[]) => {
