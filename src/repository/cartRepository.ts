@@ -66,7 +66,7 @@ export class CartRepository {
         $elemMatch: this.itemElemMath(item),
       },
     };
-    return await CartModel.findOneAndUpdate(
+    return CartModel.findOneAndUpdate(
       filter,
       {
         $pull: {
