@@ -2,21 +2,19 @@ import { GetUserFavoriteDTO } from '../../../dto/user/getUserFavoriteDto';
 import { Status } from '../../../types/common.type';
 
 const productFields = (isPublic: boolean) => ({
-  product: {
-    _id: { $ifNull: ['$product._id', '$favorites.productId'] },
-    ...(isPublic && {
-      title: '$product.title',
-      type: '$product.type',
-      genre: '$product.genre',
-      price: '$product.price',
-      soldAmount: '$product.soldAmount',
-      amount: '$product.amount',
-      isLaunched: '$product.isLaunched',
-      photoPath: '$product.photoPath',
-      sellStartAt: '$product.sellStartAt',
-      sellEndAt: '$product.sellEndAt',
-    }),
-  },
+  _id: { $ifNull: ['$product._id', '$favorites.productId'] },
+  ...(isPublic && {
+    title: '$product.title',
+    type: '$product.type',
+    genre: '$product.genre',
+    price: '$product.price',
+    soldAmount: '$product.soldAmount',
+    amount: '$product.amount',
+    isLaunched: '$product.isLaunched',
+    photoPath: '$product.photoPath',
+    sellStartAt: '$product.sellStartAt',
+    sellEndAt: '$product.sellEndAt',
+  }),
   createdAt: '$favorites.createdAt',
   updatedAt: '$favorites.updatedAt',
 });
