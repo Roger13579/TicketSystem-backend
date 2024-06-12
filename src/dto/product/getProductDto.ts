@@ -7,7 +7,7 @@ import {
   ProductSortField,
 } from '../../types/product.type';
 import { AccountType } from '../../types/user.type';
-import { omitBy, isNil } from 'lodash';
+import { omitBy, isNil, isNaN } from 'lodash';
 import { defaultProjection } from '../../utils/product.constants';
 import { SortOrder } from '../../types/common.type';
 
@@ -31,6 +31,11 @@ export class GetProductDTO {
   private readonly _limit: number;
   private readonly _sort: Record<string, 1 | -1>;
   private readonly _isAdmin: boolean = false;
+  private readonly _user: IUser | undefined;
+
+  get user() {
+    return this._user;
+  }
 
   get startAtFrom() {
     return this._startAtFrom;
@@ -151,6 +156,7 @@ export class GetProductDTO {
     if ((req.user as IUser)?.accountType === AccountType.admin) {
       this._isAdmin = true;
     }
+    this._user = req.user != null ? (req.user as IUser) : undefined;
 
     this._types = types?.split(',') as ProductType[];
     this._genres = genres?.split(',') as MovieGenre[];

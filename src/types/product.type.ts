@@ -155,4 +155,13 @@ export interface IInvalidProduct extends ISubResponse {
   product: unknown;
 }
 
+export interface IProductWithFavorite extends IProduct {
+  isFavorite: boolean;
+}
+
+export type ProductDocumentWithFavorite = Document &
+  IProductWithFavorite & {
+    _id: Types.ObjectId;
+  };
+
 export type TCreateInvalidProductParam = (product: unknown) => IInvalidProduct;

@@ -50,6 +50,7 @@ export const ProductItem = {
   startAt: moment().add(2, 'day').add(4, 'hour').toISOString(),
   tags: [{ tagId: '123' }, { tagId: '123' }],
   photoPath: '',
+  isFavorite: false,
 };
 
 /**
@@ -85,6 +86,7 @@ export const GetProductDetailSuccess = {
     $startAt: moment().add(2, 'day').add(4, 'hour').toISOString(),
     $tags: [{ tagId: '123' }, { tagId: '123' }],
     $photoPath: '',
+    $isFavorite: false,
     ...ProductDetailItem,
   },
 };
