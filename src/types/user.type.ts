@@ -67,7 +67,7 @@ interface FavoriteItem
     | 'amount'
     | 'isLaunched'
     | 'photoPath'
-    | 'sellEndAt'
+    | 'sellStartAt'
     | 'sellEndAt'
   > {}
 
