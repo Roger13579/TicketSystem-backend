@@ -10,6 +10,11 @@ import {
 export class GetProductDetailDTO {
   private readonly _productId: Types.ObjectId;
   private readonly _isAdmin: boolean = false;
+  private readonly _user: IUser | undefined;
+
+  get user(): IUser | undefined {
+    return this._user;
+  }
 
   get filter() {
     return {
@@ -33,5 +38,6 @@ export class GetProductDetailDTO {
     if ((user as IUser | undefined)?.accountType === AccountType.admin) {
       this._isAdmin = true;
     }
+    this._user = req.user != null ? (req.user as IUser) : undefined;
   }
 }
