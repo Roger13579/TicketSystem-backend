@@ -97,7 +97,7 @@ export class GetCommentsDTO {
   get options() {
     return {
       sort: this._sort,
-      skip: (this._page - 1) * this._limit,
+      page: this._page,
       limit: this._limit,
     };
   }

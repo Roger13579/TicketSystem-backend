@@ -75,8 +75,8 @@ export class OrderFilterDto {
         path: 'user',
         select: 'account name phone email',
       },
-      skip: (this._page - 1) * this._limit,
-      ...(this._limit && { limit: this._limit }),
+      page: this._page,
+      limit: this._limit,
       sort: this._sort,
     };
   }
