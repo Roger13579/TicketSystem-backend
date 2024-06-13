@@ -98,10 +98,26 @@ export const createGetCartPipeline = ({ userId, page, limit }: GetCartDTO) => [
         $cond: {
           if: { $gt: [{ $size: `$${Status.active}` }, 0] },
           then: { $arrayElemAt: [`$${Status.active}`, 0] },
-          else: { $arrayElemAt: [`$${Status.disabled}`, 0] },
+          else: {
+            $cond: {
+              if: { $gt: [{ $size: `$${Status.disabled}` }, 0] },
+              then: { $arrayElemAt: [`$${Status.disabled}`, 0] },
+              else: { fallbackField: 'noData' },
+            },
+          },
         },
       },
     },
   },
-  { $replaceRoot: { newRoot: '$result' } },
+  {
+    $replaceRoot: {
+      newRoot: {
+        $cond: {
+          if: { $ne: ['$result', null] },
+          then: '$result',
+          else: { fallbackField: 'noData' },
+        },
+      },
+    },
+  },
 ];
