@@ -12,7 +12,7 @@ export class GetCartVO {
   public readonly createdAt: Date;
   public readonly updatedAt: Date;
 
-  constructor(cart: ICartPagination | ICart, page: number, limit: number) {
+  constructor(cart: ICartPagination | ICart, limit: number, page: number) {
     this.createdAt = cart.createdAt;
     this.updatedAt = cart.updatedAt;
     this._id = cart._id;
