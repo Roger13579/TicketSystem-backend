@@ -336,8 +336,12 @@ export class OrderService {
     const subTotal = sumBy(
       products,
       ({ price, amount, plan }) =>
-        price * amount * (plan ? plan.headCount * plan.discount : 1),
+        Math.round(
+          price * amount * (plan ? plan.headCount * plan.discount : 1) * 100,
+        ) / 100,
     );
+    logger.info('totalPrice = ' + totalPrice);
+    logger.info('subTotal = ' + subTotal);
     return totalPrice === subTotal;
   };
 
