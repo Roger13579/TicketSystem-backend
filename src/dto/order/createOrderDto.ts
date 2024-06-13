@@ -77,6 +77,7 @@ export class CreateOrderDto {
     this._items = Object.values(groupBy(items, 'productId')).map((group) => ({
       productId: group[0].productId,
       amount: sumBy(group, 'amount'),
+      plan: group[0].plan,
     }));
     this.paymentMethod = paymentMethod;
     this.paymentStatus = PaymentStatus.pending;
