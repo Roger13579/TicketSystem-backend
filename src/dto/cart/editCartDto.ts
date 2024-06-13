@@ -20,7 +20,6 @@ export class EditCartDTO {
     this._userId = (user as IUser)._id;
     this._products = products.map((product) => ({
       ...product,
-      productId: new Types.ObjectId(product.productId),
     }));
   }
 }
