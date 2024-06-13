@@ -128,8 +128,8 @@ export class GetTicketsDto {
         };
     return {
       productSelect,
-      skip: (this._page - 1) * this._limit,
-      ...(this._limit && { limit: this._limit }),
+      page: this._page,
+      limit: this._limit,
       sort: this._sort,
       ticketSelect,
     };
