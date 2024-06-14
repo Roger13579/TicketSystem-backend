@@ -28,9 +28,14 @@ export const GetCommentsSuccess = {
     $comments: [
       {
         ...Comment,
+        $productId: '123141353413',
         $user: {
           $account: 'yjadmin0001',
           $avatarPath: '',
+        },
+        $product: {
+          $title: '好看的電影',
+          $photoPath: '',
         },
       },
     ],
