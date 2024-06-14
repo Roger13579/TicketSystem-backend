@@ -83,6 +83,7 @@ export class GetCommentsDTO {
       rating: 1,
       content: 1,
       createdAt: 1,
+      productId: 1,
       status: this._isAdmin ? 1 : -1, // admin 才能看到 status
       user: {
         ...(this._isAdmin && { _id: '$user._id' }),
@@ -90,7 +91,10 @@ export class GetCommentsDTO {
         avatarPath: '$user.avatarPath',
         name: '$user.name',
       },
-      productId: 1,
+      product: {
+        title: '$product.title',
+        photoPath: '$product.photoPath',
+      },
     };
   }
 
