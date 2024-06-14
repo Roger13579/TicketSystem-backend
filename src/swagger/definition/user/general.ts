@@ -13,6 +13,7 @@ const favorite = {
   photoPath: 'https://images.unsplash.com/photo-1554080353-a576cf803bda',
   sellStartAt: new Date().toISOString(),
   sellEndAt: new Date().toISOString(),
+  isFavorite: true,
 };
 
 export const GetFavoriteSuccess = {

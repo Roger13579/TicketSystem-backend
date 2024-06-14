@@ -55,7 +55,7 @@ export interface IGetUserFavoriteReq extends IUserReq {
   query: TPaginationQuery;
 }
 
-interface FavoriteItem
+export interface FavoriteItem
   extends Pick<
     IProduct,
     | '_id'
@@ -69,7 +69,9 @@ interface FavoriteItem
     | 'photoPath'
     | 'sellStartAt'
     | 'sellEndAt'
-  > {}
+  > {
+  isFavorite: boolean;
+}
 
 export interface IGetFavoritePagination {
   _id: Types.ObjectId;
