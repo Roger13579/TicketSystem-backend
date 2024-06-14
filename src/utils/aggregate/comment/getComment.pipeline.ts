@@ -30,27 +30,20 @@ export const createGetCommentPipeline = ({
   const accountsPipeline = accounts
     ? [
         {
-          $unwind: {
-            path: '$user',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
           $match: {
             'user.account': { $in: accounts },
           },
         },
       ]
     : [];
-
+  const unwindAccount = {
+    $unwind: {
+      path: '$user',
+      preserveNullAndEmptyArrays: true,
+    },
+  };
   const productNamePipeline = productNameRegex
     ? [
-        {
-          $unwind: {
-            path: '$product',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
         {
           $match: {
             'product.title': { $regex: productNameRegex, $options: 'i' },
@@ -58,7 +51,12 @@ export const createGetCommentPipeline = ({
         },
       ]
     : [];
-
+  const unwindProduct = {
+    $unwind: {
+      path: '$product',
+      preserveNullAndEmptyArrays: true,
+    },
+  };
   const basePipeline = [
     {
       $match: {
@@ -92,8 +90,10 @@ export const createGetCommentPipeline = ({
   return [
     ...basePipeline,
     lookupUser,
+    unwindAccount,
     ...accountsPipeline,
     lookupProduct,
+    unwindProduct,
     ...productNamePipeline,
     facetStage,
     addFieldsStage,
