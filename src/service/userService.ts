@@ -10,7 +10,7 @@ import log4js from '../config/log4js';
 import { ResetPwdDto } from '../dto/user/resetPwdDto';
 import passport from 'passport';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
-import { TGoogleUser, ThirdPartyType } from '../types/user.type';
+import { FavoriteItem, TGoogleUser, ThirdPartyType } from '../types/user.type';
 import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { ProductRepository } from '../repository/productRepository';
@@ -265,8 +265,14 @@ export class UserService {
     }
   };
 
-  public getFavorite = async (getUserFavoriteDto: GetUserFavoriteDTO) =>
-    await this.userRepository.findFavoriteByUserId(getUserFavoriteDto);
+  public getFavorite = async (getUserFavoriteDto: GetUserFavoriteDTO) => {
+    const result =
+      await this.userRepository.findFavoriteByUserId(getUserFavoriteDto);
+    result.favorites.forEach((favorite: FavoriteItem) => {
+      favorite.isFavorite = true;
+    });
+    return result;
+  };
 
   public addFavorite = async (editFavoriteDto: EditFavoriteDTO) => {
     const { productId } = editFavoriteDto;
