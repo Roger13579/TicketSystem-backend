@@ -4,8 +4,6 @@ import {
   GroupStatus,
   IGetGroupsReq,
 } from '../../types/group.type';
-import { IUser } from '../../models/user';
-import { Types } from 'mongoose';
 import { SortOrder } from '../../types/common.type';
 
 export class GroupFilterDto {
@@ -20,12 +18,10 @@ export class GroupFilterDto {
   private readonly _page: number;
   private readonly _limit: number;
   private readonly _sort: Record<string, 1 | -1>;
-  private readonly _userId: Types.ObjectId | undefined;
 
   get filter() {
     const titleRegex = this._title ? new RegExp(this._title) : undefined;
     return {
-      ...(this._userId && { userId: { $eq: this._userId } }),
       ...(titleRegex && { title: { $regex: titleRegex } }),
       ...(this._movieTitle && { movieTitle: { $in: this._movieTitle } }),
       ...(this._status && { status: { $eq: this._status } }),
@@ -48,6 +44,17 @@ export class GroupFilterDto {
       page: this._page,
       limit: this._limit,
       sort: this._sort,
+      projection: {
+        title: 1,
+        placeholderImg: 1,
+        theater: 1,
+        movieTitle: 1,
+        status: 1,
+        time: 1,
+        amount: 1,
+        haveTicket: 1,
+        content: 1,
+      },
     };
   }
 
@@ -82,6 +89,5 @@ export class GroupFilterDto {
       haveTicket === undefined ? undefined : haveTicket === 'true';
     this._startAt = startAt ? moment(startAt).toDate() : undefined;
     this._endAt = endAt ? moment(endAt).toDate() : undefined;
-    this._userId = req.user !== undefined ? (req.user as IUser).id : undefined;
   }
 }

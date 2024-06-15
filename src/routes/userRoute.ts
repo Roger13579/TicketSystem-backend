@@ -2,6 +2,7 @@ import { BaseRoute } from './baseRoute';
 import UserController from '../controller/userController';
 import { UserVerify } from '../middleware/userVerify';
 import { GetUserFavoritePipe } from '../validator/user/getUserFavorite.pipe';
+import { GetUserGroupPipe } from '../validator/group/getUserGroup.pipe';
 
 export class UserRoute extends BaseRoute {
   protected controller!: UserController;
@@ -222,6 +223,56 @@ export class UserRoute extends BaseRoute {
        */
       UserVerify,
       this.responseHandler(this.controller.getTransferableTicket),
+    );
+    this.router.get(
+      '/v1/user/groups',
+      /**
+       * #swagger.tags = ['User']
+       * #swagger.summary = '取得用戶我的揪團'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['groupType'] = {
+            in: 'query',
+            required: true,
+            description: '已建立 or 已參加',
+            type: 'string',
+            enum: ['own', 'joined'],
+            schema:{
+              $ref: "#/definitions/CustomGetGroupTypeQuery"
+            }
+          }
+        #swagger.parameters['page'] = {
+            in: 'query',
+            required: true,
+            description: '頁數',
+            type: 'number',
+            schema:{
+              $ref: "#/definitions/CustomPageQuery"
+            }
+          }
+          #swagger.parameters['sortOrder'] = {
+            in: 'query',
+            required: false,
+            description: '排序順序',
+            type: 'string',
+            enum: ["asc", "desc"],
+            schema:{
+              $ref: "#/definitions/CustomSortOrderQuery"
+            }
+          }
+      */
+      /*
+       #swagger.responses[200]={
+       description:'OK',
+       schema:{
+          $ref:'#/definitions/GetUserGroupSuccess'
+          }
+       }
+       */
+      UserVerify,
+      this.usePipe(GetUserGroupPipe),
+      this.responseHandler(this.controller.getUserGroups),
     );
   }
 }

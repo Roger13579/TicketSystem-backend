@@ -1,11 +1,16 @@
 import { Types } from 'mongoose';
 import { IUserReq, TPaginationQuery } from './common.type';
 import { IUserId } from './user.type';
+import { IGroup } from '../models/group';
 
 export enum GroupStatus {
   ongoing = 'ongoing', // 正在揪團
   cancelled = 'cancelled', // 取消揪團
   completed = 'completed', // 完成揪團
+}
+export enum GroupType {
+  own = 'own', // 是主揪的揪團
+  joined = 'joined', // 是參加人的揪團
 }
 
 export interface IGroupId {
@@ -45,6 +50,21 @@ export interface IGetGroupsReq extends IUserReq {
     endAt?: string;
   };
 }
+
+export interface IGetUserGroupsReq extends IUserReq {
+  query: TPaginationQuery<GroupSortField> & {
+    groupType?: string;
+  };
+}
+
+export interface IGetUserGroups extends IGroup {
+  vacancy: number;
+}
+
+export type GroupDocument = Document &
+  IGetUserGroups & {
+    _id: Types.ObjectId;
+  };
 
 export interface TJoinGroupReq extends IUserReq {
   body: IParticipant;

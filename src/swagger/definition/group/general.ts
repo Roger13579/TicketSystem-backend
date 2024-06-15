@@ -15,6 +15,19 @@ export const GroupItem = {
   time: '2024-05-19',
   vacancy: 2,
   content: '參加參加',
+};
+
+export const UserGroupItem = {
+  $_id: 'asdfasdfasd',
+  title: '這是一個活動名稱',
+  movieTitle: '電影名稱',
+  amount: 10,
+  placeholderImg: 'imageUrl',
+  location: '信義威秀',
+  hasTicket: false,
+  time: '2024-05-19',
+  vacancy: 9,
+  content: '參加參加',
   participant: [
     {
       userId: '123123aabb',
@@ -33,6 +46,23 @@ export const GetGroupsSuccess = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     $groups: [GroupItem],
+    ...PaginationSuccess,
+  },
+};
+
+export const GetGroupDetailSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    UserGroupItem,
+  },
+};
+
+export const GetUserGroupSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    $groups: [UserGroupItem],
     ...PaginationSuccess,
   },
 };
