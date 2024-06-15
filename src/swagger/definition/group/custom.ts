@@ -10,6 +10,9 @@ export const CustomGetGroupStatusQuery = {
 export const CustomGetGroupCountQuery = {
   example: 5,
 };
+export const CustomGetGroupTypeQuery = {
+  example: 'own',
+};
 
 import { CustomResponseType } from '../../../types/customResponseType';
 

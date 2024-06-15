@@ -12,6 +12,11 @@ import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { GetFavoriteVO } from '../vo/user/getFavoriteVo';
 import { SellTicketDto } from '../dto/ticket/sellTicketDto';
 import { ISellTicketReq } from '../types/ticket.type';
+import { GetUserGroupDto } from '../dto/group/getUserGroupDto';
+import { GetGroupVo } from '../vo/group/getGroupVo';
+import { PaginateDocument, PaginateOptions, PaginateResult } from 'mongoose';
+import { IGroup } from '../models/group';
+import { IGetUserGroupsReq } from '../types/group.type';
 
 class UserController extends BaseController {
   private readonly userService = new UserService();
@@ -85,6 +90,20 @@ class UserController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       tickets,
+    );
+  };
+
+  public getUserGroups: TMethod = async (req: IGetUserGroupsReq) => {
+    const getUserGroupDto = new GetUserGroupDto(req);
+    const groups = (await this.userService.getUserGroups(
+      getUserGroupDto,
+    )) as PaginateResult<
+      PaginateDocument<IGroup, NonNullable<unknown>, PaginateOptions>
+    >;
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      new GetGroupVo(groups),
     );
   };
 }

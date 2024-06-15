@@ -20,9 +20,18 @@ import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
 import { SellTicketDto } from '../dto/ticket/sellTicketDto';
 import { TicketRepository } from '../repository/ticketRepository';
 import { ITicket } from '../models/ticket';
-import { Types } from 'mongoose';
+import {
+  PaginateDocument,
+  PaginateOptions,
+  PaginateResult,
+  Types,
+} from 'mongoose';
 import { IProduct } from '../models/product';
 import { GetTransferableTicketVo } from '../vo/ticket/getTransferableTicketVo';
+import { GroupRepository } from '../repository/groupRepository';
+import { GroupDocument, IGroupId } from '../types/group.type';
+import { GetUserGroupDto } from '../dto/group/getUserGroupDto';
+import { IGroup } from '../models/group';
 
 const logger = log4js.getLogger(`UserService`);
 
@@ -33,6 +42,7 @@ export class UserService {
     new ProductRepository();
 
   private readonly ticketRepository: TicketRepository = new TicketRepository();
+  private readonly groupRepository: GroupRepository = new GroupRepository();
 
   public async createUser({ pwd, email, account }: SignUpDTO) {
     const hashPwd = bcrypt.hashSync(pwd, 10);
@@ -107,6 +117,29 @@ export class UserService {
       );
     }
     return user;
+  }
+
+  public async getUserGroups(getUserGroupDto: GetUserGroupDto) {
+    switch (getUserGroupDto.groupType) {
+      case 'own': {
+        const ownResult = await this.groupRepository.findByUserId(
+          getUserGroupDto.ownFilter,
+          getUserGroupDto.ownOptions,
+        );
+        return this.addVacancy(ownResult);
+      }
+      case 'joined': {
+        const groupIds =
+          getUserGroupDto.user.groups !== undefined
+            ? getUserGroupDto.user.groups
+            : ([] as IGroupId[]);
+        const joinedResult = await this.groupRepository.findByIds(
+          groupIds.map((id) => id.groupId.toString()),
+          getUserGroupDto.joinedOptions,
+        );
+        return this.addVacancy(joinedResult);
+      }
+    }
   }
 
   public async forgotPwd(email: string) {
@@ -363,4 +396,24 @@ export class UserService {
     });
     return Promise.all(map);
   };
+  private addVacancy(
+    result: PaginateResult<
+      PaginateDocument<
+        IGroup,
+        NonNullable<unknown>,
+        PaginateOptions | undefined
+      >
+    >,
+  ) {
+    result.docs = result.docs.map((doc) => {
+      const participants =
+        doc.participant != undefined ? doc.participant.length : 0;
+      const vacancy = doc.amount - participants;
+      return {
+        ...doc.toObject(),
+        vacancy: vacancy,
+      } as GroupDocument;
+    });
+    return result;
+  }
 }

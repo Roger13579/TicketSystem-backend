@@ -146,4 +146,8 @@ export class GroupService {
   public async findGroups(groupFilterDto: GroupFilterDto) {
     return await this.groupRepository.findGroups(groupFilterDto);
   }
+
+  public async findGroupDetail(groupId: string) {
+    return await this.groupRepository.findById(new Types.ObjectId(groupId));
+  }
 }

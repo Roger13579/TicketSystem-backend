@@ -15,6 +15,7 @@ import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
 import { GetGroupVo } from '../vo/group/getGroupVo';
 import { Types } from 'mongoose';
+import { Request } from 'express';
 import { IUser } from '../models/user';
 import { TMethod } from '../types/common.type';
 
@@ -77,6 +78,14 @@ export class GroupController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       new GetGroupVo(groups),
+    );
+  };
+  public getGroupDetail = async (req: Request) => {
+    const group = await this.groupService.findGroupDetail(req.params.groupId);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      group,
     );
   };
 }

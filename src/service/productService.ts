@@ -87,20 +87,18 @@ export class ProductService {
         favorite.productId.toString(),
       );
     }
-    result.docs = await Promise.all(
-      result.docs.map(async (doc) => {
-        let isFavorite = false;
-        if (user) {
-          if (favoriteProductIds.includes(doc._id.toString())) {
-            isFavorite = true;
-          }
+    result.docs = result.docs.map((doc) => {
+      let isFavorite = false;
+      if (user) {
+        if (favoriteProductIds.includes(doc._id.toString())) {
+          isFavorite = true;
         }
-        return {
-          ...doc.toObject(),
-          isFavorite: isFavorite,
-        } as ProductDocumentWithFavorite;
-      }),
-    );
+      }
+      return {
+        ...doc.toObject(),
+        isFavorite: isFavorite,
+      } as ProductDocumentWithFavorite;
+    });
     return result;
   };
 
