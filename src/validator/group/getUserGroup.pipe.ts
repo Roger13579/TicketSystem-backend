@@ -1,21 +1,11 @@
 import { PipeBase } from '../pipe.base';
 import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
-import { GroupType, IGetGroupsReq } from '../../types/group.type';
-import { OptionType, TCustomValidator } from '../index.type';
+import { GroupType } from '../../types/group.type';
+import { OptionType } from '../index.type';
 import { SortOrder } from '../../types/common.type';
 
 export class GetUserGroupPipe extends PipeBase {
-  private validateStartAt: TCustomValidator = (value, { req }) => {
-    const { endAt } = (req as IGetGroupsReq).query;
-    return this.validatePeriod(value, endAt, (a, b) => a.isBefore(b));
-  };
-
-  private validateEndAt: TCustomValidator = (value, { req }) => {
-    const { startAt } = (req as IGetGroupsReq).query;
-    return this.validatePeriod(value, startAt, (a, b) => a.isAfter(b));
-  };
-
   public transform = () => [
     this.limitValidation(
       query('limit'),
