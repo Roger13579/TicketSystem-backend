@@ -6,6 +6,7 @@ import {
   PaginateDocument,
   PaginateOptions,
   Types,
+  FilterQuery,
 } from 'mongoose';
 import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
@@ -19,6 +20,27 @@ export class GroupRepository {
 
   public async findById(groupId: Types.ObjectId) {
     return GroupModel.findById(groupId);
+  }
+
+  public async findByIds(
+    groupIds: string[],
+    option: PaginateOptions | undefined,
+  ) {
+    return GroupModel.paginate(
+      {
+        _id: {
+          $in: groupIds,
+        },
+      },
+      option,
+    );
+  }
+
+  public async findByUserId(
+    filter: FilterQuery<IGroup> | undefined,
+    option: PaginateOptions | undefined,
+  ) {
+    return GroupModel.paginate(filter, option);
   }
 
   public async updateGroup(updateGroupDto: UpdateGroupDto) {

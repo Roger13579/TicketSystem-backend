@@ -1,6 +1,6 @@
 import { BaseRoute } from './baseRoute';
 import { GroupController } from '../controller/groupController';
-import { UserCheck, UserVerify } from '../middleware/userVerify';
+import { UserVerify } from '../middleware/userVerify';
 import { CreateGroupPipe } from '../validator/group/createGroup.pipe';
 import { UpdateGroupPipe } from '../validator/group/updateGroup.pipe';
 import { JoinGroupPipe } from '../validator/group/joinGroup.pipe';
@@ -164,11 +164,33 @@ export class GroupRoute extends BaseRoute {
       this.responseHandler(this.controller.deleteGroup),
     );
     this.router.get(
+      '/v1/group/:groupId',
+      /**
+       * #swagger.tags = ['Group']
+       * #swagger.summary = '取得揪團詳細'
+       */
+      /*
+       #swagger.parameters['groupId'] ={
+          in:'path',
+          description:'揪團ID',
+          required: true,
+          type: 'string'
+       }
+       */
+      /**
+       #swagger.responses[200] = {
+       description: 'OK',
+       schema: {
+       $ref: '#/definitions/GetGroupDetailSuccess' }
+       }
+       */
+      this.responseHandler(this.controller.getGroupDetail),
+    );
+    this.router.get(
       '/v1/group',
       /**
        * #swagger.tags = ['Group']
        * #swagger.summary = '取得揪團列表'
-       * #swagger.security=[{"Bearer": []}],
        */
       /*  
           #swagger.parameters['limit'] = {
@@ -283,7 +305,6 @@ export class GroupRoute extends BaseRoute {
             }
           }
       */
-      UserCheck,
       this.usePipe(GetGroupsPipe),
       this.responseHandler(this.controller.getGroups),
     );
