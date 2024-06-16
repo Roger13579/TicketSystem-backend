@@ -54,7 +54,7 @@ export class UserRoute extends BaseRoute {
               "gender": "none",
               "phone": "0912345678",
               "address": "aaaabbb",
-              "avatarPath": "avatarPath"
+              "imgUrl": "imgimg"
             }
           }
           */

@@ -14,6 +14,7 @@ import { Types } from 'mongoose';
 import * as crypto from 'node:crypto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
+import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
 
 const logger = log4js.getLogger(`TicketService`);
 
@@ -34,8 +35,10 @@ export class TicketService {
 
     return await this.ticketRepository.findTickets(ticketFilterDto);
   };
-  public findSharedTickets = async (ticketFilterDto: GetTicketsDto) => {
-    return await this.ticketRepository.findSharedTickets(ticketFilterDto);
+  public findSharedTickets = async (
+    getSharedTicketsDto: GetSharedTicketsDto,
+  ) => {
+    return await this.ticketRepository.findSharedTickets(getSharedTicketsDto);
   };
 
   public async createTickets(order: IOrder) {
