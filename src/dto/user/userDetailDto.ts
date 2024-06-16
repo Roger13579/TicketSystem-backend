@@ -40,12 +40,12 @@ export class UserDetailDto {
 
   constructor(req: IUpdateUserDetailReq) {
     this._id = (req.user as IUser).id.toString();
-    const { name, birthDate, gender, phone, address, avatarPath } = req.body;
+    const { name, birthDate, gender, phone, address, imgUrl } = req.body;
     this._name = name;
     this._birthDate = birthDate;
     this._gender = gender;
     this._phone = phone;
     this._address = address;
-    this._avatarPath = avatarPath;
+    this._avatarPath = imgUrl;
   }
 }
