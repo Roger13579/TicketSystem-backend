@@ -2,39 +2,50 @@ import { IUser } from '../../models/user';
 import { Gender, IUpdateUserDetailReq } from '../../types/user.type';
 
 export class UserDetailDto {
-  private readonly id: string;
-  private readonly name: string;
-  private readonly birthDate: Date;
-  private readonly gender: Gender;
-  private readonly phone: string;
-  private readonly address: string;
+  private readonly _id: string;
+  private readonly _name: string;
+  private readonly _birthDate: Date;
+  private readonly _gender: Gender;
+  private readonly _phone: string;
+  private readonly _address: string;
+  private readonly _avatarPath: string;
 
-  get getId(): string {
-    return this.id;
+  get avatarPath(): string {
+    return this._avatarPath;
   }
-  get getName(): string {
-    return this.name;
+
+  get id(): string {
+    return this._id;
   }
-  get getBirthDate(): Date {
-    return this.birthDate;
+
+  get name(): string {
+    return this._name;
   }
-  get getGender(): string {
-    return this.gender;
+
+  get birthDate(): Date {
+    return this._birthDate;
   }
-  get getPhone(): string {
-    return this.phone;
+
+  get gender(): Gender {
+    return this._gender;
   }
-  get getAddress(): string {
-    return this.address;
+
+  get phone(): string {
+    return this._phone;
+  }
+
+  get address(): string {
+    return this._address;
   }
 
   constructor(req: IUpdateUserDetailReq) {
-    this.id = (req.user as IUser).id.toString();
-    const { name, birthDate, gender, phone, address } = req.body;
-    this.name = name;
-    this.birthDate = birthDate;
-    this.gender = gender;
-    this.phone = phone;
-    this.address = address;
+    this._id = (req.user as IUser).id.toString();
+    const { name, birthDate, gender, phone, address, avatarPath } = req.body;
+    this._name = name;
+    this._birthDate = birthDate;
+    this._gender = gender;
+    this._phone = phone;
+    this._address = address;
+    this._avatarPath = avatarPath;
   }
 }

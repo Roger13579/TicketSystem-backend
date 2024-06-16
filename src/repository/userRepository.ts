@@ -52,13 +52,14 @@ export class UserRepository {
 
   public async updateUserDetail(userDetailDto: UserDetailDto) {
     return UserModel.findByIdAndUpdate(
-      { _id: new Types.ObjectId(userDetailDto.getId) },
+      { _id: new Types.ObjectId(userDetailDto.id) },
       {
-        name: userDetailDto.getName,
-        birthDate: userDetailDto.getBirthDate,
-        gender: userDetailDto.getGender,
-        phone: userDetailDto.getPhone,
-        address: userDetailDto.getAddress,
+        name: userDetailDto.name,
+        birthDate: userDetailDto.birthDate,
+        gender: userDetailDto.gender,
+        phone: userDetailDto.phone,
+        address: userDetailDto.address,
+        avatarPath: userDetailDto.avatarPath,
       },
       updateOptions,
     );
