@@ -109,5 +109,6 @@ export interface IUpdateUserDetailReq extends IUserReq {
     gender: Gender;
     phone: string;
     address: string;
+    avatarPath: string;
   };
 }
