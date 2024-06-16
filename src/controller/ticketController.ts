@@ -46,6 +46,17 @@ export class TicketController extends BaseController {
     );
   };
 
+  public getSharedTickets: TMethod<IGetTicketsReq> = async (req) => {
+    const getTicketsDto = new GetTicketsDto(req);
+    const { page, limit } = getTicketsDto;
+    const info = await this.ticketService.findSharedTickets(getTicketsDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      new GetTicketVo(info, page, limit),
+    );
+  };
+
   public getTicketDetail = async (req: IUserReq) => {
     const getTicketsDto = new GetTicketDetailDto(req);
     const ticket = await this.ticketService.getTicketDetail(getTicketsDto);

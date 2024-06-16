@@ -34,6 +34,9 @@ export class TicketService {
 
     return await this.ticketRepository.findTickets(ticketFilterDto);
   };
+  public findSharedTickets = async (ticketFilterDto: GetTicketsDto) => {
+    return await this.ticketRepository.findSharedTickets(ticketFilterDto);
+  };
 
   public async createTickets(order: IOrder) {
     const orderProducts = order.products.reduce(

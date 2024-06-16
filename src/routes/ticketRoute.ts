@@ -173,6 +173,32 @@ export class TicketRoute extends BaseRoute {
       this.responseHandler(this.controller.getTicketDetail),
     );
 
+    this.router.get(
+      '/v1/ticket-shared',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '取得票券詳細資料'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+        #swagger.parameters['id'] = {
+          in: 'path',
+          description: '票券 id',
+          example: 'abcdefg123124',
+        }
+      */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/GetTicketDetailSuccess"
+            }
+          }
+      */
+      UserVerify,
+      this.responseHandler(this.controller.getSharedTickets),
+    );
+
     this.router.patch(
       '/v1/ticket',
       /**
