@@ -31,6 +31,18 @@ export const Ticket = {
   writeOffStaffId: 'rrr',
   giverId: 'iiddidididi',
 };
+
+export const SharedTicket = {
+  $_id: 'asdfasdfasd',
+  $productId: 'cdscsdcsdc',
+  $userId: '123235564364567',
+  $orderId: 'iiddidididi',
+  $status: TicketStatus.unverified,
+  $isPublished: false,
+  $createdAt: new Date().toISOString(),
+  $updatedAt: new Date().toISOString(),
+  $expiredAt: new Date().toISOString(),
+};
 /**
  * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
  */
@@ -56,6 +68,20 @@ export const GetTicketsSuccess = {
         ...Ticket,
         product: TicketProductDetail,
         shareCode: '112315641231',
+      },
+    ],
+    ...PaginationSuccess,
+  },
+};
+export const GetSharedTicketsSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    tickets: [
+      {
+        ...SharedTicket,
+        product: TicketProductDetail,
+        count: 2,
       },
     ],
     ...PaginationSuccess,
