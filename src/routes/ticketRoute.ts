@@ -204,7 +204,7 @@ export class TicketRoute extends BaseRoute {
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/GetSharedTicketSuccess"
+              $ref: "#/definitions/GetSharedTicketsSuccess"
             }
           }
       */
