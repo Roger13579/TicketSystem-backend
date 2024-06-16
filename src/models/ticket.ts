@@ -47,7 +47,10 @@ const schema = new Schema<ITicket>(
       type: Date,
       select: true,
     },
-    writeOffStaffId: userId,
+    writeOffStaffId: {
+      type: Types.ObjectId,
+      select: true,
+    },
     shareCode: { type: String },
   },
   { ...schemaOption, ...virtualSchemaOption },
