@@ -340,7 +340,7 @@ export class TicketRoute extends BaseRoute {
       /*
         #swagger.parameters['obj'] ={
           in:'body',
-          description:'欲核銷的票券列表',
+          description:'欲刪除的票券列表',
           schema:{
             $ref:"#/definitions/CustomDeleteTicketsObj"
           }

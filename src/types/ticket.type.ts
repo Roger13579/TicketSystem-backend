@@ -124,3 +124,9 @@ export interface IDeleteTicketsReq extends IUserReq {
     ticketIds: string[];
   };
 }
+export interface ITicketRefundReq extends IUserReq {
+  body: {
+    ticketId: string;
+    reason: string;
+  };
+}

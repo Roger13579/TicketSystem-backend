@@ -13,6 +13,9 @@ export const CustomGetTicketIdQuery = {
 export const CustomGetTicketStatusQuery = {
   example: TicketStatus.verified,
 };
+export const CustomRefundTicketsReason = {
+  example: 'test reason',
+};
 
 const propName = {
   productId: '商品 id',

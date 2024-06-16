@@ -212,4 +212,7 @@ export const enum CustomResponseType {
 
   TICKET_NOT_ENOUGH = '6547',
   TICKET_NOT_ENOUGH_MESSAGE = '欲分票之票券數量不足',
+
+  INVALID_TICKET_REFUND = '6548',
+  INVALID_TICKET_REFUND_MESSAGE = '退票錯誤',
 }

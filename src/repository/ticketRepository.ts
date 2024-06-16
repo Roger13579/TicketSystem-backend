@@ -30,12 +30,18 @@ export class TicketRepository {
     return TicketModel.create(new TicketModel(createTicketDto));
   }
 
+  public async findById(ticketId: Types.ObjectId) {
+    return TicketModel.findById(ticketId);
+  }
   public findTickets = async (
     ticketFilterDto: GetTicketsDto,
   ): Promise<IGetTicketsRes> => {
     const pipeline = createGetTicketPipeline(ticketFilterDto);
     const results = await TicketModel.aggregate(pipeline);
     return results[0];
+  };
+  public findByOrderId = async (orderId: Types.ObjectId) => {
+    return TicketModel.find({ orderId: orderId });
   };
   public findSharedTickets = async (
     getSharedTicketsDto: GetSharedTicketsDto,
@@ -160,6 +166,31 @@ export class TicketRepository {
       );
     } finally {
       session.endSession();
+    }
+  };
+
+  public updateRefundTickets = async (
+    ticketIds: Types.ObjectId[],
+    refundReason: string,
+  ) => {
+    const session = await startSession();
+    try {
+      return await session.withTransaction(async () => {
+        return TicketModel.updateMany(
+          { _id: { $in: ticketIds } },
+          {
+            $set: { status: TicketStatus.refunded, refundReason: refundReason },
+          },
+          { session },
+        );
+      });
+    } catch (error) {
+      throwError(
+        (error as Error).message,
+        CustomResponseType.INVALID_EDIT_TICKET,
+      );
+    } finally {
+      await session.endSession();
     }
   };
 

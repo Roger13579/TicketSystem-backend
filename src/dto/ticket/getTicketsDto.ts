@@ -113,6 +113,7 @@ export class GetTicketsDto {
           writeOffAt: 1,
           writeOffStaffId: 1,
           product: 1,
+          refundReason: 1,
         }
       : {
           _id: 1,
@@ -125,6 +126,7 @@ export class GetTicketsDto {
           createdAt: 1,
           updatedAt: 1,
           product: 1,
+          refundReason: 1,
         };
     return {
       productSelect,
