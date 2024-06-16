@@ -1,8 +1,9 @@
 import { BaseRoute } from './baseRoute';
-import UserController from '../controller/userController';
+import { UserController } from '../controller/userController';
 import { UserVerify } from '../middleware/userVerify';
 import { GetUserFavoritePipe } from '../validator/user/getUserFavorite.pipe';
 import { GetUserGroupPipe } from '../validator/group/getUserGroup.pipe';
+import { TicketRefundPipe } from '../validator/ticket/ticketRefund.pipe';
 
 export class UserRoute extends BaseRoute {
   protected controller!: UserController;
@@ -273,6 +274,43 @@ export class UserRoute extends BaseRoute {
       UserVerify,
       this.usePipe(GetUserGroupPipe),
       this.responseHandler(this.controller.getUserGroups),
+    );
+    this.router.patch(
+      '/v1/user/refund',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '退票'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'欲退票的票券ID',
+          schema:{
+            $ref:"#/definitions/CustomGetTicketIdQuery"
+          }
+        }
+       */
+      /*
+        #swagger.parameters['obj'] ={
+          in:'body',
+          description:'退票原因',
+          schema:{
+            $ref:"#/definitions/CustomRefundTicketsReason"
+          }
+        }
+       */
+      /**
+       #swagger.responses[200]={
+       description:'退票成功',
+       schema:{
+       $ref:'#/definitions/Success'
+       }
+       }
+       */
+      UserVerify,
+      this.usePipe(TicketRefundPipe),
+      this.responseHandler(this.controller.ticketRefund),
     );
   }
 }

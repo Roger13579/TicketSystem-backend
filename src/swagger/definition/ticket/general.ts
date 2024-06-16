@@ -53,6 +53,7 @@ export const TransferableTicket = {
     'https://thumb.ac-illust.com/0c/0c3c64e631df8b99256cf6de8fa8f12f_t.jpeg',
   $theater: '秀秀',
   $startAt: new Date().toISOString(),
+  $expiredAt: new Date().toISOString(),
   $amount: 7,
 };
 

@@ -8,6 +8,7 @@ export class GetTransferableTicketVo {
   private photoPath: string;
   private theater: string;
   private startAt: Date;
+  private expiredAt: Date;
   private amount: number;
 
   constructor(group: ITicket[], product: IProduct) {
@@ -17,6 +18,7 @@ export class GetTransferableTicketVo {
     this.photoPath = product.photoPath;
     this.theater = product.theater;
     this.startAt = product.startAt;
+    this.expiredAt = group[0].expiredAt;
     this.amount = group.length - 1;
   }
 }
