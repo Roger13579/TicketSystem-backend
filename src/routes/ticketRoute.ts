@@ -9,6 +9,7 @@ import { TransferTicketPipe } from '../validator/ticket/TransferTicket.pipe';
 import { ClaimTransferTicketPipe } from '../validator/ticket/claimTransferTicket.pipe';
 import { DeleteTicketsPipe } from '../validator/ticket/deleteTickets.pipe';
 import { GetTicketDetailPipe } from '../validator/ticket/getTicketDetail.pipe';
+import { GetSharedTicketPipe } from '../validator/ticket/getSharedTicket.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -207,7 +208,7 @@ export class TicketRoute extends BaseRoute {
             }
           }
       */
-      this.usePipe(GetTicketPipe),
+      this.usePipe(GetSharedTicketPipe),
       this.responseHandler(this.controller.getSharedTickets),
     );
 
