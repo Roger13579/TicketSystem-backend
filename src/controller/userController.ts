@@ -11,15 +11,18 @@ import { IGetUserFavoriteReq, IUpdateUserDetailReq } from '../types/user.type';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { GetFavoriteVO } from '../vo/user/getFavoriteVo';
 import { SellTicketDto } from '../dto/ticket/sellTicketDto';
-import { ISellTicketReq } from '../types/ticket.type';
+import { ISellTicketReq, ITicketRefundReq } from '../types/ticket.type';
 import { GetUserGroupDto } from '../dto/group/getUserGroupDto';
 import { GetGroupVo } from '../vo/group/getGroupVo';
 import { PaginateDocument, PaginateOptions, PaginateResult } from 'mongoose';
 import { IGroup } from '../models/group';
 import { IGetUserGroupsReq } from '../types/group.type';
+import { TicketRefundDto } from '../dto/ticket/TicketRefundDto';
+import { TicketService } from '../service/ticketService';
 
-class UserController extends BaseController {
+export class UserController extends BaseController {
   private readonly userService = new UserService();
+  private readonly ticketService = new TicketService();
 
   public getUserDetail: TMethod = async (req) => {
     const payload = new JWTPayloadDTO(req);
@@ -106,6 +109,14 @@ class UserController extends BaseController {
       new GetGroupVo(groups),
     );
   };
-}
 
-export default UserController;
+  public ticketRefund = async (req: ITicketRefundReq) => {
+    const ticketRefundDto = new TicketRefundDto(req);
+    const tickets = await this.ticketService.ticketRefund(ticketRefundDto);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { orderId: tickets[0].orderId, refundTicketsCount: tickets.length },
+    );
+  };
+}
