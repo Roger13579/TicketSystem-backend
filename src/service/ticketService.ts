@@ -15,11 +15,15 @@ import * as crypto from 'node:crypto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
+import { TicketRefundDto } from '../dto/ticket/TicketRefundDto';
+import { OrderRepository } from '../repository/orderRepository';
+import { ITicket } from '../models/ticket';
 
 const logger = log4js.getLogger(`TicketService`);
 
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
+  private readonly orderRepository: OrderRepository = new OrderRepository();
 
   public findTickets = async (ticketFilterDto: GetTicketsDto) => {
     const { expiredAtFrom, expiredAtTo } = ticketFilterDto;
@@ -182,5 +186,41 @@ export class TicketService {
     }
 
     return deletedTickets;
+  };
+
+  public ticketRefund = async (ticketRefundDto: TicketRefundDto) => {
+    const ticket = await this.ticketRepository.findById(
+      ticketRefundDto.ticketId,
+    );
+    if (!ticket) {
+      throwError(
+        CustomResponseType.INVALID_TICKET_REFUND_MESSAGE,
+        CustomResponseType.INVALID_TICKET_REFUND,
+      );
+    }
+    const order = await this.orderRepository.findById(
+      (ticket as ITicket).orderId,
+    );
+    if (!order) {
+      throwError(
+        CustomResponseType.INVALID_TICKET_REFUND_MESSAGE,
+        CustomResponseType.INVALID_TICKET_REFUND,
+      );
+    }
+    const tickets = await this.ticketRepository.findByOrderId(
+      (order as IOrder)._id,
+    );
+    try {
+      await this.ticketRepository.updateRefundTickets(
+        tickets.map((ticket) => ticket._id),
+        ticketRefundDto.refundReason,
+      );
+    } catch (err) {
+      throwError(
+        CustomResponseType.INVALID_TICKET_REFUND_MESSAGE,
+        CustomResponseType.INVALID_TICKET_REFUND,
+      );
+    }
+    return tickets;
   };
 }

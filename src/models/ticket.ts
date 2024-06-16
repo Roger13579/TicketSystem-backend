@@ -13,11 +13,12 @@ export interface ITicket extends BaseModel, IUserId, IProductId, IOrderId {
   status: TicketStatus;
   isPublished: boolean;
   chatRoomId: string;
-  expiredAt?: Date;
+  expiredAt: Date;
   writeOffAt?: Date;
   writeOffStaffId?: Types.ObjectId;
   shareCode?: string;
   giverId?: Types.ObjectId;
+  refundReason?: string;
 }
 
 const schema = new Schema<ITicket>(
@@ -52,6 +53,7 @@ const schema = new Schema<ITicket>(
       select: true,
     },
     shareCode: { type: String },
+    refundReason: { type: String },
   },
   { ...schemaOption, ...virtualSchemaOption },
 ).plugin(paginate);
