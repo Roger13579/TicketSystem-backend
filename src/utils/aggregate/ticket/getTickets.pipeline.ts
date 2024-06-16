@@ -1,4 +1,5 @@
 import { GetTicketsDto } from '../../../dto/ticket/getTicketsDto';
+import { GetSharedTicketsDto } from '../../../dto/ticket/getSharedTicketsDto';
 
 export const createGetTicketPipeline = ({
   productNameRegex,
@@ -73,7 +74,7 @@ export const createGetSharedTicketPipeline = ({
   sort,
   limit,
   page,
-}: GetTicketsDto) => {
+}: GetSharedTicketsDto) => {
   return [
     {
       $match: {

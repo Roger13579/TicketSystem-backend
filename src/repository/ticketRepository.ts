@@ -23,6 +23,7 @@ import {
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 import { createGetTicketDetailPipeline } from '../utils/aggregate/ticket/getTicketDetail.pipeline';
 import { SellTicketDto } from '../dto/ticket/sellTicketDto';
+import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
@@ -37,9 +38,9 @@ export class TicketRepository {
     return results[0];
   };
   public findSharedTickets = async (
-    ticketFilterDto: GetTicketsDto,
+    getSharedTicketsDto: GetSharedTicketsDto,
   ): Promise<IGetTicketsRes> => {
-    const pipeline = createGetSharedTicketPipeline(ticketFilterDto);
+    const pipeline = createGetSharedTicketPipeline(getSharedTicketsDto);
     const results = await TicketModel.aggregate(pipeline);
     return results[0];
   };

@@ -9,6 +9,7 @@ import { TransferTicketPipe } from '../validator/ticket/TransferTicket.pipe';
 import { ClaimTransferTicketPipe } from '../validator/ticket/claimTransferTicket.pipe';
 import { DeleteTicketsPipe } from '../validator/ticket/deleteTickets.pipe';
 import { GetTicketDetailPipe } from '../validator/ticket/getTicketDetail.pipe';
+import { GetSharedTicketPipe } from '../validator/ticket/getSharedTicket.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -177,25 +178,37 @@ export class TicketRoute extends BaseRoute {
       '/v1/ticket-shared',
       /**
        * #swagger.tags = ['Ticket']
-       * #swagger.summary = '取得票券詳細資料'
-       * #swagger.security=[{"Bearer": []}],
+       * #swagger.summary = '取得已上架分票票券'
        */
       /*
-        #swagger.parameters['id'] = {
-          in: 'path',
-          description: '票券 id',
-          example: 'abcdefg123124',
+      #swagger.parameters['page'] = {
+        in: 'query',
+        required: true,
+        description: '頁數',
+        type: 'number',
+        schema:{
+          $ref: "#/definitions/CustomPageQuery"
         }
+      }
+    #swagger.parameters['limit'] = {
+      in: 'query',
+      required: false,
+      description: '每頁資料數',
+      type: 'number',
+      schema:{
+        $ref: "#/definitions/CustomLimitQuery"
+      }
+    }
       */
       /*
           #swagger.responses[200] = {
             description:'OK',
             schema:{
-              $ref: "#/definitions/GetTicketDetailSuccess"
+              $ref: "#/definitions/GetSharedTicketsSuccess"
             }
           }
       */
-      UserVerify,
+      this.usePipe(GetSharedTicketPipe),
       this.responseHandler(this.controller.getSharedTickets),
     );
 

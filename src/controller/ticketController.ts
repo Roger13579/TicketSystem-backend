@@ -19,6 +19,7 @@ import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
 import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
+import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
 
 export class TicketController extends BaseController {
   private readonly ticketService = new TicketService();
@@ -47,9 +48,10 @@ export class TicketController extends BaseController {
   };
 
   public getSharedTickets: TMethod<IGetTicketsReq> = async (req) => {
-    const getTicketsDto = new GetTicketsDto(req);
-    const { page, limit } = getTicketsDto;
-    const info = await this.ticketService.findSharedTickets(getTicketsDto);
+    const getSharedTicketsDto = new GetSharedTicketsDto(req);
+    const { page, limit } = getSharedTicketsDto;
+    const info =
+      await this.ticketService.findSharedTickets(getSharedTicketsDto);
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
