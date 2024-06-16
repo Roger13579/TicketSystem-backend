@@ -64,6 +64,10 @@ export enum TicketSortField {
   status = 'status',
 }
 
+export enum SharedTicketSortField {
+  updatedAt = 'updatedAt',
+}
+
 export interface IVerifyTicketsReq extends IUserReq {
   body: {
     tickets: {
