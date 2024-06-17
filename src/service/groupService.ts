@@ -9,6 +9,7 @@ import { UserRepository } from '../repository/userRepository';
 import { Types } from 'mongoose';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
+import { GroupDocument } from '../types/group.type';
 
 const logger = log4js.getLogger(`GroupService`);
 
@@ -148,6 +149,21 @@ export class GroupService {
   }
 
   public async findGroupDetail(groupId: string) {
-    return await this.groupRepository.findById(new Types.ObjectId(groupId));
+    const group = await this.groupRepository.findById(
+      new Types.ObjectId(groupId),
+    );
+    if (group) {
+      const participantLength =
+        group.participant != undefined ? group.participant.length : 0;
+      return {
+        ...group.toObject(),
+        vacancy: group.amount - participantLength,
+      } as GroupDocument;
+    } else {
+      throwError(
+        CustomResponseType.NO_DATA_FOUND_MESSAGE + ` : ${groupId}`,
+        CustomResponseType.NO_DATA_FOUND,
+      );
+    }
   }
 }
