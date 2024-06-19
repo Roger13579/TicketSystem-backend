@@ -15,10 +15,7 @@ const ItemSchema = new Schema<IItem>(
   {
     productId,
     amount: { type: Number, required: true, min: 1 },
-    plan: {
-      type: plan,
-      required: true,
-    },
+    plan,
   },
   {
     ...schemaOption,

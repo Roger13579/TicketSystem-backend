@@ -46,21 +46,13 @@ export class LinePayOrderDTO {
         id: _id.toString(),
         amount: price,
         name: 'Movie Go',
-        products: products.map(({ productId, title, amount, plan, price }) => {
-          const isExistedPlan = !!(
-            plan &&
-            plan.discount &&
-            plan.headCount &&
-            plan.name
-          );
-          return {
-            id: productId.toString(),
-            name: title,
-            quantity: amount,
-            price: price * (isExistedPlan ? plan.headCount * plan.discount : 1),
-            ...(isExistedPlan && { originalPrice: price * plan.headCount }),
-          };
-        }),
+        products: products.map(({ productId, title, amount, plan, price }) => ({
+          id: productId.toString(),
+          name: title,
+          quantity: amount,
+          price: price * plan.headCount * plan.discount,
+          originalPrice: price * plan.headCount,
+        })),
       },
     ];
 
