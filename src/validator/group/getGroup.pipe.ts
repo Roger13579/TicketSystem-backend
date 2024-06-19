@@ -31,53 +31,53 @@ export class GetGroupsPipe extends PipeBase {
       CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'page',
     ),
     query('title')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .isString()
       .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'title'),
     query('hasTicket')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .isIn(booleanStrings)
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'hasTicket',
       ),
     query('movieTitle')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .isString()
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'movieTitle',
       ),
     query('status')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .isIn(Object.keys(GroupStatus))
       .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'status'),
     query('participantCount')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .isInt({ min: 1 })
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'participantCount',
       ),
     query('startAt')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .custom(this.validateDate)
       .custom(this.validateStartAt)
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startAtTo',
       ),
     query('endAt')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .custom(this.validateDate)
       .custom(this.validateEndAt)
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startAtTo',
       ),
     query('sortField')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .custom(this.validateOption(OptionType.item, GroupSortField))
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'sortField',
       ),
     query('sortOrder')
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .custom(this.validateOption(OptionType.item, SortOrder))
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'sortOrder',
