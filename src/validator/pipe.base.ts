@@ -57,7 +57,7 @@ export abstract class PipeBase {
    */
   protected validateDate = (value: string) => {
     const date = new Date(value);
-    return date instanceof Date && !isNaN(date.getTime());
+    return !isNaN(date.getTime());
   };
 
   protected validationHandler: TMethod<IUserReq, void> = (req, res, next) => {
@@ -155,7 +155,7 @@ export abstract class PipeBase {
 
   /**
    * 驗證：多個屬性不可同時存在
-   * @param propNames - 需要檢查的屬性名稱數組
+   * @param params - 需要檢查的屬性名稱數組
    */
   protected validateExclusiveQuery =
     (params: IValidateExclusiveQueryParams): TCustomValidator<unknown> =>

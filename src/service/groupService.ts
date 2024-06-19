@@ -53,10 +53,10 @@ export class GroupService {
           (userId) => userId.toString() === joinGroupDto.userId.toString(),
         );
       if (matchGroup.length > 0) {
-        throwError(
-          CustomResponseType.GROUP_ALREADY_JOINED_MESSAGE,
-          CustomResponseType.GROUP_ALREADY_JOINED,
-        );
+        return {
+          code: CustomResponseType.GROUP_ALREADY_JOINED,
+          message: CustomResponseType.GROUP_ALREADY_JOINED_MESSAGE,
+        };
       }
       // 檢查人數是否已滿
       const groupSize = group.amount;
