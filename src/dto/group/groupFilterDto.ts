@@ -29,7 +29,7 @@ export class GroupFilterDto {
       ...(this._participantCount && {
         amount: { $eq: this._participantCount },
       }),
-      ...(this._haveTicket !== undefined && { haveTicket: this._haveTicket }),
+      ...(this._haveTicket && { haveTicket: this._haveTicket }),
       ...((this._startAt || this._endAt) && {
         time: {
           ...(this._endAt && { $lte: this._endAt }),
@@ -83,8 +83,8 @@ export class GroupFilterDto {
     this._limit = Number(limit);
     this._page = Number(page);
     this._participantCount = Number(participantCount);
-    this._movieTitle = movieTitle?.split(',');
-    this._theater = theater?.split(',');
+    this._movieTitle = movieTitle ? movieTitle.split(',') : undefined;
+    this._theater = theater ? theater.split(',') : undefined;
     this._haveTicket =
       haveTicket === undefined ? undefined : haveTicket === 'true';
     this._startAt = startAt ? moment(startAt).toDate() : undefined;

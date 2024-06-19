@@ -45,7 +45,10 @@ export class GroupController extends BaseController {
   };
   public joinGroup: TMethod<TJoinGroupReq> = async (req) => {
     const joinGroupDto = new JoinGroupDto(req);
-    await this.groupService.joinGroup(joinGroupDto);
+    const result = await this.groupService.joinGroup(joinGroupDto);
+    if (result) {
+      return this.formatResponse(result.message, result.code, {});
+    }
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
