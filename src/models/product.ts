@@ -52,6 +52,7 @@ const validateUniqPlans = (plans: IPlan[]) => {
   const uniqueHeadCounts = uniqBy(plans, 'headCount');
 
   return (
+    plans.length > 0 &&
     isEqual(plans, uniqueNames) &&
     isEqual(plans, uniqueDiscounts) &&
     isEqual(plans, uniqueHeadCounts)
@@ -230,10 +231,10 @@ const transform = (_doc: unknown, ret: Record<string, unknown>) => {
     }));
   }
   if (!!ret.plans) {
-    ret.plans = (ret.plans as IPlan[]).map((plan) => ({
-      name: plan.name,
-      discount: plan.discount,
-      headCount: plan.headCount,
+    ret.plans = (ret.plans as IPlan[]).map(({ name, discount, headCount }) => ({
+      name,
+      discount,
+      headCount,
     }));
   }
   delete ret.id;

@@ -14,11 +14,9 @@ import { createGetCartPipeline } from '../utils/aggregate/cart/getCart.pipeline'
 export class CartRepository {
   private itemElemMath = ({ productId, plan }: ICartProduct) => ({
     productId,
-    ...(plan && {
-      'plan.discount': plan.discount,
-      'plan.name': plan.name,
-      'plan.headCount': plan.headCount,
-    }),
+    'plan.discount': plan.discount,
+    'plan.name': plan.name,
+    'plan.headCount': plan.headCount,
   });
 
   public createCart = async (userId: Types.ObjectId) =>

@@ -61,22 +61,25 @@ export const schemaDef = {
     required: true,
   },
   plan: {
-    name: {
-      type: String,
-      trim: true,
-      required: true,
+    type: {
+      name: {
+        type: String,
+        trim: true,
+        required: true,
+      },
+      discount: {
+        type: Number,
+        max: 0.95,
+        min: 0.1,
+        required: true,
+      },
+      headCount: {
+        type: Number,
+        min: 1,
+        required: true,
+      },
     },
-    discount: {
-      type: Number,
-      max: 0.95,
-      min: 0.1,
-      required: true,
-    },
-    headCount: {
-      type: Number,
-      min: 2,
-      required: true,
-    },
+    required: true,
   },
 };
 

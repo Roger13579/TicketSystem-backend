@@ -13,7 +13,7 @@ export class LinePayConfirmDTO {
   }
 
   constructor(req: ILinePayConfirmReq) {
-    const { orderId, transactionId } = req.body;
+    const { orderId, transactionId } = req.query;
     this._orderId = orderId || '';
     this._transactionId = transactionId || '';
   }

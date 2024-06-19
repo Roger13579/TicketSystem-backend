@@ -13,6 +13,18 @@ export class CreateOrderPipe extends PipeBase {
       body('items.*.productId'),
       CustomResponseType.FORMAT_ERROR_MESSAGE + 'items.*.productId',
     ),
+    this.planValidation.discount(
+      body('items.*.plan.discount'),
+      CustomResponseType.FORMAT_ERROR_MESSAGE + 'items.*.plan.discount',
+    ),
+    this.nonEmptyStringValidation(
+      body('items.*.plan.name'),
+      'items.*.plan.name',
+    ),
+    this.planValidation.headCount(
+      body('items.*.plan.headCount'),
+      CustomResponseType.FORMAT_ERROR_MESSAGE + 'items.*.plan.headCount',
+    ),
     this.positiveIntValidation(
       body('items.*.amount'),
       CustomResponseType.FORMAT_ERROR_MESSAGE + 'items.*.amount',

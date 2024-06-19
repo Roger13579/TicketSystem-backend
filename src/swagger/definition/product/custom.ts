@@ -277,6 +277,7 @@ export const CustomCreateProductsObj = {
           'endAt',
           'startAt',
           'introduction',
+          'plans',
         ],
         properties: {
           soldAmount: {

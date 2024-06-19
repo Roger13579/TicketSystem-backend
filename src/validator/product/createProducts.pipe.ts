@@ -89,30 +89,21 @@ export class CreateProductsPipe extends PipeBase {
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'amount',
         ),
       body('products.*.plans')
-        .optional()
+        .exists()
         .isArray({ min: 1 })
         .withMessage(CustomResponseType.INVALID_CREATE_PRODUCT + 'plans'),
-      body('products.*.plans.*.name')
-        .if(body('products.*.plans').isArray({ min: 1 }))
-        .exists()
-        .isString()
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.name',
-        ),
-      body('products.*.plans.*.discount')
-        .if(body('products.*.plans').isArray({ min: 1 }))
-        .exists()
-        .isFloat({ min: 0.1, max: 1 })
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.discount',
-        ),
-      body('products.*.plans.*.headCount')
-        .if(body('products.*.plans').isArray({ min: 1 }))
-        .exists()
-        .isInt({ min: 2 })
-        .withMessage(
-          CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.headCount',
-        ),
+      this.nonEmptyStringValidation(
+        body('products.*.plans.*.name'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.name',
+      ),
+      this.planValidation.discount(
+        body('products.*.plans.*.discount'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.discount',
+      ),
+      this.planValidation.headCount(
+        body('products.*.plans.*.headCount'),
+        CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'plan.headCount',
+      ),
       body('products.*.startAt')
         .exists()
         .custom(this.validateDate)

@@ -10,6 +10,7 @@ import {
 } from '../../types/order.type';
 import { IOrderProduct } from '../../models/order';
 import { groupBy, sumBy, find, isMatch } from 'lodash';
+import { IPlan } from '../../types/product.type';
 
 export class CreateOrderDto {
   private readonly userId: Types.ObjectId;
@@ -34,15 +35,14 @@ export class CreateOrderDto {
       startAt,
     } = product;
 
-    const existedPlan = plan
-      ? find(plans || [], (p) =>
-          isMatch(p, {
-            discount: plan.discount,
-            name: plan.name,
-            headCount: plan.headCount,
-          }),
-        )
-      : undefined;
+    const existedPlan = find(plans, (p) =>
+      isMatch(p, {
+        discount: plan.discount,
+        name: plan.name,
+        headCount: plan.headCount,
+      }),
+    ) as IPlan;
+
     return {
       productId,
       amount,
@@ -54,7 +54,7 @@ export class CreateOrderDto {
       vendor,
       theater,
       startAt,
-      ...(existedPlan && { plan: existedPlan }),
+      plan: existedPlan,
     };
   }
 
