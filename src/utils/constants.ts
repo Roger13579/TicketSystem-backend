@@ -33,3 +33,5 @@ export const virtualSchemaOption = {
     },
   },
 };
+
+export const nullableOption = { nullable: true, checkFalsy: true };
