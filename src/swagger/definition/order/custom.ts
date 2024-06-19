@@ -68,7 +68,7 @@ export const CustomCreateOrderObj = {
       description: propName.items,
       items: {
         type: 'object',
-        required: ['productId', 'amount'],
+        required: ['productId', 'plan', 'amount'],
         properties: {
           productId: {
             type: 'string',
