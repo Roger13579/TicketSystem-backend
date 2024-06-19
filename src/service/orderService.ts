@@ -28,7 +28,7 @@ import {
 } from '../types/line.type';
 import { LinePayOrderDTO } from '../dto/order/linePayOrderDto';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
-import { get, some, sumBy } from 'lodash';
+import { get, some } from 'lodash';
 import { SortOrder } from '../types/common.type';
 import moment from 'moment';
 
@@ -58,9 +58,11 @@ export class OrderService {
 
   public async createOrder(createOrderDto: CreateOrderDto) {
     const validProducts: IOrderProduct[] = [];
+    let validPrice: number = 0;
     const { items, price } = createOrderDto;
     for (const item of items) {
-      const product = await this.productRepository.findById(item.productId);
+      const { productId, amount, plan } = item;
+      const product = await this.productRepository.findById(productId);
       // 1. 確認各商品存在
       if (product) {
         const isValidAmount = this.validateAmount({ item, product });
@@ -88,6 +90,9 @@ export class OrderService {
           item,
           product,
         });
+
+        validPrice =
+          validPrice + product.price * amount * plan.discount * plan.headCount;
         validProducts.push(validProduct);
       } else {
         throwError(
@@ -99,8 +104,8 @@ export class OrderService {
 
     // 3. 確認總價格正確
     const isValidPrice = this.validatePrice({
-      products: validProducts,
-      totalPrice: price,
+      price,
+      validPrice,
     });
 
     if (!isValidPrice) {
@@ -332,17 +337,10 @@ export class OrderService {
     return true;
   };
 
-  private validatePrice = ({ products, totalPrice }: IValidatePrice) => {
-    const subTotal = sumBy(
-      products,
-      ({ price, amount, plan }) =>
-        Math.round(
-          price * amount * (plan ? plan.headCount * plan.discount : 1) * 100,
-        ) / 100,
-    );
-    logger.info('totalPrice = ' + totalPrice);
-    logger.info('subTotal = ' + subTotal);
-    return totalPrice === subTotal;
+  private validatePrice = ({ price, validPrice }: IValidatePrice) => {
+    logger.info('validPrice = ' + validPrice);
+    logger.info('price = ' + price);
+    return validPrice === price;
   };
 
   private createLinePayReq = (params: ICreateLinePayReqParams) => {
