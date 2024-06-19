@@ -1,6 +1,5 @@
 import { IUserReq, TPaginationQuery } from './common.type';
 import { IPlan, IProductId } from './product.type';
-import { IOrderProduct } from '../models/order';
 import { IProduct } from '../models/product';
 import { Types } from 'mongoose';
 
@@ -38,7 +37,7 @@ export interface IDeliveryInfo {
 
 export interface IOrderItem extends IProductId {
   amount: number;
-  plan?: IPlan;
+  plan: IPlan;
 }
 
 export interface ICreateOrderReq extends IUserReq {
@@ -86,8 +85,8 @@ export interface IValidateAmount {
 }
 
 export interface IValidatePrice {
-  products: IOrderProduct[];
-  totalPrice: number;
+  price: number;
+  validPrice: number;
 }
 
 export interface ILinePayConfirmReq extends IUserReq {

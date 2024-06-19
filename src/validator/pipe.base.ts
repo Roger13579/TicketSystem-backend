@@ -175,5 +175,12 @@ export abstract class PipeBase {
     return pwd === value;
   };
 
+  protected planValidation: { [property: string]: TCustomValidation } = {
+    headCount: (chain, message) =>
+      chain.exists().isInt({ min: 1 }).withMessage(message),
+    discount: (chain, message) =>
+      chain.exists().isFloat({ min: 0.1, max: 0.95 }).withMessage(message),
+  };
+
   constructor() {}
 }
