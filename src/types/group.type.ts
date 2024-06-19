@@ -46,8 +46,10 @@ export interface IGetGroupsReq extends IUserReq {
     participantCount?: string;
     status?: GroupStatus;
     haveTicket?: string;
-    startAt?: string;
-    endAt?: string;
+    startTime?: string;
+    endTime?: string;
+    startDate?: string;
+    endDate?: string;
   };
 }
 

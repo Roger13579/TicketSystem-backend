@@ -1,26 +1,12 @@
 import { PipeBase } from '../pipe.base';
 import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
-import {
-  GroupSortField,
-  GroupStatus,
-  IGetGroupsReq,
-} from '../../types/group.type';
-import { OptionType, TCustomValidator } from '../index.type';
+import { GroupSortField, GroupStatus } from '../../types/group.type';
+import { OptionType } from '../index.type';
 import { SortOrder } from '../../types/common.type';
 import { booleanStrings, nullableOption } from '../../utils/constants';
 
 export class GetGroupsPipe extends PipeBase {
-  private validateStartAt: TCustomValidator = (value, { req }) => {
-    const { endAt } = (req as IGetGroupsReq).query;
-    return this.validatePeriod(value, endAt, (a, b) => a.isBefore(b));
-  };
-
-  private validateEndAt: TCustomValidator = (value, { req }) => {
-    const { startAt } = (req as IGetGroupsReq).query;
-    return this.validatePeriod(value, startAt, (a, b) => a.isAfter(b));
-  };
-
   public transform = () => [
     this.limitValidation(
       query('limit'),
@@ -46,20 +32,22 @@ export class GetGroupsPipe extends PipeBase {
       .withMessage(
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'participantCount',
       ),
-    query('startAt')
-      .optional(nullableOption)
-      .custom(this.validateDate)
-      .custom(this.validateStartAt)
+    query('startTime')
+      .exists()
       .withMessage(
-        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startAtTo',
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startTime',
       ),
-    query('endAt')
-      .optional(nullableOption)
-      .custom(this.validateDate)
-      .custom(this.validateEndAt)
+    query('endTime')
+      .exists()
+      .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'endTime'),
+    query('startDate')
+      .exists()
       .withMessage(
-        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startAtTo',
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startDate',
       ),
+    query('endDate')
+      .exists()
+      .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'endDate'),
     query('sortField')
       .optional(nullableOption)
       .custom(this.validateOption(OptionType.item, GroupSortField))
