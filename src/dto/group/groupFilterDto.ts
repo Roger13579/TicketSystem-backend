@@ -6,6 +6,15 @@ import {
 } from '../../types/group.type';
 import { SortOrder } from '../../types/common.type';
 
+type TDateRange = {
+  $and: {
+    time: {
+      $gte?: Date;
+      $lte?: Date;
+    };
+  }[];
+};
+
 export class GroupFilterDto {
   private readonly _title?: string;
   private readonly _movieTitle?: string[];
@@ -13,11 +22,10 @@ export class GroupFilterDto {
   private readonly _participantCount?: number;
   private readonly _status: GroupStatus;
   private readonly _haveTicket?: boolean;
-  private readonly _startAt?: Date;
-  private readonly _endAt?: Date;
   private readonly _page: number;
   private readonly _limit: number;
   private readonly _sort: Record<string, 1 | -1>;
+  private readonly _dateRanges: TDateRange[] = [];
 
   get filter() {
     const titleRegex = this._title ? new RegExp(this._title) : undefined;
@@ -30,12 +38,7 @@ export class GroupFilterDto {
         amount: { $eq: this._participantCount },
       }),
       ...(this._haveTicket && { haveTicket: this._haveTicket }),
-      ...((this._startAt || this._endAt) && {
-        time: {
-          ...(this._endAt && { $lte: this._endAt }),
-          ...(this._startAt && { $gte: this._startAt }),
-        },
-      }),
+      $or: this._dateRanges,
     };
   }
 
@@ -58,6 +61,10 @@ export class GroupFilterDto {
     };
   }
 
+  get dateRanges() {
+    return this._dateRanges;
+  }
+
   constructor(req: IGetGroupsReq) {
     const {
       title,
@@ -66,8 +73,10 @@ export class GroupFilterDto {
       participantCount,
       status,
       haveTicket,
-      startAt,
-      endAt,
+      endTime,
+      startTime,
+      startDate,
+      endDate,
       page,
       limit,
       sortField,
@@ -87,7 +96,43 @@ export class GroupFilterDto {
     this._theater = theater ? theater.split(',') : undefined;
     this._haveTicket =
       haveTicket === undefined ? undefined : haveTicket === 'true';
-    this._startAt = startAt ? moment(startAt).toDate() : undefined;
-    this._endAt = endAt ? moment(endAt).toDate() : undefined;
+
+    // date range
+
+    const dateFrom = moment(startDate, 'YYYY/MM/DD').startOf('day');
+    const dateTo = moment(endDate, 'YYYY/MM/DD').endOf('day');
+    const timeFrom = moment(startTime, 'HH:mm');
+    const timeTo = moment(endTime, 'HH:mm');
+
+    const dateRanges: TDateRange[] = [];
+    for (
+      let date = dateFrom.clone();
+      date.isSameOrBefore(dateTo);
+      date.add(1, 'days')
+    ) {
+      const start = {
+        hour: timeFrom.hours(),
+        minute: timeFrom.minutes(),
+        second: 0,
+        millisecond: 0,
+      };
+      const end = {
+        hour: timeTo.hours(),
+        minute: timeTo.minutes(),
+        second: 0,
+        millisecond: 0,
+      };
+
+      const dateRange = {
+        $and: [
+          { time: { $gte: new Date(date.clone().set(start).toISOString()) } },
+          { time: { $lte: new Date(date.clone().set(end).toISOString()) } },
+        ],
+      };
+
+      dateRanges.push(dateRange);
+    }
+
+    this._dateRanges = dateRanges;
   }
 }
