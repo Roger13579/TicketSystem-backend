@@ -258,23 +258,33 @@ export class GroupRoute extends BaseRoute {
               $ref: "#/definitions/CustomGetGroupCountQuery"
             }
           }
-          #swagger.parameters['startAt'] = {
+          #swagger.parameters['startDate'] = {
             in: 'query',
-            required: false,
-            description: '開始活動時間-起',
+            required: true,
+            description: '開始活動日期-起 (一定要遵循以下格式)',
             type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomTimeAtFromQuery"
-            }
+            example: '2024/01/12'
           }
-          #swagger.parameters['endAt'] = {
+          #swagger.parameters['endDate'] = {
             in: 'query',
-            required: false,
-            description: '開始活動時間-迄',
+            required: true,
+            description: '開始活動日期-迄 (一定要遵循以下格式)',
             type: 'string',
-            schema:{
-              $ref: "#/definitions/CustomTimeAtToQuery"
-            }
+            example:'2024/07/12'
+          }
+          #swagger.parameters['startTime'] = {
+            in: 'query',
+            required: true,
+            description: '開始活動時間-起 (一定要遵循以下格式)',
+            type: 'string',
+            example: '01:00'
+          }
+          #swagger.parameters['endTime'] = {
+            in: 'query',
+            required: true,
+            description: '開始活動時間-迄 (一定要遵循以下格式)',
+            type: 'string',
+            example: '23:00'
           }
           #swagger.parameters['sortField'] = {
             in: 'query',
