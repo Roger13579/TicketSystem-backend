@@ -151,13 +151,17 @@ export class CartService {
 
     const promises = products.map(async (item) => {
       // 2-1 確認商品是否存在且可被購買
-      const { productId, amount, plan } = item;
-      const existedProduct = this.productRepository.findProduct({
+      const {
+        productId,
+        amount,
+        plan: { name, discount, headCount },
+      } = item;
+      const existedProduct = await this.productRepository.findProduct({
         _id: item.productId,
         isPublic: true,
-        'plans.name': plan.name,
-        'plans.discount': plan.discount,
-        'plans.headCount': plan.headCount,
+        plans: {
+          $elemMatch: { name, discount, headCount },
+        },
       });
 
       // 2-2 商品不存在
@@ -170,9 +174,9 @@ export class CartService {
       const existedItem = cart.items.find((item) => {
         const isEqualId = item.productId?.equals(new Types.ObjectId(productId));
         const isEqualPlan =
-          item.plan.discount === plan.discount &&
-          item.plan.headCount === plan.headCount &&
-          item.plan.name === plan.name;
+          item.plan.discount === discount &&
+          item.plan.headCount === headCount &&
+          item.plan.name === name;
         return isEqualId && isEqualPlan;
       });
 
