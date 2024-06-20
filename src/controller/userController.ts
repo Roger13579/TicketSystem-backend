@@ -19,6 +19,7 @@ import { IGroup } from '../models/group';
 import { IGetUserGroupsReq } from '../types/group.type';
 import { TicketRefundDto } from '../dto/ticket/TicketRefundDto';
 import { TicketService } from '../service/ticketService';
+import { locale } from 'moment';
 
 export class UserController extends BaseController {
   private readonly userService = new UserService();
@@ -117,6 +118,15 @@ export class UserController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       { orderId: tickets[0].orderId, refundTicketsCount: tickets.length },
+    );
+  };
+
+  public useTicket: TMethod = async (req) => {
+    const jwtString = await this.userService.useTicket(req.params.ticketId);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { qrCode: jwtString },
     );
   };
 }
