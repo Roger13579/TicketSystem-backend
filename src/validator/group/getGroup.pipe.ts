@@ -1,12 +1,35 @@
 import { PipeBase } from '../pipe.base';
 import { query } from 'express-validator';
 import { CustomResponseType } from '../../types/customResponseType';
-import { GroupSortField, GroupStatus } from '../../types/group.type';
-import { OptionType } from '../index.type';
+import {
+  GroupSortField,
+  GroupStatus,
+  IGetGroupsReq,
+} from '../../types/group.type';
+import { OptionType, TCustomValidator } from '../index.type';
 import { SortOrder } from '../../types/common.type';
 import { booleanStrings, nullableOption } from '../../utils/constants';
 
+const timeFormat = /^([01]\d|2[0-3]):([0-5]\d)$/; // HH:mm 格式
+const dateFormat = /^\d{4}\/\d{2}\/\d{2}$/; // YYYY/MM/DD 格式
+
 export class GetGroupsPipe extends PipeBase {
+  private validateTimeRange: TCustomValidator = (value, { req }) => {
+    const { startTime, endTime, startDate, endDate } = (req as IGetGroupsReq)
+      .query;
+
+    const hasTimeRange = !!startTime && !!endTime && !!startDate && !!endDate;
+    const hasNoTimeRange = !startTime && !endTime && !startDate && !endDate;
+
+    return hasTimeRange || hasNoTimeRange;
+  };
+
+  private validateTimeFormat: TCustomValidator<string> = (value) =>
+    timeFormat.test(value);
+
+  private validateDateFormat: TCustomValidator<string> = (value) =>
+    dateFormat.test(value);
+
   public transform = () => [
     this.limitValidation(
       query('limit'),
@@ -33,21 +56,49 @@ export class GetGroupsPipe extends PipeBase {
         CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'participantCount',
       ),
     query('startTime')
-      .exists()
+      .optional()
+      .custom(this.validateTimeFormat)
       .withMessage(
-        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startTime',
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startTime 格式錯誤',
+      )
+      .custom(this.validateTimeRange)
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE +
+          '使用時間區段搜尋時，startTime、endTime、startDate、endDate 皆為必填',
       ),
     query('endTime')
-      .exists()
-      .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'endTime'),
-    query('startDate')
-      .exists()
+      .optional()
+      .custom(this.validateTimeFormat)
       .withMessage(
-        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startDate',
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'endTime 格式錯誤',
+      )
+      .custom(this.validateTimeRange)
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE +
+          '使用時間區段搜尋時，startTime、endTime、startDate、endDate 皆為必填',
+      ),
+    query('startDate')
+      .optional()
+      .custom(this.validateDateFormat)
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'startDate 格式錯誤',
+      )
+      .custom(this.validateTimeRange)
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE +
+          '使用時間區段搜尋時，startTime、endTime、startDate、endDate 皆為必填',
       ),
     query('endDate')
-      .exists()
-      .withMessage(CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'endDate'),
+      .optional()
+      .custom(this.validateDateFormat)
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + 'endDate 格式錯誤',
+      )
+      .custom(this.validateTimeRange)
+      .withMessage(
+        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE +
+          '使用時間區段搜尋時，startTime、endTime、startDate、endDate 皆為必填',
+      ),
     query('sortField')
       .optional(nullableOption)
       .custom(this.validateOption(OptionType.item, GroupSortField))

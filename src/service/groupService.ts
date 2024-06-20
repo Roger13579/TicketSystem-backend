@@ -145,15 +145,6 @@ export class GroupService {
     }
   }
   public async findGroups(groupFilterDto: GroupFilterDto) {
-    const { dateRanges } = groupFilterDto;
-
-    if (dateRanges.length === 0) {
-      throwError(
-        CustomResponseType.INVALID_GROUP_FILTER_MESSAGE + '時間區間有誤',
-        CustomResponseType.INVALID_GROUP_FILTER,
-      );
-    }
-
     return await this.groupRepository.findGroups(groupFilterDto);
   }
 

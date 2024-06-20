@@ -38,7 +38,7 @@ export class GroupFilterDto {
         amount: { $eq: this._participantCount },
       }),
       ...(this._haveTicket && { haveTicket: this._haveTicket }),
-      $or: this._dateRanges,
+      ...(this._dateRanges.length > 0 && { $or: this._dateRanges }),
     };
   }
 
@@ -59,10 +59,6 @@ export class GroupFilterDto {
         content: 1,
       },
     };
-  }
-
-  get dateRanges() {
-    return this._dateRanges;
   }
 
   constructor(req: IGetGroupsReq) {
