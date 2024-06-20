@@ -19,7 +19,6 @@ import { IGroup } from '../models/group';
 import { IGetUserGroupsReq } from '../types/group.type';
 import { TicketRefundDto } from '../dto/ticket/TicketRefundDto';
 import { TicketService } from '../service/ticketService';
-import { locale } from 'moment';
 
 export class UserController extends BaseController {
   private readonly userService = new UserService();
