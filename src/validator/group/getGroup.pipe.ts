@@ -25,10 +25,10 @@ export class GetGroupsPipe extends PipeBase {
   };
 
   private validateTimeFormat: TCustomValidator<string> = (value) =>
-    timeFormat.test(value);
+    timeFormat.test(value) || !value;
 
   private validateDateFormat: TCustomValidator<string> = (value) =>
-    dateFormat.test(value);
+    dateFormat.test(value) || !value;
 
   public transform = () => [
     this.limitValidation(

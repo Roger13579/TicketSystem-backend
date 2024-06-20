@@ -6,7 +6,7 @@ import {
 } from '../../types/group.type';
 import { SortOrder } from '../../types/common.type';
 
-type TDateRange = {
+type TTimeRange = {
   $and: {
     time: {
       $gte?: Date;
@@ -25,7 +25,7 @@ export class GroupFilterDto {
   private readonly _page: number;
   private readonly _limit: number;
   private readonly _sort: Record<string, 1 | -1>;
-  private readonly _dateRanges: TDateRange[] = [];
+  private readonly _timeRanges: TTimeRange[] = [];
 
   get filter() {
     const titleRegex = this._title ? new RegExp(this._title) : undefined;
@@ -38,7 +38,7 @@ export class GroupFilterDto {
         amount: { $eq: this._participantCount },
       }),
       ...(this._haveTicket && { haveTicket: this._haveTicket }),
-      ...(this._dateRanges.length > 0 && { $or: this._dateRanges }),
+      ...(this._timeRanges.length > 0 && { $or: this._timeRanges }),
     };
   }
 
@@ -95,40 +95,44 @@ export class GroupFilterDto {
 
     // date range
 
-    const dateFrom = moment(startDate, 'YYYY/MM/DD').startOf('day');
-    const dateTo = moment(endDate, 'YYYY/MM/DD').endOf('day');
-    const timeFrom = moment(startTime, 'HH:mm');
-    const timeTo = moment(endTime, 'HH:mm');
+    const hasTimeRange = !!startDate && !!endDate && !!startTime && !!endTime;
 
-    const dateRanges: TDateRange[] = [];
-    for (
-      let date = dateFrom.clone();
-      date.isSameOrBefore(dateTo);
-      date.add(1, 'days')
-    ) {
-      const start = {
-        hour: timeFrom.hours(),
-        minute: timeFrom.minutes(),
-        second: 0,
-        millisecond: 0,
-      };
-      const end = {
-        hour: timeTo.hours(),
-        minute: timeTo.minutes(),
-        second: 0,
-        millisecond: 0,
-      };
+    if (hasTimeRange) {
+      const dateFrom = moment(startDate, 'YYYY/MM/DD').startOf('day');
+      const dateTo = moment(endDate, 'YYYY/MM/DD').endOf('day');
+      const timeFrom = moment(startTime, 'HH:mm');
+      const timeTo = moment(endTime, 'HH:mm');
 
-      const dateRange = {
-        $and: [
-          { time: { $gte: new Date(date.clone().set(start).toISOString()) } },
-          { time: { $lte: new Date(date.clone().set(end).toISOString()) } },
-        ],
-      };
+      const dateRanges: TTimeRange[] = [];
+      for (
+        let date = dateFrom.clone();
+        date.isSameOrBefore(dateTo);
+        date.add(1, 'days')
+      ) {
+        const start = {
+          hour: timeFrom.hours(),
+          minute: timeFrom.minutes(),
+          second: 0,
+          millisecond: 0,
+        };
+        const end = {
+          hour: timeTo.hours(),
+          minute: timeTo.minutes(),
+          second: 0,
+          millisecond: 0,
+        };
 
-      dateRanges.push(dateRange);
+        const dateRange = {
+          $and: [
+            { time: { $gte: new Date(date.clone().set(start).toISOString()) } },
+            { time: { $lte: new Date(date.clone().set(end).toISOString()) } },
+          ],
+        };
+
+        dateRanges.push(dateRange);
+      }
+
+      this._timeRanges = dateRanges;
     }
-
-    this._dateRanges = dateRanges;
   }
 }
