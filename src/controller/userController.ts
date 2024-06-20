@@ -119,4 +119,13 @@ export class UserController extends BaseController {
       { orderId: tickets[0].orderId, refundTicketsCount: tickets.length },
     );
   };
+
+  public useTicket: TMethod = async (req) => {
+    const jwtString = await this.userService.useTicket(req.params.ticketId);
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      { qrCode: jwtString },
+    );
+  };
 }

@@ -108,17 +108,6 @@ export class UserService {
     return user;
   }
 
-  public async findByEmail(email: string) {
-    const user = await this.userRepository.findByEmail(email);
-    if (!user) {
-      throwError(
-        CustomResponseType.UNREGISTERED_USER_MESSAGE,
-        CustomResponseType.UNREGISTERED_USER,
-      );
-    }
-    return user;
-  }
-
   public async getUserGroups(getUserGroupDto: GetUserGroupDto) {
     switch (getUserGroupDto.groupType) {
       case 'own': {
@@ -416,4 +405,25 @@ export class UserService {
     });
     return result;
   }
+
+  public useTicket = async (ticketId: string) => {
+    const ticket = await this.ticketRepository.findById(
+      new Types.ObjectId(ticketId),
+    );
+    if (!ticket) {
+      throwError(
+        CustomResponseType.TICKET_NOT_FOUND_MESSAGE,
+        CustomResponseType.TICKET_NOT_FOUND,
+      );
+    }
+    const privateKey = process.env.JWT_SECRETS;
+    const defaultOptions: object = {
+      expiresIn: '5m',
+    };
+    return jwt.sign(
+      { ticketId: ticketId },
+      privateKey,
+      Object.assign(defaultOptions),
+    );
+  };
 }

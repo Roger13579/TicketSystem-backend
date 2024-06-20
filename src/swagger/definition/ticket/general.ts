@@ -14,6 +14,10 @@ const TicketProductDetail = {
   photoPath: '',
 };
 
+const QRCodeResponse = {
+  qrCode: 'uwiehdfipu28349y5rp24gh9',
+};
+
 /**
  * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
  */
@@ -129,4 +133,10 @@ export const GetTransferTicketSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: [TransferableTicket],
+};
+
+export const GetQRCodeSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: QRCodeResponse,
 };

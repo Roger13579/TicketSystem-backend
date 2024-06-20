@@ -4,6 +4,7 @@ import { UserVerify } from '../middleware/userVerify';
 import { GetUserFavoritePipe } from '../validator/user/getUserFavorite.pipe';
 import { GetUserGroupPipe } from '../validator/group/getUserGroup.pipe';
 import { TicketRefundPipe } from '../validator/ticket/ticketRefund.pipe';
+import { UseTicketPipe } from '../validator/ticket/useTicket.pipe';
 
 export class UserRoute extends BaseRoute {
   protected controller!: UserController;
@@ -278,25 +279,16 @@ export class UserRoute extends BaseRoute {
     this.router.patch(
       '/v1/user/refund',
       /**
-       * #swagger.tags = ['Ticket']
+       * #swagger.tags = ['User']
        * #swagger.summary = '退票'
        * #swagger.security=[{"Bearer": []}]
        */
       /*
         #swagger.parameters['obj'] ={
           in:'body',
-          description:'欲退票的票券ID',
+          description:'欲退票的票券資料',
           schema:{
-            $ref:"#/definitions/CustomGetTicketIdQuery"
-          }
-        }
-       */
-      /*
-        #swagger.parameters['obj'] ={
-          in:'body',
-          description:'退票原因',
-          schema:{
-            $ref:"#/definitions/CustomRefundTicketsReason"
+            $ref:"#/definitions/CustomTicketRefundObj"
           }
         }
        */
@@ -311,6 +303,34 @@ export class UserRoute extends BaseRoute {
       UserVerify,
       this.usePipe(TicketRefundPipe),
       this.responseHandler(this.controller.ticketRefund),
+    );
+
+    this.router.post(
+      '/v1/user/use-ticket/:ticketId',
+      /**
+       * #swagger.tags = ['User']
+       * #swagger.summary = '產生換票QR Code'
+       * #swagger.security=[{"Bearer": []}]
+       */
+      /*
+        #swagger.parameters['ticketId'] ={
+          in:'path',
+          description:'欲兌換的票券ID',
+          required: true,
+          type: 'string',
+        }
+       */
+      /**
+       #swagger.responses[200]={
+       description:'QR Code產生成功',
+       schema:{
+       $ref:'#/definitions/GetQRCodeSuccess'
+       }
+       }
+       */
+      UserVerify,
+      this.usePipe(UseTicketPipe),
+      this.responseHandler(this.controller.useTicket),
     );
   }
 }

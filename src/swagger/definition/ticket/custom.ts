@@ -146,3 +146,19 @@ export const CustomDeleteTicketsObj = {
     },
   },
 };
+export const CustomTicketRefundObj = {
+  type: 'object',
+  required: ['ticketId', 'reason'],
+  properties: {
+    ticketId: {
+      type: 'string',
+      description: propName.ticketId,
+      example: ticket.ticketId,
+    },
+    reason: {
+      type: 'string',
+      description: '退票原因',
+      example: '臨時有事',
+    },
+  },
+};
