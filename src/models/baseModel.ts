@@ -69,7 +69,7 @@ export const schemaDef = {
       },
       discount: {
         type: Number,
-        max: 0.95,
+        max: 1,
         min: 0.1,
         required: true,
       },

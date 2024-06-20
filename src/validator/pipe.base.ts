@@ -182,7 +182,7 @@ export abstract class PipeBase {
     headCount: (chain, message) =>
       chain.exists().isInt({ min: 1 }).withMessage(message),
     discount: (chain, message) =>
-      chain.exists().isFloat({ min: 0.1, max: 0.95 }).withMessage(message),
+      chain.exists().isFloat({ min: 0.1, max: 1 }).withMessage(message),
   };
 
   constructor() {}
