@@ -260,29 +260,29 @@ export class GroupRoute extends BaseRoute {
           }
           #swagger.parameters['startDate'] = {
             in: 'query',
-            required: true,
-            description: '開始活動日期-起 (一定要遵循以下格式)',
+            required: false,
+            description: '開始活動日期-起，一定要遵循以下格式，若要以時段搜尋則 startDate、endDate、startTime、endTime 皆為必填。',
             type: 'string',
             example: '2024/01/12'
           }
           #swagger.parameters['endDate'] = {
             in: 'query',
-            required: true,
-            description: '開始活動日期-迄 (一定要遵循以下格式)',
+            required: false,
+            description: '開始活動日期-迄，一定要遵循以下格式，若要以時段搜尋則 startDate、endDate、startTime、endTime 皆為必填。',
             type: 'string',
             example:'2024/07/12'
           }
           #swagger.parameters['startTime'] = {
             in: 'query',
-            required: true,
-            description: '開始活動時間-起 (一定要遵循以下格式)',
+            required: false,
+            description: '開始活動時間-起，一定要遵循以下格式，若要以時段搜尋則 startDate、endDate、startTime、endTime 皆為必填。',
             type: 'string',
             example: '01:00'
           }
           #swagger.parameters['endTime'] = {
             in: 'query',
-            required: true,
-            description: '開始活動時間-迄 (一定要遵循以下格式)',
+            required: false,
+            description: '開始活動時間-迄，一定要遵循以下格式，若要以時段搜尋則 startDate、endDate、startTime、endTime 皆為必填。',
             type: 'string',
             example: '23:00'
           }
