@@ -18,6 +18,7 @@ import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
 import { TicketRefundDto } from '../dto/ticket/TicketRefundDto';
 import { OrderRepository } from '../repository/orderRepository';
 import { ITicket } from '../models/ticket';
+import { ShareCodeRepository } from '../repository/shareCodeRepository';
 import { ProductRepository } from '../repository/productRepository';
 import { GetOrderInfoVo } from '../vo/ticket/getOrderInfoVo';
 import { IProduct } from '../models/product';
@@ -27,6 +28,8 @@ const logger = log4js.getLogger(`TicketService`);
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
   private readonly orderRepository: OrderRepository = new OrderRepository();
+  private readonly shareCodeRepository: ShareCodeRepository =
+    new ShareCodeRepository();
   private readonly productRepository: ProductRepository =
     new ProductRepository();
 
@@ -153,11 +156,31 @@ export class TicketService {
     decrypted += decipher.final('utf8');
     return decrypted;
   };
+  private checkShareCode = async (shareCode: string) => {
+    const code = await this.shareCodeRepository.findByShareCode(shareCode);
+    if (code) {
+      return code.ticketId;
+    } else {
+      throwError(
+        CustomResponseType.SHARE_CODE_ERROR_MESSAGE,
+        CustomResponseType.SHARE_CODE_ERROR,
+      );
+    }
+  };
+  private genShareCode = async (ticketId: Types.ObjectId) => {
+    let shareCode;
+    let code;
+    do {
+      shareCode = (Math.floor(Math.random() * 9000000) + 1000000).toString();
+      code = await this.shareCodeRepository.findByShareCode(shareCode);
+    } while (code);
+    await this.shareCodeRepository.create(ticketId, shareCode.toString());
+    return shareCode;
+  };
 
   public updateShareCode = async (createShareCodeDto: CreateShareCodeDTO) => {
     const { ticketId } = createShareCodeDto;
-    const shareCode = this.encryptTicketId(ticketId);
-    createShareCodeDto.shareCode = shareCode;
+    createShareCodeDto.shareCode = await this.genShareCode(ticketId);
     const ticket =
       await this.ticketRepository.updateShareCode(createShareCodeDto);
 
@@ -173,10 +196,10 @@ export class TicketService {
 
   public transferTicket = async (transferTicketDto: TransferTicketDTO) => {
     const { shareCode } = transferTicketDto;
-    const ticketId = this.decryptShareCode(shareCode);
+    const ticketId = (await this.checkShareCode(shareCode)) as Types.ObjectId;
     const ticket = await this.ticketRepository.transferTicket(
       transferTicketDto,
-      new Types.ObjectId(ticketId),
+      ticketId,
     );
 
     if (!ticket) {
@@ -184,6 +207,8 @@ export class TicketService {
         CustomResponseType.TRANSFER_TICKET_ERROR_MESSAGE + '無效的分票驗證碼',
         CustomResponseType.TRANSFER_TICKET_ERROR,
       );
+    } else {
+      await this.shareCodeRepository.update(ticketId);
     }
     return ticket;
   };

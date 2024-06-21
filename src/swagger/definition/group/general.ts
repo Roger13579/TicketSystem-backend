@@ -32,6 +32,7 @@ export const UserGroupItem = {
   participant: [
     {
       userId: '123123aabb',
+      phone: '0912345678',
       name: '阿明',
       nickName: '小明',
       lineId: '1234567',
@@ -69,6 +70,7 @@ export const GetGroupDetailSuccess = {
     participant: [
       {
         userId: '123123aabb',
+        phone: '0912345678',
         name: '阿明',
         nickName: '小明',
         lineId: '1234567',

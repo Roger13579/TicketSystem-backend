@@ -13,6 +13,7 @@ export enum ModelName {
   order = 'Order',
   chat = 'Chat',
   notify = 'Notify',
+  shareCode = 'ShareCode',
 }
 
 export interface BaseModel extends Document, ITimestamp {
