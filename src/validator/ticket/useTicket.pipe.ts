@@ -6,9 +6,7 @@ export class UseTicketPipe extends PipeBase {
   public transform = () => [
     param('ticketId')
       .exists()
-      .withMessage(
-        CustomResponseType.INVALID_TICKET_REFUND_MESSAGE + 'ticketId',
-      ),
+      .withMessage(CustomResponseType.FORMAT_ERROR_MESSAGE + 'ticketId'),
     this.validationHandler,
   ];
   constructor() {

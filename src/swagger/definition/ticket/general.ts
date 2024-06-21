@@ -47,6 +47,12 @@ export const SharedTicket = {
   $updatedAt: new Date().toISOString(),
   $expiredAt: new Date().toISOString(),
 };
+export const OrderInfo = {
+  $productName: 'testproduct',
+  $holdCount: '2',
+  $price: '350',
+  $photoPath: 'https://image.com.tw',
+};
 /**
  * @description swagger autogen 可以自動生成，通常用於 response 的 general 資料
  */
@@ -90,6 +96,13 @@ export const GetSharedTicketsSuccess = {
       },
     ],
     ...PaginationSuccess,
+  },
+};
+export const GetOrderInfoSuccess = {
+  $status: CustomResponseType.OK,
+  $message: CustomResponseType.OK_MESSAGE,
+  $data: {
+    ...OrderInfo,
   },
 };
 

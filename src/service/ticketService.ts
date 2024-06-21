@@ -18,12 +18,17 @@ import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
 import { TicketRefundDto } from '../dto/ticket/TicketRefundDto';
 import { OrderRepository } from '../repository/orderRepository';
 import { ITicket } from '../models/ticket';
+import { ProductRepository } from '../repository/productRepository';
+import { GetOrderInfoVo } from '../vo/ticket/getOrderInfoVo';
+import { IProduct } from '../models/product';
 
 const logger = log4js.getLogger(`TicketService`);
 
 export class TicketService {
   private readonly ticketRepository: TicketRepository = new TicketRepository();
   private readonly orderRepository: OrderRepository = new OrderRepository();
+  private readonly productRepository: ProductRepository =
+    new ProductRepository();
 
   public findTickets = async (ticketFilterDto: GetTicketsDto) => {
     const { expiredAtFrom, expiredAtTo } = ticketFilterDto;
@@ -76,6 +81,19 @@ export class TicketService {
   }
   public getTicketDetail = async (getTicketDetailDto: GetTicketDetailDto) => {
     return await this.ticketRepository.getTicketDetail(getTicketDetailDto);
+  };
+
+  public getOrderInfo = async (orderId: string, productId: string) => {
+    const order = (await this.orderRepository.findById(
+      new Types.ObjectId(orderId),
+    )) as IOrder;
+    const product = (await this.productRepository.findById(
+      new Types.ObjectId(productId),
+    )) as IProduct;
+    const holdCount = order.products
+      .filter((product) => product.productId.toString() === productId)
+      .map((p) => p.amount)[0];
+    return new GetOrderInfoVo(holdCount, product);
   };
 
   public verifyTickets = async (verifyTicketsDto: VerifyTicketsDTO) => {
