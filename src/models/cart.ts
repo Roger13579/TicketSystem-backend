@@ -24,15 +24,16 @@ const ItemSchema = new Schema<IItem>(
   },
 );
 
-ItemSchema.index(
-  {
-    productId: 1,
-    'plan.name': 1,
-    'plan.discount': 1,
-    'plan.headCount': 1,
-  },
-  { unique: true },
-);
+// TODO: 購物車內的商品與方案不重複
+// ItemSchema.index(
+//   {
+//     productId: 1,
+//     'plan.name': 1,
+//     'plan.discount': 1,
+//     'plan.headCount': 1,
+//   },
+//   { unique: true },
+// );
 
 export interface ICart extends BaseModel, IUserId {
   items: [IItem];
