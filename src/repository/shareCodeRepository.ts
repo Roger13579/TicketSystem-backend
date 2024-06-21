@@ -15,7 +15,9 @@ export class ShareCodeRepository {
     await ShareCodeModel.create({
       ticketId: ticketId,
       shareCode: shareCode,
-      expiredAt: moment().add(5, 'minute').toDate(),
+      expiredAt: moment()
+        .add(process.env.SHARE_CODE_EXPIRES, 'minute')
+        .toDate(),
       isUsed: false,
     });
 

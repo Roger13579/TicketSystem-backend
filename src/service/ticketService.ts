@@ -11,7 +11,6 @@ import { VerifyTicketsDTO } from '../dto/ticket/verifyTicketsDto';
 import { EditTicketsDTO } from '../dto/ticket/editTicketsDto';
 import { CreateShareCodeDTO } from '../dto/ticket/createShareCodeDto';
 import { Types } from 'mongoose';
-import * as crypto from 'node:crypto';
 import { TransferTicketDTO } from '../dto/ticket/transferTicketDto';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
@@ -127,36 +126,8 @@ export class TicketService {
     return tickets;
   };
 
-  private encryptTicketId = (ticketId: Types.ObjectId) => {
-    // 確保密鑰是 32 字節長度 (AES-256)
-    const key = crypto
-      .createHash('sha256')
-      .update(process.env.SHARE_CODE_SECRET_KEY)
-      .digest();
-    // 初始化向量
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-    // 加密
-    let encrypted = cipher.update(ticketId.toString(), 'utf8', 'base64');
-    encrypted += cipher.final('base64');
-    // 返回加密後的 ticket_id 及 iv，兩者用 ':' 分隔
-    return `${iv.toString('base64')}:${encrypted}`;
-  };
-
-  private decryptShareCode = (shareCode: string) => {
-    const parts = shareCode.split(':');
-    const iv = Buffer.from(parts[0], 'base64');
-    const encrypted = parts[1];
-    const key = crypto
-      .createHash('sha256')
-      .update(process.env.SHARE_CODE_SECRET_KEY)
-      .digest();
-    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-    let decrypted = decipher.update(encrypted, 'base64', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-  };
   private checkShareCode = async (shareCode: string) => {
+    // 查出驗證碼並用查詢條件判斷是否過期
     const code = await this.shareCodeRepository.findByShareCode(shareCode);
     if (code) {
       return code.ticketId;
@@ -170,6 +141,7 @@ export class TicketService {
   private genShareCode = async (ticketId: Types.ObjectId) => {
     let shareCode;
     let code;
+    // 產生後檢查db是否有重複、未到期、未使用的驗證碼
     do {
       shareCode = (Math.floor(Math.random() * 9000000) + 1000000).toString();
       code = await this.shareCodeRepository.findByShareCode(shareCode);
