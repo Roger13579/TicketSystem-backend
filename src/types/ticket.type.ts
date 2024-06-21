@@ -30,6 +30,12 @@ export interface IGetTicketsReq extends IUserReq {
     isPublished?: string;
   };
 }
+export interface IGetOrderInfoReq extends IUserReq {
+  query: {
+    orderId?: string;
+    productId?: string;
+  };
+}
 export interface IGetTicketsRes {
   metadata: [
     {

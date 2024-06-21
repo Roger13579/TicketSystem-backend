@@ -10,6 +10,7 @@ import { ClaimTransferTicketPipe } from '../validator/ticket/claimTransferTicket
 import { DeleteTicketsPipe } from '../validator/ticket/deleteTickets.pipe';
 import { GetTicketDetailPipe } from '../validator/ticket/getTicketDetail.pipe';
 import { GetSharedTicketPipe } from '../validator/ticket/getSharedTicket.pipe';
+import { GetOrderInfoPipe } from '../validator/ticket/getOrderInfo.pipe';
 
 export class TicketRoute extends BaseRoute {
   protected controller!: TicketController;
@@ -146,34 +147,6 @@ export class TicketRoute extends BaseRoute {
       this.usePipe(GetTicketPipe),
       this.responseHandler(this.controller.getTickets),
     );
-
-    this.router.get(
-      '/v1/ticket/:id',
-      /**
-       * #swagger.tags = ['Ticket']
-       * #swagger.summary = '取得票券詳細資料'
-       * #swagger.security=[{"Bearer": []}],
-       */
-      /*
-        #swagger.parameters['id'] = {
-          in: 'path',
-          description: '票券 id',
-          example: 'abcdefg123124',
-        }
-      */
-      /*
-          #swagger.responses[200] = {
-            description:'OK',
-            schema:{
-              $ref: "#/definitions/GetTicketDetailSuccess"
-            }
-          }
-      */
-      UserVerify,
-      this.usePipe(GetTicketDetailPipe),
-      this.responseHandler(this.controller.getTicketDetail),
-    );
-
     this.router.get(
       '/v1/ticket-shared',
       /**
@@ -210,6 +183,43 @@ export class TicketRoute extends BaseRoute {
       */
       this.usePipe(GetSharedTicketPipe),
       this.responseHandler(this.controller.getSharedTickets),
+    );
+    this.router.get(
+      '/v1/ticket/orderInfo',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '取得上架分票票券訂單內容'
+       */
+      /*
+      #swagger.parameters['orderId'] = {
+        in: 'query',
+        required: true,
+        description: '訂單ID',
+        type: 'string',
+        schema:{
+          $ref: "#/definitions/CustomGetOrderIdQuery"
+        }
+      }
+    #swagger.parameters['productId'] = {
+      in: 'query',
+      required: true,
+      description: '商品ID',
+      type: 'string',
+      schema:{
+        $ref: "#/definitions/CustomGetProductIdQuery"
+      }
+    }
+      */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/GetOrderInfoSuccess"
+            }
+          }
+      */
+      this.usePipe(GetOrderInfoPipe),
+      this.responseHandler(this.controller.getTicketOrderInfo),
     );
 
     this.router.patch(
@@ -358,6 +368,32 @@ export class TicketRoute extends BaseRoute {
       IsAdmin,
       this.usePipe(DeleteTicketsPipe),
       this.responseHandler(this.controller.deleteTickets),
+    );
+    this.router.get(
+      '/v1/ticket/:id',
+      /**
+       * #swagger.tags = ['Ticket']
+       * #swagger.summary = '取得票券詳細資料'
+       * #swagger.security=[{"Bearer": []}],
+       */
+      /*
+        #swagger.parameters['id'] = {
+          in: 'path',
+          description: '票券 id',
+          example: 'abcdefg123124',
+        }
+      */
+      /*
+          #swagger.responses[200] = {
+            description:'OK',
+            schema:{
+              $ref: "#/definitions/GetTicketDetailSuccess"
+            }
+          }
+      */
+      UserVerify,
+      this.usePipe(GetTicketDetailPipe),
+      this.responseHandler(this.controller.getTicketDetail),
     );
   }
 }

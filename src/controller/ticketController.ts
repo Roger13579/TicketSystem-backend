@@ -9,6 +9,7 @@ import {
   ITransferTicketReq,
   IClaimShareTicketReq,
   IDeleteTicketsReq,
+  IGetOrderInfoReq,
 } from '../types/ticket.type';
 import { IOrder } from '../models/order';
 import { OrderRepository } from '../repository/orderRepository';
@@ -115,6 +116,18 @@ export class TicketController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       { tickets },
+    );
+  };
+
+  public getTicketOrderInfo: TMethod<IGetOrderInfoReq> = async (req) => {
+    const getOrderInfoVo = await this.ticketService.getOrderInfo(
+      req.query.orderId!,
+      req.query.productId!,
+    );
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      getOrderInfoVo,
     );
   };
 }

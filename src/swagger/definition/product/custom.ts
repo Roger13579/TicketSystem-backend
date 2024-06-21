@@ -321,6 +321,10 @@ export const CustomGetProductTitleQuery = {
   example: '很棒的特映會',
 };
 
+export const CustomGetProductIdQuery = {
+  example: '1231432534wefqwef',
+};
+
 export const CustomGetProductTypesQuery = {
   example: `${ProductType.corporateBooking},${ProductType.openAir}`,
 };
