@@ -1,6 +1,4 @@
-import { ITicket } from '../../models/ticket';
 import { IProduct } from '../../models/product';
-import { IOrder } from '../../models/order';
 
 export class GetOrderInfoVo {
   private productName: string;
