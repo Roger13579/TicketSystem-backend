@@ -14,7 +14,7 @@ import { GetOrderVo } from '../vo/order/getOrderVo';
 import { throwError } from '../utils/errorHandler';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
 import { TMethod } from '../types/common.type';
-import { TicketService } from "../service/ticketService";
+import { TicketService } from '../service/ticketService';
 
 class OrderController extends BaseController {
   private readonly orderService = new OrderService();
