@@ -40,7 +40,21 @@ export abstract class BaseRoute {
     (req, res, next) => {
       method
         .call(this.controller, req, res, next)
-        .then((obj) => res.status(HttpStatus.OK).json(obj))
+        .then((obj) => {
+          const isRedirect = !!(
+            obj.data &&
+            (obj.data as { specific_redirect_url?: string })
+              .specific_redirect_url
+          );
+          if (isRedirect) {
+            const { specific_redirect_url } = obj.data as {
+              specific_redirect_url: string;
+            };
+            res.redirect(HttpStatus.OK, specific_redirect_url);
+          } else {
+            res.status(HttpStatus.OK).json(obj);
+          }
+        })
         .catch((err) => {
           logger.error(err);
           next(controller.formatResponse(err.message, err.status));

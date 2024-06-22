@@ -2,6 +2,9 @@ import { CustomResponseType } from '../types/customResponseType';
 import { ResponseObject } from '../utils/responseObject';
 
 export abstract class BaseController {
+  /**
+   * @description 如果 data 裡面有 specific_redirect_url 則要轉址
+   */
   public formatResponse(
     message: string,
     status = CustomResponseType.SYSTEM_ERROR,
