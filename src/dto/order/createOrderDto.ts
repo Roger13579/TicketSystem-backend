@@ -74,7 +74,9 @@ export class CreateOrderDto {
     const { price, items, paymentMethod, deliveryInfo } = body;
     this.userId = new Types.ObjectId((user as IUser).id);
     this.price = price;
-    this._items = Object.values(groupBy(items, 'productId')).map((group) => ({
+    const createKey = (item: IOrderItem) =>
+      `${item.productId}-${item.plan.name}-${item.plan.discount}-${item.plan.headCount}`;
+    this._items = Object.values(groupBy(items, createKey)).map((group) => ({
       productId: group[0].productId,
       amount: sumBy(group, 'amount'),
       plan: group[0].plan,

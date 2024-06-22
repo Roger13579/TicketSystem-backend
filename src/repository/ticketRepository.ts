@@ -272,10 +272,10 @@ export class TicketRepository {
       userId,
       status: TicketStatus.unverified,
       giverId: ticket.userId,
-      writeOffAt: moment().toDate(),
+      isPublished: false,
     };
 
-    return await TicketModel.findOneAndUpdate(filter, update, updateOptions);
+    return TicketModel.findOneAndUpdate(filter, update, updateOptions);
   };
 
   private checkInvalidTicket = (

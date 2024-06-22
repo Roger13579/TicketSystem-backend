@@ -78,7 +78,7 @@ export const GetTicketsSuccess = {
       {
         ...Ticket,
         product: TicketProductDetail,
-        shareCode: '112315641231',
+        shareCode: '1234567',
       },
     ],
     ...PaginationSuccess,
@@ -130,7 +130,7 @@ export const EditTicketsSuccess = {
   $status: CustomResponseType.OK,
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
-    $tickets: [{ ...Ticket, shareCode: '112315641231' }],
+    $tickets: [{ ...Ticket, shareCode: '1234567' }],
   },
 };
 
@@ -139,7 +139,7 @@ export const TransferTicketSuccess = {
   $message: CustomResponseType.OK_MESSAGE,
   $data: {
     ...Ticket,
-    $shareCode: '112315641231',
+    $shareCode: '1234567',
   },
 };
 export const GetTransferTicketSuccess = {
