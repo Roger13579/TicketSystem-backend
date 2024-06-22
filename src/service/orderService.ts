@@ -16,7 +16,6 @@ import {
   PaymentStatus,
 } from '../types/order.type';
 import { Types } from 'mongoose';
-import { areTimesInOrder } from '../utils/common';
 import { OrderFilterDto } from '../dto/order/orderFilterDto';
 import axios from 'axios';
 import {
@@ -29,7 +28,6 @@ import {
 import { LinePayOrderDTO } from '../dto/order/linePayOrderDto';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
 import { get, some } from 'lodash';
-import { SortOrder } from '../types/common.type';
 import moment from 'moment';
 
 const logger = log4js.getLogger(`OrderService`);
@@ -40,19 +38,6 @@ export class OrderService {
     new ProductRepository();
 
   public findOrders = async (orderFilterDTO: OrderFilterDto) => {
-    const { createdAtFrom, createdAtTo, paidAtFrom, paidAtTo } = orderFilterDTO;
-
-    // 確認時間順序
-    areTimesInOrder(
-      [
-        { name: 'createdAtFrom', value: createdAtFrom },
-        { name: 'createdAtTo', value: createdAtTo },
-        { name: 'paidAtFrom', value: paidAtFrom },
-        { name: 'paidAtTo', value: paidAtTo },
-      ],
-      SortOrder.asc,
-    );
-
     return await this.orderRepository.findOrders(orderFilterDTO);
   };
 
