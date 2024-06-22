@@ -1,4 +1,4 @@
-#  Ticket-System（票務系統）－ 後端
+#  Movie Go（票務系統）－ 後端
 
 ## 專案介紹
 
@@ -41,19 +41,29 @@
    在瀏覽器中前往 `http://localhost:3000` 後，輸入對應身份組的帳號密碼即可查看
 
 ## 資料夾說明
-| 資料夾/檔案           | 說明                  |
-|------------------|---------------------|
-| `src/bin`        | 內含server初始化入口www.ts |
-| `src/config`     | 此專案設定如DB連線資訊        |
-| `src/controller` | 存放各功能controller     |
-| `src/middleware` | 存放專案使用的middleware   |
-| `src/models`     | DB Schema 物件定義      |
-| `src/routes`     | 存放各功能路由             |
-| `src/service`    | 存放各功能業務邏輯           |
-| `src/utils`      | 全域共用的函式工具           |
+| 資料夾/檔案           | 說明                                    |
+|------------------|---------------------------------------|
+| `src/bin`        | 內含server初始化入口www.ts                   |
+| `src/config`     | 此專案設定如DB連線資訊                          |
+| `src/controller` | 存放各功能controller                       |
+| `src/dto`        | 存放專案使用的data transfer object           |
+| `src/middleware` | 存放專案使用的middleware                     |
+| `src/models`     | DB Schema 物件定義                        |
+| `src/repository` | 存放資料庫操作方法                             |
+| `src/routes`     | 存放各功能路由                               |
+| `src/service`    | 存放各功能業務邏輯                             |
+| `src/swagger`    | 存放產生swagger文件所需object                 |
+| `src/types`      | 專案使用的types                            |
+| `src/utils`      | 全域共用的函式工具                             |
+| `src/validator`  | express-validator 使用的 pipeline object |
+| `src/vo`         | 用於 response 的 view object             |
 
 ## 專案使用技術
 - Node.js: v21
 - Express: v4.19
 - TypeScript: v5
 - ESlint: v8
+## 專案使用平台
+- MongoDB Atlas
+- GitHub Action CI/CD
+- Google Cloud Platform - Cloud Run
