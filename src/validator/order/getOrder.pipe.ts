@@ -19,7 +19,7 @@ export class GetOrderPipe extends PipeBase {
 
   private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
     const { createdAtFrom } = (req as IGetOrdersReq).query;
-    return this.validatePeriod(value, createdAtFrom, (a, b) => a.isBefore(b));
+    return this.validatePeriod(value, createdAtFrom, (a, b) => b.isBefore(a));
   };
 
   private validatePaidAtFrom: TCustomValidator = (value, { req }) => {
@@ -29,7 +29,7 @@ export class GetOrderPipe extends PipeBase {
 
   private validatePaidAtTo: TCustomValidator = (value, { req }) => {
     const { paidAtFrom } = (req as IGetOrdersReq).query;
-    return this.validatePeriod(value, paidAtFrom, (a, b) => a.isBefore(b));
+    return this.validatePeriod(value, paidAtFrom, (a, b) => b.isBefore(a));
   };
 
   public transform = () => [
@@ -83,6 +83,9 @@ export class GetOrderPipe extends PipeBase {
     query('createdAtFrom')
       .optional()
       .custom(this.validateDate)
+      .withMessage(
+        CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'createdAtTo',
+      )
       .custom(this.validateCreatedAtFrom)
       .withMessage(
         CustomResponseType.INVALID_ORDER_FILTER_MESSAGE + 'createdAtFrom',

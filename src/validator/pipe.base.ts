@@ -147,7 +147,6 @@ export abstract class PipeBase {
       fromValue &&
       this.validateDate(value) &&
       this.validateDate(fromValue);
-
     return isNeedCheckPeriod
       ? compareFn(
           moment(value, moment.ISO_8601),

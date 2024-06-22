@@ -55,15 +55,15 @@ export class OrderFilterDto {
       ...(this._isAdmin && { ...adminFilter }),
       ...(this._status && { status: { $eq: this._status } }),
       ...((this._createdAtFrom || this._createdAtTo) && {
-        startAt: {
-          ...(this._createdAtFrom && { $lte: this._createdAtFrom }),
-          ...(this._createdAtTo && { $gte: this._createdAtTo }),
+        createdAt: {
+          ...(this._createdAtFrom && { $gte: this._createdAtFrom }),
+          ...(this._createdAtTo && { $lte: this._createdAtTo }),
         },
       }),
       ...((this._paidAtFrom || this._paidAtTo) && {
-        sellStartAt: {
-          ...(this._paidAtFrom && { $lte: this._paidAtFrom }),
-          ...(this._paidAtTo && { $gte: this._paidAtTo }),
+        paidAt: {
+          ...(this._paidAtFrom && { $gte: this._paidAtFrom }),
+          ...(this._paidAtTo && { $lte: this._paidAtTo }),
         },
       }),
     };
