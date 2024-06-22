@@ -56,11 +56,12 @@ export class TicketService {
     const orderProducts = order.products.reduce(
       (acc: IOrderProduct[], item: IOrderProduct) => {
         const repeatedItems: IOrderProduct[] = Array.from(
-          { length: item.amount },
+          { length: item.amount * item.plan.headCount },
           () => ({
             ...item,
             productId: item.productId,
             startAt: item.startAt,
+            plan: item.plan,
           }),
         );
         return acc.concat(repeatedItems);
