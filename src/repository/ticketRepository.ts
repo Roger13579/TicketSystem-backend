@@ -22,7 +22,6 @@ import {
 } from '../utils/aggregate/ticket/getTickets.pipeline';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 import { createGetTicketDetailPipeline } from '../utils/aggregate/ticket/getTicketDetail.pipeline';
-import { SellTicketDto } from '../dto/ticket/sellTicketDto';
 import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
 
 export class TicketRepository {
@@ -52,12 +51,14 @@ export class TicketRepository {
   };
 
   public findTransferableTicketByOrderIdAndProductId = async (
-    sellTicketDto: SellTicketDto,
+    userId: Types.ObjectId,
+    orderId: Types.ObjectId,
+    productId: Types.ObjectId,
   ) => {
     return TicketModel.find({
-      userId: sellTicketDto.userId,
-      orderId: sellTicketDto.orderId,
-      productId: sellTicketDto.productId,
+      userId: userId,
+      orderId: orderId,
+      productId: productId,
       isPublished: false,
       status: TicketStatus.unverified,
       expiredAt: { $gte: new Date() },

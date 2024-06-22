@@ -92,9 +92,13 @@ export class TicketService {
     const product = (await this.productRepository.findById(
       new Types.ObjectId(productId),
     )) as IProduct;
-    const holdCount = order.products
-      .filter((product) => product.productId.toString() === productId)
-      .map((p) => p.amount)[0];
+    const tickets =
+      await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
+        order.userId,
+        order._id,
+        product._id,
+      );
+    const holdCount = tickets.length;
     return new GetOrderInfoVo(holdCount, product);
   };
 
