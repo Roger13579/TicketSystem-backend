@@ -215,4 +215,7 @@ export const enum CustomResponseType {
 
   INVALID_TICKET_REFUND = '6548',
   INVALID_TICKET_REFUND_MESSAGE = '退票錯誤',
+
+  SHARE_CODE_ERROR = '6549',
+  SHARE_CODE_ERROR_MESSAGE = '分票驗證碼錯誤',
 }
