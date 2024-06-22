@@ -14,9 +14,11 @@ import { GetOrderVo } from '../vo/order/getOrderVo';
 import { throwError } from '../utils/errorHandler';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
 import { TMethod } from '../types/common.type';
+import { TicketService } from '../service/ticketService';
 
 class OrderController extends BaseController {
   private readonly orderService = new OrderService();
+  private readonly ticketService = new TicketService();
 
   public createOrder: TMethod<ICreateOrderReq> = async (req) => {
     const createOrderDto = new CreateOrderDto(req);
@@ -46,6 +48,14 @@ class OrderController extends BaseController {
 
   public newebpayNotify: TMethod<INewebPayCheckOrderReq> = async (req) => {
     const order = await this.orderService.newebPayCheckOrder(req);
+    if (!order) {
+      throwError(
+        CustomResponseType.NEWEBPAY_ERROR_MESSAGE,
+        CustomResponseType.NEWEBPAY_ERROR,
+      );
+    } else {
+      await this.ticketService.createTickets(order);
+    }
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
@@ -63,8 +73,9 @@ class OrderController extends BaseController {
         CustomResponseType.LINEPAY_ERROR_MESSAGE,
         CustomResponseType.LINEPAY_ERROR,
       );
+    } else {
+      await this.ticketService.createTickets(order);
     }
-
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
