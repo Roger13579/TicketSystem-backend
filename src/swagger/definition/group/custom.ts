@@ -4,6 +4,9 @@ export const CustomGetGroupTitleQuery = {
 export const CustomGetGroupMovieTitleQuery = {
   example: 'movie',
 };
+export const CustomGetGroupTheaterQuery = {
+  example: '京站威秀',
+};
 export const CustomGetGroupStatusQuery = {
   example: 'ongoing',
 };
