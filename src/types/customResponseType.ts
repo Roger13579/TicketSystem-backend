@@ -218,4 +218,7 @@ export const enum CustomResponseType {
 
   SHARE_CODE_ERROR = '6549',
   SHARE_CODE_ERROR_MESSAGE = '分票驗證碼錯誤',
+
+  NEWEBPAY_ERROR = '6550',
+  NEWEBPAY_ERROR_MESSAGE = '藍新金流 發生錯誤',
 }

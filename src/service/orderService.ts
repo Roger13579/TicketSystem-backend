@@ -271,7 +271,6 @@ export class OrderService {
     // 更改 product soldAmount
     await this.productRepository.editProductsSoldAmount(products);
     return updatedOrder;
-    //TODO 派發票券Ticket
   }
 
   // 字串組合
