@@ -73,9 +73,9 @@ export class GetTicketsDto {
       ...(this._userId && { userId: { $eq: this._userId } }),
       ...(this._ids && { _id: { $in: this._ids } }),
       ...((this._expiredAtFrom || this._expiredAtTo) && {
-        startAt: {
-          ...(this._expiredAtFrom && { $lte: this._expiredAtFrom }),
-          ...(this._expiredAtTo && { $gte: this._expiredAtTo }),
+        expiredAt: {
+          ...(this._expiredAtFrom && { $gte: this._expiredAtFrom }),
+          ...(this._expiredAtTo && { $lte: this._expiredAtTo }),
         },
       }),
       ...(this._isPublished && { isPublished: { $eq: this._isPublished } }),
