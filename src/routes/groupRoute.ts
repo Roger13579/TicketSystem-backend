@@ -239,6 +239,15 @@ export class GroupRoute extends BaseRoute {
               $ref: "#/definitions/CustomGetGroupMovieTitleQuery"
             }
           }
+          #swagger.parameters['theater'] = {
+            in: 'query',
+            required: false,
+            description: '精準搜尋：電影院名稱',
+            type: 'string',
+            schema:{
+              $ref: "#/definitions/CustomGetGroupTheaterQuery"
+            }
+          }
           #swagger.parameters['status'] = {
             in: 'query',
             required: false,
