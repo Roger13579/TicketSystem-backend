@@ -37,6 +37,7 @@ declare global {
       LINEPAY_CHANNEL_SECRET_KEY: string;
       LINEPAY_SITE: string;
       SHARE_CODE_SECRET_KEY: string;
+      MOVIE_GO_URL: string;
     }
   }
 }

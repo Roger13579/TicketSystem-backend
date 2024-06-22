@@ -64,6 +64,15 @@ export class OrderRoute extends BaseRoute {
       this.responseHandler(this.controller.linePayConfirmNotify),
     );
 
+    this.router.get(
+      '/v1/order/linePay/cancel',
+      /**
+       * #swagger.tags = ['Order']
+       * #swagger.summary = 'LinePay 取消交易回傳交易結果'
+       */
+      this.responseHandler(this.controller.linePayCancelNotify),
+    );
+
     // 使用者取消付款
 
     // 使用者退款

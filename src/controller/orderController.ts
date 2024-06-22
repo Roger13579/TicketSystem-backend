@@ -63,6 +63,9 @@ class OrderController extends BaseController {
     );
   };
 
+  /**
+   * @description 使用者付款後 line 會到這個 url
+   */
   public linePayConfirmNotify: TMethod<ILinePayConfirmReq> = async (req) => {
     const linePayConfirmDto = new LinePayConfirmDTO(req);
     const order =
@@ -79,13 +82,22 @@ class OrderController extends BaseController {
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
-      order,
+      {
+        specific_redirect_url: process.env.MOVIE_GO_URL,
+      },
     );
   };
 
-  // 取消付款
-
-  // 退款
+  // TODO: 取消交易
+  public linePayCancelNotify: TMethod = async () => {
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      {
+        specific_redirect_url: process.env.MOVIE_GO_URL,
+      },
+    );
+  };
 
   public getOrders: TMethod<IGetOrdersReq> = async (req) => {
     const orderFilterDto = new OrderFilterDto(req);
