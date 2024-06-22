@@ -22,11 +22,7 @@ import {
 } from '../utils/aggregate/ticket/getTickets.pipeline';
 import { GetTicketDetailDto } from '../dto/ticket/getTicketDetailDto';
 import { createGetTicketDetailPipeline } from '../utils/aggregate/ticket/getTicketDetail.pipeline';
-import { SellTicketDto } from '../dto/ticket/sellTicketDto';
 import { GetSharedTicketsDto } from '../dto/ticket/getSharedTicketsDto';
-import { IProductId } from '../types/product.type';
-import { IUserId } from '../types/user.type';
-import { IOrderId } from '../types/order.type';
 
 export class TicketRepository {
   public async createTicket(createTicketDto: CreateTicketDto) {
