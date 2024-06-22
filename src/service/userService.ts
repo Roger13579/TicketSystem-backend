@@ -340,7 +340,9 @@ export class UserService {
   public sellTicket = async (sellTicketDto: SellTicketDto) => {
     const tickets =
       await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
-        sellTicketDto,
+        sellTicketDto.userId,
+        sellTicketDto.orderId,
+        sellTicketDto.productId,
       );
     if (!tickets) {
       throwError(
