@@ -143,11 +143,23 @@ export class TicketService {
   };
 
   public updateShareCode = async (createShareCodeDto: CreateShareCodeDTO) => {
-    const { ticketId } = createShareCodeDto;
-    createShareCodeDto.shareCode = await this.genShareCode(ticketId);
+    const { orderId, productId, userId } = createShareCodeDto;
+    const tickets =
+      (await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
+        userId,
+        orderId,
+        productId,
+      )) as ITicket[];
+    if (!tickets || tickets.length < 2) {
+      throwError(
+        CustomResponseType.TICKET_NOT_ENOUGH_MESSAGE,
+        CustomResponseType.TICKET_NOT_ENOUGH,
+      );
+    }
+    createShareCodeDto.ticketId = tickets[0]._id;
+    createShareCodeDto.shareCode = await this.genShareCode(tickets[0]._id);
     const ticket =
       await this.ticketRepository.updateShareCode(createShareCodeDto);
-
     if (!ticket) {
       throwError(
         CustomResponseType.TRANSFER_TICKET_CREATE_ERROR_MESSAGE +
