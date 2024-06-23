@@ -19,6 +19,7 @@ export const CustomRefundTicketsReason = {
 
 const propName = {
   productId: '商品 id',
+  orderId: '訂單 id',
   userId: '擁有者 id',
   ticketId: '票券 id',
   status: '票券狀態',
@@ -55,6 +56,11 @@ const property = {
     example: ticket.userId,
   },
   ticketId: {
+    type: 'string',
+    description: propName.ticketId,
+    example: ticket.ticketId,
+  },
+  orderId: {
     type: 'string',
     description: propName.ticketId,
     example: ticket.ticketId,
@@ -120,9 +126,10 @@ export const CustomEditTicketsObj = {
 
 export const CustomCreateShareCodeObj = {
   type: 'object',
-  required: ['ticketId'],
+  required: ['orderId', 'productId'],
   properties: {
-    ticketId: property.ticketId,
+    orderId: property.orderId,
+    productId: property.productId,
   },
 };
 
