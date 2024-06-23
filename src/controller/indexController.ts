@@ -96,12 +96,19 @@ class IndexController extends BaseController {
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
-        new LoginVo(authUser, accessToken, refreshToken),
+        {
+          specific_redirect_url:
+            process.env.MOVIE_GO_URL +
+            `?account=${authUser.account}&email=${authUser.email}&token=${accessToken}&refresh_token=${refreshToken}&accountType=${authUser.accountType.toString()}`,
+        },
       );
     } else {
       return this.formatResponse(
         CustomResponseType.GOOGLE_AUTH_ERROR_MESSAGE,
         CustomResponseType.GOOGLE_AUTH_ERROR,
+        {
+          specific_redirect_url: process.env.MOVIE_GO_URL,
+        },
       );
     }
   };
