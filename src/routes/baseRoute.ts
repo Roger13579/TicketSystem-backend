@@ -50,7 +50,9 @@ export abstract class BaseRoute {
             const { specific_redirect_url } = obj.data as {
               specific_redirect_url: string;
             };
-            res.redirect(HttpStatus.OK, specific_redirect_url);
+            res
+              .status(HttpStatus.MOVED_PERMANENTLY)
+              .redirect(specific_redirect_url);
           } else {
             res.status(HttpStatus.OK).json(obj);
           }
