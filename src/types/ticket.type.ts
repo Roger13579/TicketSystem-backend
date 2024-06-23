@@ -108,7 +108,8 @@ export enum TicketProcess {
 
 export interface ITransferTicketReq extends IUserReq {
   body: {
-    ticketId: string;
+    orderId: string;
+    productId: string;
   };
 }
 export interface ISellTicketReq extends IUserReq {

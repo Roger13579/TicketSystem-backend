@@ -6,7 +6,9 @@ import moment from 'moment';
 
 export class CreateShareCodeDTO {
   private readonly _userId: Types.ObjectId;
-  private readonly _ticketId: Types.ObjectId;
+  private readonly _orderId: Types.ObjectId;
+  private readonly _productId: Types.ObjectId;
+  private _ticketId: Types.ObjectId | undefined;
   private _shareCode: string = '';
 
   get shareCode() {
@@ -17,12 +19,23 @@ export class CreateShareCodeDTO {
     this._shareCode = value;
   }
 
+  get ticketId(): Types.ObjectId | undefined {
+    return this._ticketId;
+  }
+
+  set ticketId(value: Types.ObjectId) {
+    this._ticketId = value;
+  }
+
   get userId() {
     return this._userId;
   }
 
-  get ticketId() {
-    return this._ticketId;
+  get orderId() {
+    return this._orderId;
+  }
+  get productId() {
+    return this._productId;
   }
 
   get availableFilter(): FilterQuery<ITicket> {
@@ -36,8 +49,8 @@ export class CreateShareCodeDTO {
 
   constructor(req: ITransferTicketReq) {
     const { user, body } = req;
-
     this._userId = new Types.ObjectId((user as IUser)._id as string);
-    this._ticketId = new Types.ObjectId(body.ticketId as string);
+    this._orderId = new Types.ObjectId(body.orderId as string);
+    this._productId = new Types.ObjectId(body.productId as string);
   }
 }
