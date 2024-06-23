@@ -149,11 +149,7 @@ export class GetTicketsDto {
       sortField,
       sortOrder,
     } = req.query;
-    this._userId =
-      req.user !== undefined &&
-      (req.user as IUser).accountType !== AccountType.admin
-        ? (req.user as IUser)._id
-        : undefined;
+    this._userId = req.user !== undefined ? (req.user as IUser)._id : undefined;
     this._isAdmin =
       req.user !== undefined
         ? (req.user as IUser).accountType === AccountType.admin
