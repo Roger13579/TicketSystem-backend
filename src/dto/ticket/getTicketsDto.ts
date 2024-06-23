@@ -18,7 +18,7 @@ export class GetTicketsDto {
   private readonly _page: number;
   private readonly _limit: number;
   private readonly _sort: Record<string, 1 | -1>;
-  private readonly _ids?: string[];
+  private readonly _ids?: Types.ObjectId[];
   private readonly _productName?: string;
   private readonly _isAdmin?: boolean;
 
@@ -155,7 +155,7 @@ export class GetTicketsDto {
         ? (req.user as IUser).accountType === AccountType.admin
         : false;
     this._status = status;
-    this._ids = ids?.split(',');
+    this._ids = ids?.split(',').map((id) => new Types.ObjectId(id));
     this._productName = productName;
     this._sort = {
       [`${sortField || TicketSortField.createdAt}`]:
