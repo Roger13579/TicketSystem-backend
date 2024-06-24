@@ -61,7 +61,7 @@ export class GroupService {
       // 檢查人數是否已滿
       const groupSize = group.amount;
       const length = participant.length;
-      if (length === groupSize - 1) {
+      if (length === groupSize) {
         throwError(
           CustomResponseType.GROUP_IS_FULL_MESSAGE,
           CustomResponseType.GROUP_IS_FULL,
