@@ -1,5 +1,4 @@
 import { Document, Schema, Types } from 'mongoose';
-import { ProductType, MovieGenre } from '../types/product.type';
 import { ITimestamp } from '../types/common.type';
 
 export enum ModelName {
@@ -98,12 +97,10 @@ export const productSnapshotSchemaDef = {
   },
   type: {
     type: String,
-    enum: Object.values(ProductType),
     required: true,
   },
   genre: {
     type: String,
-    enum: Object.values(MovieGenre),
     required: true,
   },
   vendor: {
