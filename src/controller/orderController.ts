@@ -63,6 +63,16 @@ class OrderController extends BaseController {
     );
   };
 
+  public newebpayRedirect = async () => {
+    return this.formatResponse(
+      CustomResponseType.OK_MESSAGE,
+      CustomResponseType.OK,
+      {
+        specific_redirect_url: process.env.MOVIE_GO_URL,
+      },
+    );
+  };
+
   /**
    * @description 使用者付款後 line 會到這個 url
    */

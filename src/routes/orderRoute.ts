@@ -54,6 +54,14 @@ export class OrderRoute extends BaseRoute {
        */
       this.responseHandler(this.controller.newebpayNotify),
     );
+    this.router.post(
+      '/v1/order/newebpay_redirect',
+      /**
+       * #swagger.tags = ['Order']
+       * #swagger.summary = '藍新金流交易成功轉導'
+       */
+      this.responseHandler(this.controller.newebpayRedirect),
+    );
 
     this.router.get(
       '/v1/order/linePay/confirm',
