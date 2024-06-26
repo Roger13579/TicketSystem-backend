@@ -172,7 +172,7 @@ export class OrderRoute extends BaseRoute {
             description: '訂單成立時間-起',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomTimeAtFromQuery"
+              $ref: "#/definitions/CustomGetOrderDateQuery"
             }
           }
           #swagger.parameters['createdAtTo'] = {
@@ -181,7 +181,7 @@ export class OrderRoute extends BaseRoute {
             description: '訂單成立時間-迄',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomTimeAtToQuery"
+              $ref: "#/definitions/CustomGetOrderDateQuery"
             }
           }
           #swagger.parameters['paidAtFrom'] = {
@@ -190,7 +190,7 @@ export class OrderRoute extends BaseRoute {
             description: '付款時間-起',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomTimeAtFromQuery"
+              $ref: "#/definitions/CustomGetOrderDateQuery"
             }
           }
           #swagger.parameters['paidAtTo'] = {
@@ -199,7 +199,7 @@ export class OrderRoute extends BaseRoute {
             description: '付款時間-迄',
             type: 'string',
             schema:{
-              $ref: "#/definitions/CustomTimeAtToQuery"
+              $ref: "#/definitions/CustomGetOrderDateQuery"
             }
           }
           #swagger.parameters['sortField'] = {

@@ -14,22 +14,28 @@ import { SortOrder } from '../../types/common.type';
 export class GetOrderPipe extends PipeBase {
   private validateCreatedAtFrom: TCustomValidator = (value, { req }) => {
     const { createdAtTo } = (req as IGetOrdersReq).query;
-    return this.validatePeriod(value, createdAtTo, (a, b) => b.isAfter(a));
+    return this.validatePeriod(value, createdAtTo, (a, b) =>
+      b.isSameOrAfter(a),
+    );
   };
 
   private validateCreatedAtTo: TCustomValidator = (value, { req }) => {
     const { createdAtFrom } = (req as IGetOrdersReq).query;
-    return this.validatePeriod(value, createdAtFrom, (a, b) => b.isBefore(a));
+    return this.validatePeriod(value, createdAtFrom, (a, b) =>
+      b.isSameOrBefore(a),
+    );
   };
 
   private validatePaidAtFrom: TCustomValidator = (value, { req }) => {
     const { paidAtTo } = (req as IGetOrdersReq).query;
-    return this.validatePeriod(value, paidAtTo, (a, b) => b.isAfter(a));
+    return this.validatePeriod(value, paidAtTo, (a, b) => b.isSameOrAfter(a));
   };
 
   private validatePaidAtTo: TCustomValidator = (value, { req }) => {
     const { paidAtFrom } = (req as IGetOrdersReq).query;
-    return this.validatePeriod(value, paidAtFrom, (a, b) => b.isBefore(a));
+    return this.validatePeriod(value, paidAtFrom, (a, b) =>
+      b.isSameOrBefore(a),
+    );
   };
 
   public transform = () => [
