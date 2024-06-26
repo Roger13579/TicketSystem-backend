@@ -120,11 +120,17 @@ export class OrderFilterDto {
     this._emails = emails?.split(',');
     this._phones = phones?.split(',');
 
-    this._createdAtTo = createdAtTo ? moment(createdAtTo).toDate() : undefined;
-    this._createdAtFrom = createdAtFrom
-      ? moment(createdAtFrom).toDate()
+    this._createdAtTo = createdAtTo
+      ? moment(createdAtTo).hour(23).minute(59).second(59).toDate()
       : undefined;
-    this._paidAtFrom = paidAtFrom ? moment(paidAtFrom).toDate() : undefined;
-    this._paidAtTo = paidAtTo ? moment(paidAtTo).toDate() : undefined;
+    this._createdAtFrom = createdAtFrom
+      ? moment(createdAtFrom).hour(0).minute(0).second(0).toDate()
+      : undefined;
+    this._paidAtFrom = paidAtFrom
+      ? moment(paidAtFrom).hour(0).minute(0).second(0).toDate()
+      : undefined;
+    this._paidAtTo = paidAtTo
+      ? moment(paidAtTo).hour(23).minute(59).second(59).toDate()
+      : undefined;
   }
 }

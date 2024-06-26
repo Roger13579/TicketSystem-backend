@@ -18,6 +18,9 @@ export const CustomGetOrderEmailQuery = {
 export const CustomGetOrderPhoneQuery = {
   example: '0912345678',
 };
+export const CustomGetOrderDateQuery = {
+  example: '2024-06-25',
+};
 
 const propName = {
   userId: '使用者id',
