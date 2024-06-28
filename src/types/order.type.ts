@@ -2,6 +2,7 @@ import { IUserReq, TPaginationQuery } from './common.type';
 import { IPlan, IProductId } from './product.type';
 import { IProduct } from '../models/product';
 import { Types } from 'mongoose';
+import { IOrder } from '../models/order';
 
 export enum PaymentMethod {
   linePay = 'linePay',
@@ -105,3 +106,13 @@ export interface IUpdateOrderParam extends IOrderId {
 export interface INewebPayCheckOrderReq extends IUserReq {
   body: { TradeInfo: string; TradeSha: unknown };
 }
+
+export interface IGetOrderParam extends IOrder {
+  thirdPartyPaymentId: string;
+  paidAt: Date;
+}
+
+export type OrderDocumentWithPayment = Document &
+  IGetOrderParam & {
+    _id: Types.ObjectId;
+  };
