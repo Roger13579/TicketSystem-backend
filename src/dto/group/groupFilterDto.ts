@@ -57,6 +57,7 @@ export class GroupFilterDto {
         amount: 1,
         haveTicket: 1,
         content: 1,
+        participant: 1,
       },
     };
   }

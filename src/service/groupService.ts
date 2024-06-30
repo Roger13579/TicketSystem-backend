@@ -145,7 +145,18 @@ export class GroupService {
     }
   }
   public async findGroups(groupFilterDto: GroupFilterDto) {
-    return await this.groupRepository.findGroups(groupFilterDto);
+    const result = await this.groupRepository.findGroups(groupFilterDto);
+    result.docs = result.docs.map((doc) => {
+      const participantLength =
+        doc.participant != undefined ? doc.participant.length : 0;
+      const docObj = doc.toObject();
+      delete docObj.participant;
+      return {
+        ...docObj,
+        vacancy: doc.amount - participantLength,
+      } as GroupDocument;
+    });
+    return result;
   }
 
   public async findGroupDetail(groupId: string) {
