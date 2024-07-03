@@ -35,6 +35,12 @@ export const SignUpForm = {
   pwd: '12345678',
   confirmPwd: '12345678',
 };
+export const GoogleLoginForm = {
+  id: '123192398168294789',
+  name: 'roger',
+  email: 'roger@gmail.com',
+  image: '12345678.com',
+};
 export const ForgotPwdForm = {
   email: 'roger@gmail.com',
 };

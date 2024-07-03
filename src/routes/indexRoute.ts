@@ -1,15 +1,12 @@
 import { BaseRoute } from './baseRoute';
 import IndexController from '../controller/indexController';
 import { UserVerify } from '../middleware/userVerify';
-import passport from 'passport';
-import { PassportInit } from '../middleware/passportInit';
 import { SignUpPipe } from '../validator/user/signUp.pipe';
 import { LoginPipe } from '../validator/user/login.pipe';
 import { ForgetPwdPipe } from '../validator/user/forgetPwd.pipe';
 import { ResetPwdPipe } from '../validator/user/resetPwd.pipe';
 import { GoogleUpdatePipe } from '../validator/user/googleUpdate.pipe';
 import { RefreshTokenPipe } from '../validator/user/refreshToken.pipe';
-import { ThirdPartyType } from '../types/user.type';
 export class IndexRoute extends BaseRoute {
   protected controller!: IndexController;
 
@@ -150,29 +147,27 @@ export class IndexRoute extends BaseRoute {
       this.responseHandler(this.controller.resetPwd),
     );
 
-    this.router.get(
+    this.router.post(
       '/v1/user/google-login',
       /**
        * #swagger.tags = ['Sign-in']
-       * #swagger.summary = 'Google第三方登入'
+       * #swagger.summary = 'Google第三方登入後回傳user資料'
        */
-      /*
+      /*	#swagger.parameters['obj'] = {
+                 in: 'body',
+                 description: 'user data',
+                 required: true,
+                 schema: { $ref: "#/definitions/GoogleLoginForm" }
+         }
+       */
       /* #swagger.responses[200] = {
               description: 'OK',
               schema:{
                 $ref: "#/definitions/Success"
               }
             }
-         */
-      PassportInit,
-      passport.authenticate(ThirdPartyType.google, {
-        scope: ['email', 'profile'],
-      }),
-    );
-
-    this.router.get(
-      '/v1/user/google/callback',
-      this.responseHandler(this.controller.googleCallback),
+       */
+      this.responseHandler(this.controller.googleLogin),
     );
 
     this.router.post(

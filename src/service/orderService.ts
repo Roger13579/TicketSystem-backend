@@ -267,7 +267,7 @@ export class OrderService {
     }&Amt=${newebpayOrderDto.Amt}&NotifyURL=${encodeURIComponent(
       process.env.NEWEBPAY_NOTIFY_URL,
     )}&ReturnURL=${encodeURIComponent(process.env.RETURN_URL)}&ItemDesc=${encodeURIComponent(
-      'test',
+      newebpayOrderDto.productName,
     )}&Email=${encodeURIComponent(newebpayOrderDto.email)}`;
   }
 

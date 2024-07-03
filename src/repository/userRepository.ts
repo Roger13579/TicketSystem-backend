@@ -26,12 +26,12 @@ export class UserRepository {
   public async createUserByGoogle(googleUser: GoogleProfileDto) {
     return UserModel.create(
       new UserModel({
-        account: googleUser.getEmail,
-        email: googleUser.getEmail,
-        thirdPartyId: googleUser.getId,
+        account: googleUser.name,
+        email: googleUser.email,
+        thirdPartyId: googleUser.id,
         thirdPartyType: ThirdPartyType.google,
-        avatarPath: googleUser.getPicture,
-        isThirdPartyVerified: googleUser.getEmailVerified,
+        avatarPath: googleUser.picture,
+        isThirdPartyVerified: true,
         accountType: AccountType.member,
       }),
     );
