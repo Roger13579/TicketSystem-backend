@@ -11,7 +11,7 @@ export class GetTransferableTicketVo {
   private expiredAt: Date;
   private amount: number;
 
-  constructor(group: ITicket[], product: IProduct) {
+  constructor(group: ITicket[], product: IProduct, amount: number) {
     this.orderId = group[0].orderId.toString();
     this.productId = product._id.toString();
     this.productName = product.title;
@@ -19,6 +19,6 @@ export class GetTransferableTicketVo {
     this.theater = product.theater;
     this.startAt = product.startAt;
     this.expiredAt = group[0].expiredAt;
-    this.amount = group.length - 1;
+    this.amount = amount;
   }
 }

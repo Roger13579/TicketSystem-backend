@@ -227,17 +227,6 @@ export class UserService {
     );
     return { accessToken, refreshToken };
   }
-  public generateRefreshJWT(userId: string, accountType: string): string {
-    const privateKey = process.env.JWT_SECRETS;
-    const defaultOptions: object = {
-      expiresIn: process.env.JWT_REFRESH_EXPIRES,
-    };
-    return jwt.sign(
-      { id: userId, accountType: accountType },
-      privateKey,
-      Object.assign(defaultOptions),
-    );
-  }
 
   public async generateForgotPasswordJWT(userId: string) {
     const privateKey = process.env.JWT_SECRETS;
@@ -335,8 +324,15 @@ export class UserService {
       tickets.splice(0, sellTicketDto.sellAmount),
     );
   };
-  public getTransferableTicket = async (userId: string) => {
-    const tickets = await this.ticketRepository.findTransferableTicket(userId);
+  public getTransferableTicket = async (
+    userId: string,
+    booleanString: string | undefined,
+  ) => {
+    const isPublished = booleanString === 'true';
+    const tickets = await this.ticketRepository.findTransferableTicket(
+      userId,
+      isPublished,
+    );
     // 查出的ticket依orderId和productId分組
     const grouped = tickets.reduce(
       (acc, ticket) => {
@@ -349,16 +345,18 @@ export class UserService {
       },
       {} as { [key: string]: ITicket[] },
     );
-    // 去除只剩一張的票
-    const validGroups = Object.values(grouped).filter(
-      (group) => group.length > 1,
-    );
+    let validGroups = Object.values(grouped);
+    // 條件為搜尋未上架票券時才去除只剩一張的票
+    if (!isPublished) {
+      validGroups = validGroups.filter((group) => group.length > 1);
+    }
     // 依productId查出商品資訊
     const map = Object.values(validGroups).map(async (group) => {
       const product = (await this.productRepository.findById(
         new Types.ObjectId(group[0].productId),
       )) as IProduct;
-      return new GetTransferableTicketVo(group, product);
+      const amount = isPublished ? group.length : group.length - 1;
+      return new GetTransferableTicketVo(group, product, amount);
     });
     return Promise.all(map);
   };
