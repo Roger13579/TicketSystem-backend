@@ -155,7 +155,7 @@ export class IndexRoute extends BaseRoute {
        */
       /*	#swagger.parameters['obj'] = {
                  in: 'body',
-                 description: 'Reset Password.',
+                 description: 'user data',
                  required: true,
                  schema: { $ref: "#/definitions/GoogleLoginForm" }
          }
