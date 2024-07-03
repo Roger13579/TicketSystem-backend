@@ -21,15 +21,14 @@ export interface IUserId {
   userId: Types.ObjectId;
 }
 
-export type TGoogleUser = {
-  _json: {
-    sub: string;
+export interface IGoogleUser extends IUserReq {
+  body: {
+    id: string;
     name: string;
     email: string;
-    picture: string;
-    email_verified: boolean;
+    image: string;
   };
-};
+}
 
 export interface IResetPwdReq extends IUserReq {
   body: {

@@ -15,6 +15,7 @@ import {
 import { TMethod } from '../types/common.type';
 import { SignUpDTO } from '../dto/user/signUpDto';
 import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
+import { GoogleProfileDto } from '../dto/user/googleProfileDto';
 
 class IndexController extends BaseController {
   private readonly userService = new UserService();
@@ -86,8 +87,9 @@ class IndexController extends BaseController {
     );
   };
 
-  public googleCallback: TMethod = async (req, res, next) => {
-    const authUser = await this.userService.googleAuth(req, res, next);
+  public googleLogin: TMethod = async (req) => {
+    const googleProfileDto = new GoogleProfileDto(req);
+    const authUser = await this.userService.googleAuth(googleProfileDto);
     if (authUser) {
       const { accessToken, refreshToken } = this.userService.generateJWT(
         authUser._id.toString(),
@@ -96,11 +98,7 @@ class IndexController extends BaseController {
       return this.formatResponse(
         CustomResponseType.OK_MESSAGE,
         CustomResponseType.OK,
-        {
-          specific_redirect_url:
-            process.env.MOVIE_GO_URL +
-            `?account=${authUser.account}&email=${authUser.email}&token=${accessToken}&refresh_token=${refreshToken}&accountType=${authUser.accountType.toString()}`,
-        },
+        new LoginVo(authUser, accessToken, refreshToken),
       );
     } else {
       return this.formatResponse(

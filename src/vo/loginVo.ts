@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import { IUser } from '../models/user';
 
 export class LoginVo {
   private account: string;
@@ -7,11 +7,11 @@ export class LoginVo {
   private refreshToken: string;
   private accountType: string;
 
-  constructor(user: mongoose.Document, token: string, refreshToken: string) {
-    this.account = user.get('account');
-    this.email = user.get('email');
+  constructor(user: IUser, token: string, refreshToken: string) {
+    this.account = user.account;
+    this.email = user.email;
     this.token = token;
     this.refreshToken = refreshToken;
-    this.accountType = user.get('accountType');
+    this.accountType = user.accountType;
   }
 }
