@@ -8,13 +8,11 @@ import { IUser } from '../models/user';
 import { mailer } from '../utils/mailer';
 import log4js from '../config/log4js';
 import { ResetPwdDto } from '../dto/user/resetPwdDto';
-import passport from 'passport';
 import { GoogleProfileDto } from '../dto/user/googleProfileDto';
-import { FavoriteItem, TGoogleUser, ThirdPartyType } from '../types/user.type';
+import { FavoriteItem } from '../types/user.type';
 import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { ProductRepository } from '../repository/productRepository';
-import { IUserReq, TMethod } from '../types/common.type';
 import { SignUpDTO } from '../dto/user/signUpDto';
 import { GoogleSignUpDTO } from '../dto/user/googleSignUpdDto';
 import { SellTicketDto } from '../dto/ticket/sellTicketDto';
@@ -249,31 +247,8 @@ export class UserService {
     return jwt.sign({ id: userId }, privateKey, Object.assign(defaultOptions));
   }
 
-  public googleAuth: TMethod<IUserReq, Promise<IUser | void>> = async (
-    req,
-    res,
-    next,
-  ) => {
-    const authenticate = (): Promise<GoogleProfileDto> =>
-      new Promise((resolve) => {
-        passport.authenticate(
-          ThirdPartyType.google,
-          { session: false },
-          (error: Error, user: TGoogleUser) => {
-            if (error || !user) {
-              logger.error(error);
-              throwError(
-                CustomResponseType.GOOGLE_AUTH_ERROR_MESSAGE,
-                CustomResponseType.GOOGLE_AUTH_ERROR,
-              );
-            }
-            resolve(new GoogleProfileDto(user));
-          },
-        )(req, res, next);
-      });
-
-    const googleUser: GoogleProfileDto = await authenticate();
-    const user = await this.userRepository.findByThirdPartyId(googleUser.getId);
+  public async googleAuth(googleUser: GoogleProfileDto) {
+    const user = await this.userRepository.findByThirdPartyId(googleUser.id);
     if (!user) {
       return this.userRepository.createUserByGoogle(googleUser).catch((err) => {
         logger.error('create user error', err);
@@ -285,7 +260,7 @@ export class UserService {
     } else {
       return user;
     }
-  };
+  }
 
   public getFavorite = async (getUserFavoriteDto: GetUserFavoriteDTO) => {
     const result =

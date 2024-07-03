@@ -1,34 +1,32 @@
-import { TGoogleUser } from '../../types/user.type';
+import { IGoogleUser } from '../../types/user.type';
 
 export class GoogleProfileDto {
-  private readonly id: string;
-  private readonly name: string;
-  private readonly email: string;
-  private readonly picture: string;
-  private readonly emailVerified: boolean;
+  private readonly _id: string;
+  private readonly _name: string;
+  private readonly _email: string;
+  private readonly _picture: string;
 
-  get getId(): string {
-    return this.id;
-  }
-  get getName(): string {
-    return this.name;
-  }
-  get getEmail(): string {
-    return this.email;
-  }
-  get getPicture(): string {
-    return this.picture;
-  }
-  get getEmailVerified(): boolean {
-    return this.emailVerified;
+  get id(): string {
+    return this._id;
   }
 
-  constructor(googleUser: TGoogleUser) {
-    const { sub, name, email, picture, email_verified } = googleUser._json;
-    this.id = sub;
-    this.name = name;
-    this.email = email;
-    this.picture = picture;
-    this.emailVerified = email_verified;
+  get name(): string {
+    return this._name;
+  }
+
+  get email(): string {
+    return this._email;
+  }
+
+  get picture(): string {
+    return this._picture;
+  }
+
+  constructor(googleUser: IGoogleUser) {
+    const { id, name, email, image } = googleUser.body;
+    this._id = id;
+    this._name = name;
+    this._email = email;
+    this._picture = image;
   }
 }
