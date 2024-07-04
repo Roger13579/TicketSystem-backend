@@ -65,10 +65,13 @@ export class TicketRepository {
     });
   };
 
-  public findTransferableTicket = async (userId: string) => {
+  public findTransferableTicket = async (
+    userId: string,
+    isPublished: boolean,
+  ) => {
     return TicketModel.find({
       userId: userId,
-      isPublished: false,
+      isPublished: isPublished,
       status: TicketStatus.unverified,
       expiredAt: { $gte: new Date() },
     });

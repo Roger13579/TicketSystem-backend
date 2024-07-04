@@ -4,14 +4,18 @@ import { UserService } from '../service/userService';
 import { JWTPayloadDTO } from '../dto/user/jwtPayloadDto';
 import { UserDetailVo } from '../vo/userDetailVo';
 import { UserDetailDto } from '../dto/user/userDetailDto';
-import { IUserReq, TMethod } from '../types/common.type';
+import { TMethod } from '../types/common.type';
 import { IUser } from '../models/user';
 import { EditFavoriteDTO } from '../dto/user/editFavoriteDto';
 import { IGetUserFavoriteReq, IUpdateUserDetailReq } from '../types/user.type';
 import { GetUserFavoriteDTO } from '../dto/user/getUserFavoriteDto';
 import { GetFavoriteVO } from '../vo/user/getFavoriteVo';
 import { SellTicketDto } from '../dto/ticket/sellTicketDto';
-import { ISellTicketReq, ITicketRefundReq } from '../types/ticket.type';
+import {
+  IGetTicketsReq,
+  ISellTicketReq,
+  ITicketRefundReq,
+} from '../types/ticket.type';
 import { GetUserGroupDto } from '../dto/group/getUserGroupDto';
 import { GetGroupVo } from '../vo/group/getGroupVo';
 import { PaginateDocument, PaginateOptions, PaginateResult } from 'mongoose';
@@ -85,9 +89,10 @@ export class UserController extends BaseController {
       {},
     );
   };
-  public getTransferableTicket = async (req: IUserReq) => {
+  public getTransferableTicket = async (req: IGetTicketsReq) => {
     const tickets = await this.userService.getTransferableTicket(
       (req.user as IUser)._id,
+      req.query.isPublished,
     );
     return this.formatResponse(
       CustomResponseType.OK_MESSAGE,
