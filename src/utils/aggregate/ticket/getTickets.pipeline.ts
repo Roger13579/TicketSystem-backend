@@ -1,5 +1,6 @@
 import { GetTicketsDto } from '../../../dto/ticket/getTicketsDto';
 import { GetSharedTicketsDto } from '../../../dto/ticket/getSharedTicketsDto';
+import { TicketStatus } from '../../../types/ticket.type';
 
 export const createGetTicketPipeline = ({
   productNameRegex,
@@ -78,6 +79,7 @@ export const createGetSharedTicketPipeline = ({
   return [
     {
       $match: {
+        status: { $eq: TicketStatus.unverified },
         isPublished: { $eq: true },
       },
     },
