@@ -58,13 +58,13 @@ export class CreateProductsPipe extends PipeBase {
         ),
       body('products.*.type')
         .exists()
-        .isIn(Object.keys(ProductType))
+        .isIn(Object.values(ProductType))
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'type',
         ),
       body('products.*.genre')
         .exists()
-        .isIn(Object.keys(MovieGenre))
+        .isIn(Object.values(MovieGenre))
         .withMessage(
           CustomResponseType.INVALID_CREATE_PRODUCT_MESSAGE + 'genre',
         ),

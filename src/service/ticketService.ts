@@ -48,6 +48,7 @@ export class TicketService {
             ...item,
             productId: item.productId,
             startAt: item.startAt,
+            endAt: item.endAt,
             plan: item.plan,
           }),
         );
@@ -145,7 +146,7 @@ export class TicketService {
   public updateShareCode = async (createShareCodeDto: CreateShareCodeDTO) => {
     const { orderId, productId, userId } = createShareCodeDto;
     const tickets =
-      (await this.ticketRepository.findTransferableTicketByOrderIdAndProductId(
+      (await this.ticketRepository.findTicketByOrderIdAndProductId(
         userId,
         orderId,
         productId,

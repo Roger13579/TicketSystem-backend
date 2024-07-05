@@ -65,6 +65,20 @@ export class TicketRepository {
     });
   };
 
+  public findTicketByOrderIdAndProductId = async (
+    userId: Types.ObjectId,
+    orderId: Types.ObjectId,
+    productId: Types.ObjectId,
+  ) => {
+    return TicketModel.find({
+      userId: userId,
+      orderId: orderId,
+      productId: productId,
+      status: TicketStatus.unverified,
+      expiredAt: { $gte: new Date() },
+    });
+  };
+
   public findTransferableTicket = async (
     userId: string,
     isPublished: boolean,
@@ -72,7 +86,10 @@ export class TicketRepository {
     return TicketModel.find({
       userId: userId,
       isPublished: isPublished,
-      status: TicketStatus.unverified,
+      $or: [
+        { status: TicketStatus.unverified },
+        { status: TicketStatus.transfer },
+      ],
       expiredAt: { $gte: new Date() },
     });
   };

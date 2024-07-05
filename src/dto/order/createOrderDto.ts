@@ -33,6 +33,7 @@ export class CreateOrderDto {
       theater,
       plans,
       startAt,
+      endAt,
     } = product;
 
     const existedPlan = find(plans, (p) =>
@@ -54,6 +55,7 @@ export class CreateOrderDto {
       vendor,
       theater,
       startAt,
+      endAt,
       plan: existedPlan,
     };
   }
