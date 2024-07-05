@@ -22,6 +22,6 @@ export class CreateTicketDto {
     this.amount = orderProduct.amount;
     this.status = TicketStatus.unverified;
     this.isPublished = false;
-    this.expiredAt = orderProduct.startAt;
+    this.expiredAt = orderProduct.endAt;
   }
 }

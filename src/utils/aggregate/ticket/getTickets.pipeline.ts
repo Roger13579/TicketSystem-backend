@@ -79,7 +79,10 @@ export const createGetSharedTicketPipeline = ({
   return [
     {
       $match: {
-        status: { $eq: TicketStatus.unverified },
+        $or: [
+          { status: TicketStatus.unverified },
+          { status: TicketStatus.transfer },
+        ],
         isPublished: { $eq: true },
       },
     },

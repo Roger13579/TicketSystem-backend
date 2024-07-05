@@ -58,6 +58,7 @@ export interface IGetTicket extends ITimestamp, IUserId, IProductId, IOrderId {
     | 'theater'
     | 'price'
     | 'startAt'
+    | 'endAt'
     | 'recommendWeight'
     | 'isPublic'
     | 'photoPath'

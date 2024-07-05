@@ -4,33 +4,33 @@ import { Types } from 'mongoose';
 import { ITagId } from './tag.type';
 
 export enum ProductType {
-  premier = 'premier',
-  corporateBooking = 'corporateBooking',
-  privateBooking = 'privateBooking',
-  preScreeningMeeting = 'preScreeningMeeting',
-  postScreeningMeeting = 'postScreeningMeeting',
-  specialEvent = 'specialEvent',
-  openAir = 'openAir',
+  premier = '特映會',
+  corporateBooking = '企業包場',
+  privateBooking = '私人包場',
+  preScreeningMeeting = '映前見面會',
+  postScreeningMeeting = '映後見面會',
+  specialEvent = '活動特別場',
+  openAir = '露天電影院',
 }
 
 export enum MovieGenre {
-  action = 'action',
-  adventure = 'adventure',
-  comedy = 'comedy',
-  drama = 'drama',
-  horror = 'horror',
-  fantasy = 'fantasy',
-  romance = 'romance',
-  animation = 'animation',
-  thriller = 'thriller',
-  mystery = 'mystery',
-  scienceFiction = 'scienceFiction',
-  musical = 'musical',
-  music = 'music',
-  war = 'war',
-  western = 'western',
-  epic = 'epic',
-  historical = 'historical',
+  action = '動作片',
+  adventure = '冒險片',
+  comedy = '喜劇片',
+  drama = '劇情片',
+  horror = '恐怖片',
+  fantasy = '奇幻片',
+  romance = '愛情片',
+  animation = '動畫片',
+  thriller = '驚悚片',
+  mystery = '懸疑片',
+  scienceFiction = '科幻片',
+  musical = '歌舞劇',
+  music = '音樂片',
+  war = '戰爭片',
+  western = '西部片',
+  epic = '史詩片',
+  historical = '歷史電影',
 }
 
 export const RecommendWeightRange = {
@@ -149,6 +149,7 @@ export interface IProductSnapshot extends IProductId {
   theater: string;
   price: number;
   startAt: Date;
+  endAt: Date;
 }
 
 export interface IInvalidProduct extends ISubResponse {
