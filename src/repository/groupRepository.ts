@@ -12,6 +12,7 @@ import { JoinGroupDto } from '../dto/group/joinGroupDto';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
 import { updateOptions } from '../utils/constants';
+import { GroupStatus } from '../types/group.type';
 
 export class GroupRepository {
   public async createGroup(createGroupDto: CreateGroupDto) {
@@ -51,6 +52,18 @@ export class GroupRepository {
         content: updateGroupDto.content,
       },
       updateOptions,
+    );
+  }
+  public async updateExpiredStatusByGroupIds(groupIds: Types.ObjectId[]) {
+    return GroupModel.updateMany(
+      {
+        _id: {
+          $in: groupIds,
+        },
+      },
+      {
+        status: GroupStatus.cancelled,
+      },
     );
   }
 
