@@ -68,7 +68,7 @@ class OrderController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       {
-        specific_redirect_url: process.env.MOVIE_GO_URL,
+        specific_redirect_url: process.env.PAYMENT_SUCCESS_REDIRECT_URL,
       },
     );
   };
@@ -93,7 +93,7 @@ class OrderController extends BaseController {
       CustomResponseType.OK_MESSAGE,
       CustomResponseType.OK,
       {
-        specific_redirect_url: process.env.MOVIE_GO_URL,
+        specific_redirect_url: process.env.PAYMENT_SUCCESS_REDIRECT_URL,
       },
     );
   };
