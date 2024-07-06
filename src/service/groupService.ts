@@ -9,7 +9,8 @@ import { UserRepository } from '../repository/userRepository';
 import { Types } from 'mongoose';
 import { LeaveGroupDto } from '../dto/group/leaveGroupDto';
 import { GroupFilterDto } from '../dto/group/groupFilterDto';
-import { GroupDocument } from '../types/group.type';
+import { GroupDocument, GroupStatus } from '../types/group.type';
+import moment from 'moment';
 
 const logger = log4js.getLogger(`GroupService`);
 
@@ -145,7 +146,18 @@ export class GroupService {
     }
   }
   public async findGroups(groupFilterDto: GroupFilterDto) {
-    const result = await this.groupRepository.findGroups(groupFilterDto);
+    let result = await this.groupRepository.findGroups(groupFilterDto);
+    // 更新已過期揪團為cancelled
+    const expiredGroupId = result.docs
+      .filter(
+        (doc) =>
+          moment(new Date()).isAfter(moment(doc.time)) &&
+          doc.status === GroupStatus.ongoing,
+      )
+      .map((doc) => doc._id);
+    await this.groupRepository.updateExpiredStatusByGroupIds(expiredGroupId);
+    // 重新查詢
+    result = await this.groupRepository.findGroups(groupFilterDto);
     result.docs = result.docs.map((doc) => {
       const participantLength =
         doc.participant != undefined ? doc.participant.length : 0;
