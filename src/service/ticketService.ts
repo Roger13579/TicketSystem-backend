@@ -19,6 +19,7 @@ import { ShareCodeRepository } from '../repository/shareCodeRepository';
 import { ProductRepository } from '../repository/productRepository';
 import { GetOrderInfoVo } from '../vo/ticket/getOrderInfoVo';
 import { IProduct } from '../models/product';
+import { TicketStatus } from '../types/ticket.type';
 
 const logger = log4js.getLogger(`TicketService`);
 
@@ -157,8 +158,22 @@ export class TicketService {
         CustomResponseType.TICKET_NOT_ENOUGH,
       );
     }
-    createShareCodeDto.ticketId = tickets[0]._id;
-    createShareCodeDto.shareCode = await this.genShareCode(tickets[0]._id);
+    const transferredTickets = tickets.filter(
+      (ticket) => ticket.status === TicketStatus.transfer,
+    );
+    const transferredAdnPublishedTickets = transferredTickets.filter(
+      (ticket) => ticket.isPublished,
+    );
+
+    createShareCodeDto.ticketId =
+      transferredAdnPublishedTickets.length === 0
+        ? transferredTickets.length === 0
+          ? tickets[0]._id
+          : transferredTickets[0]._id
+        : transferredAdnPublishedTickets[0]._id;
+    createShareCodeDto.shareCode = await this.genShareCode(
+      createShareCodeDto.ticketId,
+    );
     const ticket =
       await this.ticketRepository.updateShareCode(createShareCodeDto);
     if (!ticket) {

@@ -8,7 +8,7 @@ export class CreateShareCodeDTO {
   private readonly _userId: Types.ObjectId;
   private readonly _orderId: Types.ObjectId;
   private readonly _productId: Types.ObjectId;
-  private _ticketId: Types.ObjectId | undefined;
+  private _ticketId: Types.ObjectId;
   private _shareCode: string = '';
 
   get shareCode() {
@@ -19,7 +19,7 @@ export class CreateShareCodeDTO {
     this._shareCode = value;
   }
 
-  get ticketId(): Types.ObjectId | undefined {
+  get ticketId() {
     return this._ticketId;
   }
 
@@ -52,5 +52,6 @@ export class CreateShareCodeDTO {
     this._userId = new Types.ObjectId((user as IUser)._id as string);
     this._orderId = new Types.ObjectId(body.orderId as string);
     this._productId = new Types.ObjectId(body.productId as string);
+    this._ticketId = new Types.ObjectId();
   }
 }
