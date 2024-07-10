@@ -161,16 +161,16 @@ export class TicketService {
     const transferredTickets = tickets.filter(
       (ticket) => ticket.status === TicketStatus.transfer,
     );
-    const transferredAdnPublishedTickets = transferredTickets.filter(
+    const transferredAndPublishedTickets = transferredTickets.filter(
       (ticket) => ticket.isPublished,
     );
 
     createShareCodeDto.ticketId =
-      transferredAdnPublishedTickets.length === 0
+      transferredAndPublishedTickets.length === 0
         ? transferredTickets.length === 0
           ? tickets[0]._id
           : transferredTickets[0]._id
-        : transferredAdnPublishedTickets[0]._id;
+        : transferredAndPublishedTickets[0]._id;
     createShareCodeDto.shareCode = await this.genShareCode(
       createShareCodeDto.ticketId,
     );
