@@ -15,10 +15,12 @@ import { throwError } from '../utils/errorHandler';
 import { LinePayConfirmDTO } from '../dto/order/linePayConfirmDto';
 import { TMethod } from '../types/common.type';
 import { TicketService } from '../service/ticketService';
+import { CartService } from '../service/cartService';
 
 class OrderController extends BaseController {
   private readonly orderService = new OrderService();
   private readonly ticketService = new TicketService();
+  private readonly cartService = new CartService();
 
   public createOrder: TMethod<ICreateOrderReq> = async (req) => {
     const createOrderDto = new CreateOrderDto(req);
@@ -54,6 +56,7 @@ class OrderController extends BaseController {
         CustomResponseType.NEWEBPAY_ERROR,
       );
     } else {
+      await this.cartService.clearCart(order.userId);
       await this.ticketService.createTickets(order);
     }
     return this.formatResponse(
@@ -87,6 +90,7 @@ class OrderController extends BaseController {
         CustomResponseType.LINEPAY_ERROR,
       );
     } else {
+      await this.cartService.clearCart(order.userId);
       await this.ticketService.createTickets(order);
     }
     return this.formatResponse(

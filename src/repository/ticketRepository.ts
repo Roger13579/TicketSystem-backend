@@ -74,7 +74,10 @@ export class TicketRepository {
       userId: userId,
       orderId: orderId,
       productId: productId,
-      status: TicketStatus.unverified,
+      $or: [
+        { status: TicketStatus.unverified },
+        { status: TicketStatus.transfer },
+      ],
       expiredAt: { $gte: new Date() },
     });
   };
@@ -256,13 +259,9 @@ export class TicketRepository {
   public updateShareCode = async ({
     shareCode,
     ticketId,
-    userId,
   }: CreateShareCodeDTO) => {
     const filter = {
       _id: ticketId,
-      userId,
-      status: TicketStatus.unverified,
-      expiredAt: { $gt: moment().toDate() },
     };
     const update = {
       shareCode,
@@ -290,7 +289,7 @@ export class TicketRepository {
     }
 
     const update = {
-      userId,
+      userId: userId,
       status: TicketStatus.unverified,
       giverId: ticket.userId,
       isPublished: false,
